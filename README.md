@@ -40,7 +40,7 @@
 ### 📦 Installation
   Clone the repository:
     ```
-    git clone [https://github.com/yourusername/pynetsketch.git](https://github.com/yourusername/pynetsketch.git)
+    git clone https://github.com/yourusername/pynetsketch.git
     cd pynetsketch
     ```
 
