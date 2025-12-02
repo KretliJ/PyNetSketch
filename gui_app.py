@@ -33,10 +33,42 @@ class NetworkApp:
 
         # --- Layout ---
         self.create_top_bar() 
-        self.create_tabs()    
+        self.create_tabs()
+        self.create_bottom_bar() # New About button here
         
+        # --- Icon Setup (Moved inside class to prevent Garbage Collection) ---
+        self.setup_icon()
+
         self.fill_local_ip()
         self.log_to_console(f"App started. Local IP: {self.local_ip}")
+
+    def setup_icon(self):
+        """Loads the application icon in a cross-platform way"""
+        try:
+            # Check both "assets" folder AND current folder
+            base_path = os.path.dirname(__file__)
+            possible_paths = [
+                os.path.join(base_path, "assets", "app_icon.png"),
+                os.path.join(base_path, "app_icon.png")
+            ]
+            
+            icon_path = None
+            for p in possible_paths:
+                if os.path.exists(p):
+                    icon_path = p
+                    break
+            
+            if icon_path:
+                # Keep a reference to the image object (self.icon_img)
+                # to prevent Garbage Collection from removing it
+                self.icon_img = tk.PhotoImage(file=icon_path)
+                self.root.iconphoto(True, self.icon_img)
+                print(f"Debug: Icon successfully applied from {icon_path}")
+            else:
+                print("Debug: Warning - app_icon.png not found.")
+                
+        except Exception as e:
+            print(f"Debug: Icon load error: {e}")
 
     def create_top_bar(self):
         control_frame = ttk.LabelFrame(self.root, text="Controls", padding=10)
@@ -107,6 +139,26 @@ class NetworkApp:
         self.notebook.add(self.tab_traffic, text="Traffic Monitor")
         self.traffic_canvas = tk.Canvas(self.tab_traffic, bg="#222222") # Dark background for graph
         self.traffic_canvas.pack(fill="both", expand=True, padx=5, pady=5)
+
+    def create_bottom_bar(self):
+        """Creates a minimal footer with an About button"""
+        bottom_frame = ttk.Frame(self.root)
+        bottom_frame.pack(side="bottom", fill="x", padx=10, pady=5)
+        
+        # Spacer to push button to the right
+        ttk.Label(bottom_frame, text="").pack(side="left", expand=True)
+        
+        ttk.Button(bottom_frame, text="About", width=8, command=self.show_about_dialog).pack(side="right")
+
+    def show_about_dialog(self):
+        messagebox.showinfo(
+            "About PyNetSketch", 
+            "PyNetSketch v1.1\n\n"
+            "A Python-based Network Scanner & Visualization Tool.\n"
+            "Proof of Concept (PoC)\n\n"
+            "Created for Educational Purposes by KretliJ.\n"
+            "License: MIT"
+        )
 
     # --- UI Logic ---
 
@@ -189,6 +241,7 @@ class NetworkApp:
 
             evt = utils.run_in_background(net_utils.ping_host, 
                                           ping_formatter, 
+                                          progress_callback=self.log_to_console, # Added for fallback logs
                                           target_ip=target)
             self.set_task_running(True, evt)
             
@@ -431,29 +484,6 @@ if __name__ == "__main__":
 
     root = tk.Tk()
     
-    try:
-        # Check both "assets" folder AND current folder
-        base_path = os.path.dirname(__file__)
-        possible_paths = [
-            os.path.join(base_path, "assets", "app_icon.png"),
-            os.path.join(base_path, "app_icon.png")
-        ]
-        
-        found_icon = False
-        for icon_path in possible_paths:
-            if os.path.exists(icon_path):
-                app_icon = tk.PhotoImage(file=icon_path)
-                root.iconphoto(True, app_icon)
-                print(f"Icon loaded from: {icon_path}")
-                found_icon = True
-                break
-        
-        if not found_icon:
-            print("Warning: app_icon.png not found in ./ or ./assets/")
-            
-    except Exception as e:
-        print(f"Icon load error: {e}")
-
-
+    # 2. Initialize App (Icon loading is now INSIDE the class)
     app = NetworkApp(root)
     root.mainloop()
