@@ -1,0 +1,572 @@
+[2025-12-02 16:24:45] [GUI] - Reset target to local subnet: 172.20.21.0/24
+[2025-12-02 16:24:45] [GUI] - App started. Local IP: 172.20.21.12
+[2025-12-02 16:24:53] [GUI] - Starting Traffic Monitor...
+[2025-12-02 16:24:53] [INFO] - Thread started for: monitor_traffic
+[2025-12-02 16:24:53] [INFO] - Starting Traffic Monitor...
+[2025-12-02 16:24:53] [GUI] - Initializing Sniffer...
+[2025-12-02 16:25:00] [GUI] - Signal sent to stop task...
+[2025-12-02 16:25:01] [WARN] - Thread cancelled for: monitor_traffic
+[2025-12-02 16:25:25] [GUI] - Reset target to local subnet: 172.20.21.0/24
+[2025-12-02 16:25:25] [GUI] - App started. Local IP: 172.20.21.12
+[2025-12-02 16:25:35] [GUI] - Tracing 1.1.1.1...
+[2025-12-02 16:25:35] [INFO] - Thread started for: perform_traceroute
+[2025-12-02 16:25:35] [INFO] - Tracing route to 1.1.1.1 (TCP Mode)...
+[2025-12-02 16:25:40] [TRACERT] - Hop 1: 172.20.20.2 - 15.3ms
+[2025-12-02 16:25:40] [GUI] - Hop 1: 172.20.20.2 - 15.3ms
+[2025-12-02 16:25:40] [TRACERT] - Hop 2: 200.19.158.9 (ufop-joaomonlevade-interno-gw.pop-mg.rnp.br) - 11.6ms
+[2025-12-02 16:25:40] [GUI] - Hop 2: 200.19.158.9 (ufop-joaomonlevade-interno-gw.pop-mg.rnp.br) - 11.6ms
+[2025-12-02 16:25:41] [TRACERT] - Hop 3: No reply (1013.3ms)
+[2025-12-02 16:25:41] [GUI] - Hop 3: * Request timed out (1013.3ms)
+[2025-12-02 16:25:41] [TRACERT] - Hop 4: 200.131.0.36 (bmg2-dmg2.pop-mg.rnp.br) - 13.3ms
+[2025-12-02 16:25:41] [GUI] - Hop 4: 200.131.0.36 (bmg2-dmg2.pop-mg.rnp.br) - 13.3ms
+[2025-12-02 16:25:41] [TRACERT] - Hop 5: 170.79.214.122 (cmg2-bmg2-65031.bkb.rnp.br) - 16.3ms
+[2025-12-02 16:25:41] [GUI] - Hop 5: 170.79.214.122 (cmg2-bmg2-65031.bkb.rnp.br) - 16.3ms
+[2025-12-02 16:25:41] [TRACERT] - Hop 6: 200.143.252.74 (csp2-cmg2-infobarra.bkb.rnp.br) - 23.0ms
+[2025-12-02 16:25:41] [GUI] - Hop 6: 200.143.252.74 (csp2-cmg2-infobarra.bkb.rnp.br) - 23.0ms
+[2025-12-02 16:25:46] [TRACERT] - Hop 7: 64.191.232.248 - 46.7ms
+[2025-12-02 16:25:46] [GUI] - Hop 7: 64.191.232.248 - 46.7ms
+[2025-12-02 16:25:51] [TRACERT] - Hop 8: 172.68.16.111 - 44.1ms
+[2025-12-02 16:25:51] [GUI] - Hop 8: 172.68.16.111 - 44.1ms
+[2025-12-02 16:25:55] [TRACERT] - Hop 9: 1.1.1.1 (one.one.one.one) - 20.4ms
+[2025-12-02 16:25:55] [GUI] - Hop 9: 1.1.1.1 (one.one.one.one) - 20.4ms
+[2025-12-02 16:25:55] [GUI] - Trace complete: 1.1.1.1 reached.
+[2025-12-02 16:25:55] [GUI] - Task Completed.
+[2025-12-02 16:25:55] [INFO] - Thread finished for: perform_traceroute
+[2025-12-02 16:26:13] [GUI] - Reset target to local subnet: 172.20.21.0/24
+[2025-12-02 16:26:24] [GUI] - Scanning 172.20.2-.0/24-172.20.21.0/24...
+[2025-12-02 16:26:24] [INFO] - Thread started for: arp_scan
+[2025-12-02 16:26:24] [INFO] - Processing scan targets: ['172.20.2-.0/24-172.20.21.0/24']
+[2025-12-02 16:26:24] [INFO] - Scanning 172.20.2-.0/24-172.20.21.0/24 via \Device\NPF_{9F98E4ED-5E49-4FA0-AE59-93679514AA52}
+[2025-12-02 16:26:24] [GUI] - Scanning 172.20.2-.0/24-172.20.21.0/24 via \Device\NPF_{9F98E4ED-5E49-4FA0-AE59-93679514AA52}
+[2025-12-02 16:26:26] [INFO] - Finished 172.20.2-.0/24-172.20.21.0/24 in 2019ms. Found 0 new.
+[2025-12-02 16:26:26] [GUI] - Finished 172.20.2-.0/24-172.20.21.0/24 in 2019ms. Found 0 new.
+[2025-12-02 16:26:26] [INFO] - Total unique devices found: 0
+[2025-12-02 16:26:26] [INFO] - Thread finished for: arp_scan
+[2025-12-02 16:26:41] [GUI] - Scanning 172.20.2-.0/24-172.20.21.0/24...
+[2025-12-02 16:26:41] [INFO] - Thread started for: arp_scan
+[2025-12-02 16:26:41] [INFO] - Processing scan targets: ['172.20.2-.0/24-172.20.21.0/24']
+[2025-12-02 16:26:41] [INFO] - Scanning 172.20.2-.0/24-172.20.21.0/24 via \Device\NPF_{9F98E4ED-5E49-4FA0-AE59-93679514AA52}
+[2025-12-02 16:26:41] [GUI] - Scanning 172.20.2-.0/24-172.20.21.0/24 via \Device\NPF_{9F98E4ED-5E49-4FA0-AE59-93679514AA52}
+[2025-12-02 16:26:43] [INFO] - Finished 172.20.2-.0/24-172.20.21.0/24 in 2031ms. Found 0 new.
+[2025-12-02 16:26:43] [GUI] - Finished 172.20.2-.0/24-172.20.21.0/24 in 2031ms. Found 0 new.
+[2025-12-02 16:26:43] [INFO] - Total unique devices found: 0
+[2025-12-02 16:26:43] [INFO] - Thread finished for: arp_scan
+[2025-12-02 16:26:51] [GUI] - Scanning 172.20.20.0/24-172.20.21.0/24...
+[2025-12-02 16:26:51] [INFO] - Thread started for: arp_scan
+[2025-12-02 16:26:51] [INFO] - Processing scan targets: ['172.20.20.0/24', '172.20.21.0/24']
+[2025-12-02 16:26:51] [INFO] - Scanning 172.20.20.0/24 via \Device\NPF_{9F98E4ED-5E49-4FA0-AE59-93679514AA52}
+[2025-12-02 16:26:51] [GUI] - Scanning 172.20.20.0/24 via \Device\NPF_{9F98E4ED-5E49-4FA0-AE59-93679514AA52}
+[2025-12-02 16:26:55] [INFO] - Finished 172.20.20.0/24 in 3327ms. Found 66 new.
+[2025-12-02 16:26:55] [GUI] - Finished 172.20.20.0/24 in 3327ms. Found 66 new.
+[2025-12-02 16:26:55] [INFO] - Scanning 172.20.21.0/24 via \Device\NPF_{9F98E4ED-5E49-4FA0-AE59-93679514AA52}
+[2025-12-02 16:26:55] [GUI] - Scanning 172.20.21.0/24 via \Device\NPF_{9F98E4ED-5E49-4FA0-AE59-93679514AA52}
+[2025-12-02 16:26:58] [INFO] - Finished 172.20.21.0/24 in 3112ms. Found 20 new.
+[2025-12-02 16:26:58] [GUI] - Finished 172.20.21.0/24 in 3112ms. Found 20 new.
+[2025-12-02 16:26:58] [INFO] - Total unique devices found: 86
+[2025-12-02 16:26:59] [INFO] - Thread finished for: arp_scan
+[2025-12-02 17:24:36] [GUI] - Starting Traffic Monitor...
+[2025-12-02 17:24:36] [INFO] - Thread started for: monitor_traffic
+[2025-12-02 17:24:36] [INFO] - Starting Traffic Monitor...
+[2025-12-02 17:24:36] [GUI] - Initializing Sniffer...
+[2025-12-02 17:24:48] [GUI] - Signal sent to stop task...
+[2025-12-02 17:24:48] [WARN] - Thread cancelled for: monitor_traffic
+[2025-12-02 17:28:46] [GUI] - Reset target to local subnet: 10.92.131.0/24
+[2025-12-02 17:28:46] [GUI] - App started. Local IP: 10.92.131.139
+[2025-12-02 17:28:56] [GUI] - Starting Traffic Monitor...
+[2025-12-02 17:28:56] [INFO] - Thread started for: monitor_traffic
+[2025-12-02 17:28:56] [INFO] - Starting Traffic Monitor...
+[2025-12-02 17:28:56] [GUI] - Initializing Sniffer...
+[2025-12-02 17:29:25] [GUI] - Reset target to local subnet: 10.92.131.0/24
+[2025-12-02 17:29:26] [GUI] - Reset target to local subnet: 10.92.131.0/24
+[2025-12-02 17:29:47] [GUI] - Reset target to local subnet: 10.92.131.0/24
+[2025-12-02 17:29:52] [GUI] - Signal sent to stop task...
+[2025-12-02 17:29:52] [WARN] - Thread cancelled/stopped for: monitor_traffic
+[2025-12-02 17:29:52] [GUI] - Task Completed.
+[2025-12-02 17:30:03] [GUI] - Scanning 10.92.131.0/24...
+[2025-12-02 17:30:03] [INFO] - Thread started for: arp_scan
+[2025-12-02 17:30:03] [INFO] - Processing scan targets: ['10.92.131.0/24']
+[2025-12-02 17:30:03] [INFO] - Scanning 10.92.131.0/24 via \Device\NPF_{9F98E4ED-5E49-4FA0-AE59-93679514AA52}
+[2025-12-02 17:30:03] [GUI] - Scanning 10.92.131.0/24 via \Device\NPF_{9F98E4ED-5E49-4FA0-AE59-93679514AA52}
+[2025-12-02 17:30:06] [INFO] - Finished 10.92.131.0/24 in 3177ms. Found 2 new.
+[2025-12-02 17:30:06] [GUI] - Finished 10.92.131.0/24 in 3177ms. Found 2 new.
+[2025-12-02 17:30:06] [INFO] - Total unique devices found: 2
+[2025-12-02 17:30:06] [INFO] - Thread finished for: arp_scan
+[2025-12-02 17:33:49] [GUI] - Reset target to local subnet: 10.92.131.0/24
+[2025-12-02 17:33:49] [GUI] - App started. Local IP: 10.92.131.139
+[2025-12-02 17:33:56] [GUI] - Scanning 10.92.131.0/24...
+[2025-12-02 17:33:56] [INFO] - Thread started for: arp_scan
+[2025-12-02 17:33:56] [INFO] - Processing scan targets: ['10.92.131.0/24']
+[2025-12-02 17:33:56] [INFO] - Scanning 10.92.131.0/24 via \Device\NPF_{9F98E4ED-5E49-4FA0-AE59-93679514AA52}
+[2025-12-02 17:33:56] [GUI] - Scanning 10.92.131.0/24 via \Device\NPF_{9F98E4ED-5E49-4FA0-AE59-93679514AA52}
+[2025-12-02 17:33:59] [INFO] - Finished 10.92.131.0/24 in 3222ms. Found 2 new.
+[2025-12-02 17:33:59] [GUI] - Finished 10.92.131.0/24 in 3222ms. Found 2 new.
+[2025-12-02 17:33:59] [INFO] - Total unique devices found: 2
+[2025-12-02 17:33:59] [INFO] - Thread finished for: arp_scan
+[2025-12-02 17:35:09] [GUI] - Reset target to local subnet: 10.92.131.0/24
+[2025-12-02 17:35:09] [GUI] - App started. Local IP: 10.92.131.139
+[2025-12-02 17:35:17] [GUI] - Scanning 10.92.131.0/24...
+[2025-12-02 17:35:17] [INFO] - Thread started for: arp_scan
+[2025-12-02 17:35:17] [INFO] - Processing scan targets: ['10.92.131.0/24']
+[2025-12-02 17:35:17] [INFO] - Scanning 10.92.131.0/24 via \Device\NPF_{9F98E4ED-5E49-4FA0-AE59-93679514AA52}
+[2025-12-02 17:35:17] [GUI] - Scanning 10.92.131.0/24 via \Device\NPF_{9F98E4ED-5E49-4FA0-AE59-93679514AA52}
+[2025-12-02 17:35:21] [GUI] - Found: 10.92.131.139 (Liteon Technology Corporation)
+[2025-12-02 17:35:21] [GUI] - Found: 10.92.131.218 (Randomized / Virtual (LAA))
+[2025-12-02 17:35:21] [INFO] - Finished 10.92.131.0/24 in 3142ms. Found 2 unique devices total.
+[2025-12-02 17:35:21] [GUI] - Finished 10.92.131.0/24 in 3142ms. Found 2 unique devices total.
+[2025-12-02 17:35:21] [INFO] - Thread finished for: arp_scan
+[2025-12-02 17:36:18] [GUI] - Port scanning 10.92.131.218...
+[2025-12-02 17:36:18] [INFO] - Thread started for: scan_ports
+[2025-12-02 17:36:18] [INFO] - Starting Port Scan on 10.92.131.218
+[2025-12-02 17:36:18] [GUI] - Scanning 13 ports on 10.92.131.218...
+[2025-12-02 17:36:20] [INFO] - 10.92.131.218: [OPEN] Port 53
+[2025-12-02 17:36:20] [GUI] - [OPEN] Port 53
+[2025-12-02 17:36:24] [GUI] - Port Scan Complete. Open: [53]
+[2025-12-02 17:36:24] [INFO] - Thread finished for: scan_ports
+[2025-12-02 17:36:24] [GUI] - Task Completed.
+[2025-12-02 17:38:12] [GUI] - Tracing 8.8.8.8...
+[2025-12-02 17:38:12] [INFO] - Thread started for: perform_traceroute
+[2025-12-02 17:38:12] [INFO] - Tracing route to 8.8.8.8 (TCP Mode)...
+[2025-12-02 17:38:18] [GUI] - Hop 1: 10.92.131.218 - 26.2ms
+[2025-12-02 17:38:19] [GUI] - Hop 2: * Request timed out (1040.4ms)
+[2025-12-02 17:38:20] [GUI] - Hop 3: * Request timed out (1008.8ms)
+[2025-12-02 17:38:21] [GUI] - Hop 4: * Request timed out (1013.4ms)
+[2025-12-02 17:38:22] [GUI] - Hop 5: * Request timed out (1017.7ms)
+[2025-12-02 17:38:23] [GUI] - Hop 6: * Request timed out (1063.5ms)
+[2025-12-02 17:38:24] [GUI] - Hop 7: * Request timed out (1059.3ms)
+[2025-12-02 17:38:25] [GUI] - Hop 8: * Request timed out (1044.3ms)
+[2025-12-02 17:38:26] [GUI] - Hop 9: * Request timed out (1011.7ms)
+[2025-12-02 17:38:27] [GUI] - Hop 10: * Request timed out (1023.8ms)
+[2025-12-02 17:38:28] [GUI] - Hop 11: * Request timed out (1027.2ms)
+[2025-12-02 17:38:29] [GUI] - Hop 12: * Request timed out (1015.7ms)
+[2025-12-02 17:38:30] [GUI] - Hop 13: * Request timed out (1027.2ms)
+[2025-12-02 17:38:31] [GUI] - Hop 14: * Request timed out (1016.5ms)
+[2025-12-02 17:38:32] [GUI] - Hop 15: * Request timed out (1013.6ms)
+[2025-12-02 17:38:33] [GUI] - Hop 16: * Request timed out (1021.6ms)
+[2025-12-02 17:38:34] [GUI] - Hop 17: * Request timed out (1027.6ms)
+[2025-12-02 17:38:35] [GUI] - Hop 18: * Request timed out (1022.5ms)
+[2025-12-02 17:38:36] [GUI] - Hop 19: * Request timed out (1023.5ms)
+[2025-12-02 17:38:37] [GUI] - Hop 20: * Request timed out (1054.1ms)
+[2025-12-02 17:38:38] [GUI] - Hop 21: * Request timed out (1057.2ms)
+[2025-12-02 17:38:39] [GUI] - Hop 22: * Request timed out (1024.6ms)
+[2025-12-02 17:38:40] [GUI] - Hop 23: * Request timed out (1025.9ms)
+[2025-12-02 17:38:41] [GUI] - Hop 24: * Request timed out (1021.6ms)
+[2025-12-02 17:38:42] [GUI] - Hop 25: * Request timed out (1028.1ms)
+[2025-12-02 17:38:43] [GUI] - Hop 26: * Request timed out (1026.1ms)
+[2025-12-02 17:38:44] [GUI] - Hop 27: * Request timed out (1021.7ms)
+[2025-12-02 17:38:45] [GUI] - Hop 28: * Request timed out (1018.8ms)
+[2025-12-02 17:38:46] [GUI] - Hop 29: * Request timed out (1059.7ms)
+[2025-12-02 17:38:47] [GUI] - Hop 30: * Request timed out (1025.4ms)
+[2025-12-02 17:38:47] [INFO] - Thread finished for: perform_traceroute
+[2025-12-02 17:38:47] [GUI] - Task Completed.
+[2025-12-02 17:39:15] [GUI] - Tracing 1.1.1.1...
+[2025-12-02 17:39:15] [INFO] - Thread started for: perform_traceroute
+[2025-12-02 17:39:15] [INFO] - Tracing route to 1.1.1.1 (TCP Mode)...
+[2025-12-02 17:39:20] [GUI] - Hop 1: 10.92.131.218 - 17.9ms
+[2025-12-02 17:39:22] [GUI] - Hop 2: * Request timed out (1026.1ms)
+[2025-12-02 17:39:23] [GUI] - Hop 3: * Request timed out (1015.2ms)
+[2025-12-02 17:39:24] [GUI] - Hop 4: * Request timed out (1027.0ms)
+[2025-12-02 17:39:25] [GUI] - Hop 5: * Request timed out (1013.8ms)
+[2025-12-02 17:39:26] [GUI] - Hop 6: * Request timed out (1104.0ms)
+[2025-12-02 17:39:27] [GUI] - Hop 7: * Request timed out (1014.0ms)
+[2025-12-02 17:39:28] [GUI] - Hop 8: * Request timed out (1071.3ms)
+[2025-12-02 17:39:29] [GUI] - Hop 9: * Request timed out (1027.7ms)
+[2025-12-02 17:39:30] [GUI] - Hop 10: * Request timed out (1117.5ms)
+[2025-12-02 17:39:35] [GUI] - Hop 11: 1.1.1.1 (one.one.one.one) - 46.3ms
+[2025-12-02 17:39:35] [GUI] - Trace complete: 1.1.1.1 reached.
+[2025-12-02 17:39:35] [INFO] - Thread finished for: perform_traceroute
+[2025-12-02 17:39:35] [GUI] - Task Completed.
+[2025-12-02 17:40:03] [GUI] - Reset target to local subnet: 10.92.131.0/24
+[2025-12-02 17:40:03] [GUI] - App started. Local IP: 10.92.131.139
+[2025-12-02 17:40:18] [GUI] - Scanning 10.92.131.0/24...
+[2025-12-02 17:40:18] [INFO] - Thread started for: arp_scan
+[2025-12-02 17:40:18] [INFO] - Processing scan targets: ['10.92.131.0/24']
+[2025-12-02 17:40:18] [INFO] - Scanning 10.92.131.0/24 via \Device\NPF_{9F98E4ED-5E49-4FA0-AE59-93679514AA52}
+[2025-12-02 17:40:18] [GUI] - Scanning 10.92.131.0/24 via \Device\NPF_{9F98E4ED-5E49-4FA0-AE59-93679514AA52}
+[2025-12-02 17:40:22] [GUI] - Found: 10.92.131.139 (Liteon Technology Corporation)
+[2025-12-02 17:40:22] [GUI] - Found: 10.92.131.218 (Randomized / Virtual (LAA))
+[2025-12-02 17:40:22] [INFO] - Finished 10.92.131.0/24 in 3011ms. Found 2 unique devices total.
+[2025-12-02 17:40:22] [GUI] - Finished 10.92.131.0/24 in 3011ms. Found 2 unique devices total.
+[2025-12-02 17:40:22] [INFO] - Thread finished for: arp_scan
+[2025-12-02 17:40:32] [GUI] - Port scanning 10.92.131.218...
+[2025-12-02 17:40:32] [INFO] - Thread started for: scan_ports
+[2025-12-02 17:40:32] [INFO] - Starting Port Scan on 10.92.131.218
+[2025-12-02 17:40:32] [GUI] - Scanning 13 ports (TCP & UDP) on 10.92.131.218...
+[2025-12-02 17:40:36] [INFO] - 10.92.131.218: [TCP] Port 53 OPEN
+[2025-12-02 17:40:36] [GUI] - [TCP] Port 53 OPEN
+[2025-12-02 17:40:45] [GUI] - Scan Complete. Found 1 open services.
+[2025-12-02 17:40:45] [INFO] - Thread finished for: scan_ports
+[2025-12-02 17:40:45] [GUI] - Task Completed.
+[2025-12-02 17:44:34] [GUI] - Reset target to local subnet: 10.92.131.0/24
+[2025-12-02 17:44:34] [GUI] - App started. Local IP: 10.92.131.139
+[2025-12-02 17:44:44] [GUI] - Tracing 8.8.8.8...
+[2025-12-02 17:44:44] [INFO] - Thread started for: perform_traceroute
+[2025-12-02 17:44:44] [INFO] - Tracing route to 8.8.8.8 (TCP Mode)...
+[2025-12-02 17:44:47] [GUI] - Hop 1: * Request timed out (3164.8ms)
+[2025-12-02 17:44:50] [GUI] - Hop 2: * Request timed out (3044.3ms)
+[2025-12-02 17:44:53] [GUI] - Hop 3: * Request timed out (3049.7ms)
+[2025-12-02 17:44:54] [GUI] - Hop 4: * Request timed out (1038.0ms)
+[2025-12-02 17:44:55] [GUI] - Hop 5: * Request timed out (1053.1ms)
+[2025-12-02 17:44:56] [GUI] - Hop 6: * Request timed out (1073.5ms)
+[2025-12-02 17:44:57] [GUI] - Hop 7: * Request timed out (1021.7ms)
+[2025-12-02 17:44:58] [GUI] - Hop 8: * Request timed out (1012.8ms)
+[2025-12-02 17:44:59] [GUI] - Hop 9: * Request timed out (1050.2ms)
+[2025-12-02 17:45:00] [GUI] - Hop 10: * Request timed out (1026.8ms)
+[2025-12-02 17:45:01] [GUI] - Hop 11: * Request timed out (1010.5ms)
+[2025-12-02 17:45:02] [GUI] - Hop 12: * Request timed out (1021.0ms)
+[2025-12-02 17:45:03] [GUI] - Hop 13: * Request timed out (1074.9ms)
+[2025-12-02 17:45:04] [GUI] - Hop 14: * Request timed out (1028.5ms)
+[2025-12-02 17:45:05] [GUI] - Hop 15: * Request timed out (1059.8ms)
+[2025-12-02 17:45:07] [GUI] - Hop 16: * Request timed out (1038.2ms)
+[2025-12-02 17:45:08] [GUI] - Hop 17: * Request timed out (1008.7ms)
+[2025-12-02 17:45:09] [GUI] - Hop 18: * Request timed out (1042.3ms)
+[2025-12-02 17:45:10] [GUI] - Hop 19: * Request timed out (1017.9ms)
+[2025-12-02 17:45:11] [GUI] - Hop 20: * Request timed out (1025.8ms)
+[2025-12-02 17:45:12] [GUI] - Hop 21: * Request timed out (1014.2ms)
+[2025-12-02 17:45:13] [GUI] - Hop 22: * Request timed out (1026.6ms)
+[2025-12-02 17:45:14] [GUI] - Hop 23: * Request timed out (1023.0ms)
+[2025-12-02 17:45:15] [GUI] - Hop 24: * Request timed out (1028.4ms)
+[2025-12-02 17:45:16] [GUI] - Hop 25: * Request timed out (1097.1ms)
+[2025-12-02 17:45:17] [GUI] - Hop 26: * Request timed out (1130.6ms)
+[2025-12-02 17:45:18] [GUI] - Signal sent to stop task...
+[2025-12-02 17:45:18] [GUI] - Hop 27: * Request timed out (1024.6ms)
+[2025-12-02 17:45:18] [GUI] - Traceroute interrupted.
+[2025-12-02 17:45:18] [WARN] - Thread cancelled/stopped for: perform_traceroute
+[2025-12-02 17:45:18] [GUI] - Task Completed.
+[2025-12-02 17:45:25] [GUI] - Tracing 1.1.1.1...
+[2025-12-02 17:45:25] [INFO] - Thread started for: perform_traceroute
+[2025-12-02 17:45:25] [INFO] - Tracing route to 1.1.1.1 (TCP Mode)...
+[2025-12-02 17:45:30] [GUI] - Hop 1: 10.92.131.218 - 23.9ms
+[2025-12-02 17:45:31] [GUI] - Hop 2: * Request timed out (1025.9ms)
+[2025-12-02 17:45:32] [GUI] - Hop 3: * Request timed out (1024.1ms)
+[2025-12-02 17:45:33] [GUI] - Hop 4: * Request timed out (1022.0ms)
+[2025-12-02 17:45:34] [GUI] - Hop 5: * Request timed out (1023.2ms)
+[2025-12-02 17:45:35] [GUI] - Hop 6: * Request timed out (1015.7ms)
+[2025-12-02 17:45:36] [GUI] - Hop 7: * Request timed out (1012.1ms)
+[2025-12-02 17:45:37] [GUI] - Hop 8: * Request timed out (1024.5ms)
+[2025-12-02 17:45:39] [GUI] - Hop 9: * Request timed out (1132.6ms)
+[2025-12-02 17:45:40] [GUI] - Hop 10: * Request timed out (1052.2ms)
+[2025-12-02 17:45:41] [GUI] - Hop 11: * Request timed out (1042.4ms)
+[2025-12-02 17:45:41] [INFO] -     [Analysis] Hop 2 is likely a HIDDEN NODE (Firewall/CGNAT)
+[2025-12-02 17:45:41] [GUI] -     [Analysis] Hop 2 is likely a HIDDEN NODE (Firewall/CGNAT)
+[2025-12-02 17:45:41] [INFO] -     [Analysis] Hop 3 is likely a HIDDEN NODE (Firewall/CGNAT)
+[2025-12-02 17:45:41] [GUI] -     [Analysis] Hop 3 is likely a HIDDEN NODE (Firewall/CGNAT)
+[2025-12-02 17:45:41] [INFO] -     [Analysis] Hop 4 is likely a HIDDEN NODE (Firewall/CGNAT)
+[2025-12-02 17:45:41] [GUI] -     [Analysis] Hop 4 is likely a HIDDEN NODE (Firewall/CGNAT)
+[2025-12-02 17:45:41] [INFO] -     [Analysis] Hop 5 is likely a HIDDEN NODE (Firewall/CGNAT)
+[2025-12-02 17:45:41] [GUI] -     [Analysis] Hop 5 is likely a HIDDEN NODE (Firewall/CGNAT)
+[2025-12-02 17:45:41] [INFO] -     [Analysis] Hop 6 is likely a HIDDEN NODE (Firewall/CGNAT)
+[2025-12-02 17:45:41] [GUI] -     [Analysis] Hop 6 is likely a HIDDEN NODE (Firewall/CGNAT)
+[2025-12-02 17:45:41] [INFO] -     [Analysis] Hop 7 is likely a HIDDEN NODE (Firewall/CGNAT)
+[2025-12-02 17:45:41] [GUI] -     [Analysis] Hop 7 is likely a HIDDEN NODE (Firewall/CGNAT)
+[2025-12-02 17:45:41] [INFO] -     [Analysis] Hop 8 is likely a HIDDEN NODE (Firewall/CGNAT)
+[2025-12-02 17:45:41] [GUI] -     [Analysis] Hop 8 is likely a HIDDEN NODE (Firewall/CGNAT)
+[2025-12-02 17:45:41] [INFO] -     [Analysis] Hop 9 is likely a HIDDEN NODE (Firewall/CGNAT)
+[2025-12-02 17:45:41] [GUI] -     [Analysis] Hop 9 is likely a HIDDEN NODE (Firewall/CGNAT)
+[2025-12-02 17:45:41] [INFO] -     [Analysis] Hop 10 is likely a HIDDEN NODE (Firewall/CGNAT)
+[2025-12-02 17:45:41] [GUI] -     [Analysis] Hop 10 is likely a HIDDEN NODE (Firewall/CGNAT)
+[2025-12-02 17:45:41] [INFO] -     [Analysis] Hop 11 is likely a HIDDEN NODE (Firewall/CGNAT)
+[2025-12-02 17:45:41] [GUI] -     [Analysis] Hop 11 is likely a HIDDEN NODE (Firewall/CGNAT)
+[2025-12-02 17:45:41] [GUI] - Hop 12: 1.1.1.1 (one.one.one.one) - 64.2ms
+[2025-12-02 17:45:41] [GUI] - Trace complete: 1.1.1.1 reached.
+[2025-12-02 17:45:41] [INFO] - Thread finished for: perform_traceroute
+[2025-12-02 17:45:41] [GUI] - Task Completed.
+[2025-12-02 17:45:56] [GUI] - Tracing 8.8.8.8...
+[2025-12-02 17:45:56] [INFO] - Thread started for: perform_traceroute
+[2025-12-02 17:45:56] [INFO] - Tracing route to 8.8.8.8 (TCP Mode)...
+[2025-12-02 17:46:01] [GUI] - Hop 1: 10.92.131.218 - 23.6ms
+[2025-12-02 17:46:02] [GUI] - Hop 2: * Request timed out (1106.2ms)
+[2025-12-02 17:46:03] [GUI] - Hop 3: * Request timed out (1012.5ms)
+[2025-12-02 17:46:04] [GUI] - Hop 4: * Request timed out (1063.6ms)
+[2025-12-02 17:46:05] [GUI] - Hop 5: * Request timed out (1068.6ms)
+[2025-12-02 17:46:06] [GUI] - Hop 6: * Request timed out (1010.9ms)
+[2025-12-02 17:46:08] [GUI] - Hop 7: * Request timed out (1027.5ms)
+[2025-12-02 17:46:09] [GUI] - Hop 8: * Request timed out (1023.7ms)
+[2025-12-02 17:46:10] [GUI] - Hop 9: * Request timed out (1017.0ms)
+[2025-12-02 17:46:11] [GUI] - Hop 10: * Request timed out (1010.2ms)
+[2025-12-02 17:46:12] [GUI] - Hop 11: * Request timed out (1016.5ms)
+[2025-12-02 17:46:13] [GUI] - Hop 12: * Request timed out (1031.8ms)
+[2025-12-02 17:46:14] [GUI] - Hop 13: * Request timed out (1013.9ms)
+[2025-12-02 17:46:15] [GUI] - Hop 14: * Request timed out (1028.2ms)
+[2025-12-02 17:46:16] [GUI] - Hop 15: * Request timed out (1022.6ms)
+[2025-12-02 17:46:17] [GUI] - Hop 16: * Request timed out (1014.7ms)
+[2025-12-02 17:46:18] [GUI] - Hop 17: * Request timed out (1022.6ms)
+[2025-12-02 17:46:19] [GUI] - Hop 18: * Request timed out (1016.5ms)
+[2025-12-02 17:46:20] [GUI] - Hop 19: * Request timed out (1028.4ms)
+[2025-12-02 17:46:21] [GUI] - Hop 20: * Request timed out (1011.9ms)
+[2025-12-02 17:46:22] [GUI] - Hop 21: * Request timed out (1026.6ms)
+[2025-12-02 17:46:23] [GUI] - Hop 22: * Request timed out (1014.6ms)
+[2025-12-02 17:46:24] [GUI] - Hop 23: * Request timed out (1019.3ms)
+[2025-12-02 17:46:25] [GUI] - Hop 24: * Request timed out (1027.8ms)
+[2025-12-02 17:46:26] [GUI] - Hop 25: * Request timed out (1029.7ms)
+[2025-12-02 17:46:27] [GUI] - Hop 26: * Request timed out (1057.8ms)
+[2025-12-02 17:46:28] [GUI] - Hop 27: * Request timed out (1013.7ms)
+[2025-12-02 17:46:29] [GUI] - Hop 28: * Request timed out (1013.8ms)
+[2025-12-02 17:46:30] [GUI] - Hop 29: * Request timed out (1012.5ms)
+[2025-12-02 17:46:31] [GUI] - Hop 30: * Request timed out (1092.7ms)
+[2025-12-02 17:46:31] [INFO] - Thread finished for: perform_traceroute
+[2025-12-02 17:46:31] [GUI] - Task Completed.
+[2025-12-02 17:49:44] [GUI] - Reset target to local subnet: 10.92.131.0/24
+[2025-12-02 17:49:44] [GUI] - App started. Local IP: 10.92.131.139
+[2025-12-02 17:49:53] [GUI] - Pinging 1.1.1.1...
+[2025-12-02 17:49:53] [INFO] - Thread started for: ping_host
+[2025-12-02 17:49:53] [INFO] - Starting ping for 1.1.1.1 (Windows)
+[2025-12-02 17:49:56] [INFO] - Thread finished for: ping_host
+[2025-12-02 17:49:56] [GUI] - Task Completed.
+[2025-12-02 17:50:16] [GUI] - Tracing 1.1.1.1...
+[2025-12-02 17:50:16] [INFO] - Thread started for: perform_traceroute
+[2025-12-02 17:50:16] [INFO] - Determining best trace method for 1.1.1.1...
+[2025-12-02 17:50:16] [GUI] - Probing target 1.1.1.1 to select method...
+[2025-12-02 17:50:17] [INFO] - Probe Success: Target responded to TCP:80 (Web).
+[2025-12-02 17:50:17] [GUI] - Probe Success: Target responded to TCP:80 (Web).
+[2025-12-02 17:50:17] [INFO] - Tracing route to 1.1.1.1 using TCP:80 (Web)...
+[2025-12-02 17:50:22] [GUI] - Hop 1: 10.92.131.218 - 8.8ms
+[2025-12-02 17:50:23] [GUI] - Hop 2: * Request timed out (1030.3ms)
+[2025-12-02 17:50:24] [GUI] - Hop 3: * Request timed out (1039.8ms)
+[2025-12-02 17:50:25] [GUI] - Hop 4: * Request timed out (1012.4ms)
+[2025-12-02 17:50:27] [GUI] - Hop 5: * Request timed out (1039.5ms)
+[2025-12-02 17:50:28] [GUI] - Hop 6: * Request timed out (1023.5ms)
+[2025-12-02 17:50:29] [GUI] - Hop 7: * Request timed out (1027.6ms)
+[2025-12-02 17:50:30] [GUI] - Hop 8: * Request timed out (1023.5ms)
+[2025-12-02 17:50:31] [GUI] - Hop 9: * Request timed out (1014.2ms)
+[2025-12-02 17:50:31] [INFO] -     [Analysis] Hop 2 is likely a HIDDEN NODE (Firewall/CGNAT)
+[2025-12-02 17:50:31] [GUI] -     [Analysis] Hop 2 is likely a HIDDEN NODE (Firewall/CGNAT)
+[2025-12-02 17:50:31] [INFO] -     [Analysis] Hop 3 is likely a HIDDEN NODE (Firewall/CGNAT)
+[2025-12-02 17:50:31] [GUI] -     [Analysis] Hop 3 is likely a HIDDEN NODE (Firewall/CGNAT)
+[2025-12-02 17:50:31] [INFO] -     [Analysis] Hop 4 is likely a HIDDEN NODE (Firewall/CGNAT)
+[2025-12-02 17:50:31] [GUI] -     [Analysis] Hop 4 is likely a HIDDEN NODE (Firewall/CGNAT)
+[2025-12-02 17:50:31] [INFO] -     [Analysis] Hop 5 is likely a HIDDEN NODE (Firewall/CGNAT)
+[2025-12-02 17:50:31] [GUI] -     [Analysis] Hop 5 is likely a HIDDEN NODE (Firewall/CGNAT)
+[2025-12-02 17:50:31] [INFO] -     [Analysis] Hop 6 is likely a HIDDEN NODE (Firewall/CGNAT)
+[2025-12-02 17:50:31] [GUI] -     [Analysis] Hop 6 is likely a HIDDEN NODE (Firewall/CGNAT)
+[2025-12-02 17:50:31] [INFO] -     [Analysis] Hop 7 is likely a HIDDEN NODE (Firewall/CGNAT)
+[2025-12-02 17:50:31] [GUI] -     [Analysis] Hop 7 is likely a HIDDEN NODE (Firewall/CGNAT)
+[2025-12-02 17:50:31] [INFO] -     [Analysis] Hop 8 is likely a HIDDEN NODE (Firewall/CGNAT)
+[2025-12-02 17:50:31] [GUI] -     [Analysis] Hop 8 is likely a HIDDEN NODE (Firewall/CGNAT)
+[2025-12-02 17:50:31] [INFO] -     [Analysis] Hop 9 is likely a HIDDEN NODE (Firewall/CGNAT)
+[2025-12-02 17:50:31] [GUI] -     [Analysis] Hop 9 is likely a HIDDEN NODE (Firewall/CGNAT)
+[2025-12-02 17:50:35] [GUI] - Hop 10: 1.1.1.1 (one.one.one.one) - 86.5ms
+[2025-12-02 17:50:35] [GUI] - Trace complete: 1.1.1.1 reached.
+[2025-12-02 17:50:35] [INFO] - Thread finished for: perform_traceroute
+[2025-12-02 17:50:35] [GUI] - Task Completed.
+[2025-12-02 17:50:42] [GUI] - Tracing 8.8.8.8...
+[2025-12-02 17:50:42] [INFO] - Thread started for: perform_traceroute
+[2025-12-02 17:50:42] [INFO] - Determining best trace method for 8.8.8.8...
+[2025-12-02 17:50:42] [GUI] - Probing target 8.8.8.8 to select method...
+[2025-12-02 17:50:44] [INFO] - Probe Success: Target responded to TCP:53 (DNS).
+[2025-12-02 17:50:44] [GUI] - Probe Success: Target responded to TCP:53 (DNS).
+[2025-12-02 17:50:44] [INFO] - Tracing route to 8.8.8.8 using TCP:53 (DNS)...
+[2025-12-02 17:50:49] [GUI] - Hop 1: 10.92.131.218 - 17.8ms
+[2025-12-02 17:50:50] [GUI] - Hop 2: * Request timed out (1030.2ms)
+[2025-12-02 17:50:51] [INFO] -     [Analysis] Hop 2 is likely a HIDDEN NODE (Firewall/CGNAT)
+[2025-12-02 17:50:51] [GUI] -     [Analysis] Hop 2 is likely a HIDDEN NODE (Firewall/CGNAT)
+[2025-12-02 17:50:55] [GUI] - Hop 3: 8.8.8.8 (dns.google) - 455.3ms
+[2025-12-02 17:50:55] [GUI] - Trace complete: 8.8.8.8 reached.
+[2025-12-02 17:50:56] [INFO] - Thread finished for: perform_traceroute
+[2025-12-02 17:50:56] [GUI] - Task Completed.
+[2025-12-02 17:51:20] [GUI] - Pinging 8.8.8.8...
+[2025-12-02 17:51:20] [INFO] - Thread started for: ping_host
+[2025-12-02 17:51:20] [INFO] - Starting ping for 8.8.8.8 (Windows)
+[2025-12-02 17:51:24] [GUI] - Task Completed.
+[2025-12-02 17:51:24] [INFO] - Thread finished for: ping_host
+[2025-12-02 17:53:08] [GUI] - Reset target to local subnet: 10.92.131.0/24
+[2025-12-02 17:53:08] [GUI] - App started. Local IP: 10.92.131.139
+[2025-12-02 17:53:14] [GUI] - Pinging 8.8.8.8...
+[2025-12-02 17:53:14] [INFO] - Thread started for: ping_host
+[2025-12-02 17:53:15] [INFO] - Starting ping for 8.8.8.8 (Windows)
+[2025-12-02 17:53:18] [INFO] - Thread finished for: ping_host
+[2025-12-02 17:53:18] [GUI] - Task Completed.
+[2025-12-02 17:56:02] [GUI] - Reset target to local subnet: 10.92.131.0/24
+[2025-12-02 17:56:02] [GUI] - App started. Local IP: 10.92.131.139
+[2025-12-02 17:56:07] [GUI] - Pinging 8.8.8.8...
+[2025-12-02 17:56:07] [INFO] - Thread started for: ping_host
+[2025-12-02 17:56:07] [INFO] - Starting ping for 8.8.8.8 (Windows)
+[2025-12-02 17:56:10] [INFO] - Thread finished for: ping_host
+[2025-12-02 17:56:10] [GUI] - Ping Result: 8.8.8.8 is OFFLINE
+[2025-12-02 17:56:10] [GUI] - Task Completed.
+[2025-12-02 17:56:16] [GUI] - Pinging 1.1.1.1...
+[2025-12-02 17:56:16] [INFO] - Thread started for: ping_host
+[2025-12-02 17:56:16] [INFO] - Starting ping for 1.1.1.1 (Windows)
+[2025-12-02 17:56:20] [INFO] - Thread finished for: ping_host
+[2025-12-02 17:56:20] [GUI] - Ping Result: 1.1.1.1 is OFFLINE
+[2025-12-02 17:56:20] [GUI] - Task Completed.
+[2025-12-02 18:01:29] [GUI] - Reset target to local subnet: 10.92.131.0/24
+[2025-12-02 18:01:29] [GUI] - App started. Local IP: 10.92.131.139
+[2025-12-02 18:01:36] [GUI] - Pinging 1.1.1.1...
+[2025-12-02 18:01:36] [INFO] - Thread started for: ping_host
+[2025-12-02 18:01:36] [INFO] - ICMP Pinging 1.1.1.1...
+[2025-12-02 18:01:38] [INFO] - ICMP failed for 1.1.1.1. Trying TCP probes...
+[2025-12-02 18:01:38] [INFO] - TCP:80 Success
+[2025-12-02 18:01:38] [INFO] - Thread finished for: ping_host
+[2025-12-02 18:01:38] [GUI] - Ping Result: 1.1.1.1 is ONLINE (RTT: 114.1403999645263ms)
+[2025-12-02 18:01:38] [GUI] - Task Completed.
+[2025-12-02 18:01:45] [GUI] - Pinging 8.8.8.8...
+[2025-12-02 18:01:45] [INFO] - Thread started for: ping_host
+[2025-12-02 18:01:45] [INFO] - ICMP Pinging 8.8.8.8...
+[2025-12-02 18:01:47] [INFO] - ICMP failed for 8.8.8.8. Trying TCP probes...
+[2025-12-02 18:01:50] [INFO] - Thread finished for: ping_host
+[2025-12-02 18:01:50] [GUI] - Ping Result: 8.8.8.8 is OFFLINE
+[2025-12-02 18:01:50] [GUI] - Task Completed.
+[2025-12-02 18:02:25] [GUI] - Tracing 8.8.8.8...
+[2025-12-02 18:02:25] [INFO] - Thread started for: perform_traceroute
+[2025-12-02 18:02:25] [INFO] - Determining best trace method for 8.8.8.8...
+[2025-12-02 18:02:25] [GUI] - Probing 8.8.8.8...
+[2025-12-02 18:02:27] [INFO] - Tracing using TCP:53
+[2025-12-02 18:02:32] [GUI] - Hop 1: 10.92.131.218 - 13.2ms
+[2025-12-02 18:02:33] [GUI] - Hop 2: * Request timed out (1023.6ms)
+[2025-12-02 18:02:34] [GUI] - Hop 3: 8.8.8.8 (dns.google) - 347.0ms
+[2025-12-02 18:02:34] [INFO] - Thread finished for: perform_traceroute
+[2025-12-02 18:02:34] [GUI] - Task Completed.
+[2025-12-02 18:02:43] [GUI] - Tracing 1.1.1.1...
+[2025-12-02 18:02:43] [INFO] - Thread started for: perform_traceroute
+[2025-12-02 18:02:43] [INFO] - Determining best trace method for 1.1.1.1...
+[2025-12-02 18:02:43] [GUI] - Probing 1.1.1.1...
+[2025-12-02 18:02:44] [INFO] - Tracing using TCP:80
+[2025-12-02 18:02:49] [GUI] - Hop 1: 10.92.131.218 - 11.4ms
+[2025-12-02 18:02:50] [GUI] - Hop 2: * Request timed out (1028.2ms)
+[2025-12-02 18:02:51] [GUI] - Hop 3: * Request timed out (1092.3ms)
+[2025-12-02 18:02:52] [GUI] - Hop 4: * Request timed out (1054.0ms)
+[2025-12-02 18:02:54] [GUI] - Hop 5: * Request timed out (1059.5ms)
+[2025-12-02 18:02:55] [GUI] - Hop 6: * Request timed out (1023.5ms)
+[2025-12-02 18:02:56] [GUI] - Hop 7: * Request timed out (1089.0ms)
+[2025-12-02 18:02:57] [GUI] - Hop 8: * Request timed out (1027.7ms)
+[2025-12-02 18:02:58] [GUI] - Hop 9: * Request timed out (1044.7ms)
+[2025-12-02 18:02:59] [GUI] - Hop 10: * Request timed out (1056.1ms)
+[2025-12-02 18:02:59] [GUI] - Hop 11: 1.1.1.1 (one.one.one.one) - 53.3ms
+[2025-12-02 18:02:59] [INFO] - Thread finished for: perform_traceroute
+[2025-12-02 18:02:59] [GUI] - Task Completed.
+[2025-12-02 18:06:13] [GUI] - Reset target to local subnet: 10.92.131.0/24
+[2025-12-02 18:06:13] [GUI] - App started. Local IP: 10.92.131.139
+[2025-12-02 18:06:17] [GUI] - Pinging 1.1.1.1...
+[2025-12-02 18:06:17] [INFO] - Thread started for: ping_host
+[2025-12-02 18:06:17] [INFO] - ICMP Pinging 1.1.1.1...
+[2025-12-02 18:06:19] [INFO] - ICMP failed for 1.1.1.1. Trying TCP probes...
+[2025-12-02 18:06:19] [INFO] - TCP:80 Success
+[2025-12-02 18:06:19] [INFO] - Thread finished for: ping_host
+[2025-12-02 18:06:19] [GUI] - Ping Result: 1.1.1.1 is ONLINE (RTT: 53.0718999216333ms)
+[2025-12-02 18:06:19] [GUI] - Task Completed.
+[2025-12-02 18:06:22] [GUI] - Pinging 8.8.8.8...
+[2025-12-02 18:06:22] [INFO] - Thread started for: ping_host
+[2025-12-02 18:06:22] [INFO] - ICMP Pinging 8.8.8.8...
+[2025-12-02 18:06:24] [INFO] - ICMP failed for 8.8.8.8. Trying TCP probes...
+[2025-12-02 18:06:26] [INFO] - TCP:443 Success
+[2025-12-02 18:06:26] [INFO] - Thread finished for: ping_host
+[2025-12-02 18:06:26] [GUI] - Ping Result: 8.8.8.8 is ONLINE (RTT: 204.05830000527203ms)
+[2025-12-02 18:06:26] [GUI] - Task Completed.
+[2025-12-02 18:06:34] [GUI] - Tracing 8.8.8.8...
+[2025-12-02 18:06:34] [INFO] - Thread started for: perform_traceroute
+[2025-12-02 18:06:34] [INFO] - Determining best trace method for 8.8.8.8...
+[2025-12-02 18:06:34] [GUI] - Probing 8.8.8.8...
+[2025-12-02 18:06:36] [INFO] - Tracing using TCP:53
+[2025-12-02 18:06:41] [GUI] - Hop 1: 10.92.131.218 - 17.5ms
+[2025-12-02 18:06:42] [GUI] - Hop 2: * Request timed out (1028.2ms)
+[2025-12-02 18:06:43] [INFO] -     [Analysis] Hop 2 is likely a HIDDEN NODE (Firewall/CGNAT)
+[2025-12-02 18:06:43] [GUI] -     [Analysis] Hop 2 is likely a HIDDEN NODE (Firewall/CGNAT)
+[2025-12-02 18:06:43] [GUI] - Hop 3: 8.8.8.8 (dns.google) - 372.1ms
+[2025-12-02 18:06:43] [INFO] - Thread finished for: perform_traceroute
+[2025-12-02 18:06:43] [GUI] - Task Completed.
+[2025-12-02 18:06:49] [GUI] - Tracing 1.1.1.1...
+[2025-12-02 18:06:49] [INFO] - Thread started for: perform_traceroute
+[2025-12-02 18:06:49] [INFO] - Determining best trace method for 1.1.1.1...
+[2025-12-02 18:06:49] [GUI] - Probing 1.1.1.1...
+[2025-12-02 18:06:50] [INFO] - Tracing using TCP:80
+[2025-12-02 18:06:55] [GUI] - Hop 1: 10.92.131.218 - 10.4ms
+[2025-12-02 18:06:56] [GUI] - Hop 2: * Request timed out (1023.7ms)
+[2025-12-02 18:06:57] [GUI] - Hop 3: * Request timed out (1023.7ms)
+[2025-12-02 18:06:58] [GUI] - Hop 4: * Request timed out (1012.1ms)
+[2025-12-02 18:06:59] [GUI] - Hop 5: * Request timed out (1021.4ms)
+[2025-12-02 18:07:00] [GUI] - Hop 6: * Request timed out (1026.4ms)
+[2025-12-02 18:07:01] [GUI] - Hop 7: * Request timed out (1017.8ms)
+[2025-12-02 18:07:02] [GUI] - Hop 8: * Request timed out (1029.1ms)
+[2025-12-02 18:07:03] [GUI] - Hop 9: * Request timed out (1030.7ms)
+[2025-12-02 18:07:04] [GUI] - Hop 10: * Request timed out (1011.9ms)
+[2025-12-02 18:07:05] [INFO] -     [Analysis] Hop 2 is likely a HIDDEN NODE (Firewall/CGNAT)
+[2025-12-02 18:07:05] [GUI] -     [Analysis] Hop 2 is likely a HIDDEN NODE (Firewall/CGNAT)
+[2025-12-02 18:07:05] [INFO] -     [Analysis] Hop 3 is likely a HIDDEN NODE (Firewall/CGNAT)
+[2025-12-02 18:07:05] [GUI] -     [Analysis] Hop 3 is likely a HIDDEN NODE (Firewall/CGNAT)
+[2025-12-02 18:07:05] [INFO] -     [Analysis] Hop 4 is likely a HIDDEN NODE (Firewall/CGNAT)
+[2025-12-02 18:07:05] [GUI] -     [Analysis] Hop 4 is likely a HIDDEN NODE (Firewall/CGNAT)
+[2025-12-02 18:07:05] [INFO] -     [Analysis] Hop 5 is likely a HIDDEN NODE (Firewall/CGNAT)
+[2025-12-02 18:07:05] [GUI] -     [Analysis] Hop 5 is likely a HIDDEN NODE (Firewall/CGNAT)
+[2025-12-02 18:07:05] [INFO] -     [Analysis] Hop 6 is likely a HIDDEN NODE (Firewall/CGNAT)
+[2025-12-02 18:07:05] [GUI] -     [Analysis] Hop 6 is likely a HIDDEN NODE (Firewall/CGNAT)
+[2025-12-02 18:07:05] [INFO] -     [Analysis] Hop 7 is likely a HIDDEN NODE (Firewall/CGNAT)
+[2025-12-02 18:07:05] [GUI] -     [Analysis] Hop 7 is likely a HIDDEN NODE (Firewall/CGNAT)
+[2025-12-02 18:07:05] [INFO] -     [Analysis] Hop 8 is likely a HIDDEN NODE (Firewall/CGNAT)
+[2025-12-02 18:07:05] [GUI] -     [Analysis] Hop 8 is likely a HIDDEN NODE (Firewall/CGNAT)
+[2025-12-02 18:07:05] [INFO] -     [Analysis] Hop 9 is likely a HIDDEN NODE (Firewall/CGNAT)
+[2025-12-02 18:07:05] [GUI] -     [Analysis] Hop 9 is likely a HIDDEN NODE (Firewall/CGNAT)
+[2025-12-02 18:07:05] [INFO] -     [Analysis] Hop 10 is likely a HIDDEN NODE (Firewall/CGNAT)
+[2025-12-02 18:07:05] [GUI] -     [Analysis] Hop 10 is likely a HIDDEN NODE (Firewall/CGNAT)
+[2025-12-02 18:07:05] [GUI] - Hop 11: 1.1.1.1 (one.one.one.one) - 59.3ms
+[2025-12-02 18:07:05] [INFO] - Thread finished for: perform_traceroute
+[2025-12-02 18:07:05] [GUI] - Task Completed.
+[2025-12-02 18:07:13] [GUI] - Reset target to local subnet: 10.92.131.0/24
+[2025-12-02 18:07:14] [GUI] - Scanning 10.92.131.0/24...
+[2025-12-02 18:07:14] [INFO] - Thread started for: arp_scan
+[2025-12-02 18:07:14] [INFO] - Processing scan targets: ['10.92.131.0/24']
+[2025-12-02 18:07:14] [GUI] - Scanning 10.92.131.0/24 via \Device\NPF_{9F98E4ED-5E49-4FA0-AE59-93679514AA52}
+[2025-12-02 18:07:19] [INFO] - Finished 10.92.131.0/24 in 3039ms. Found 2 devices.
+[2025-12-02 18:07:19] [GUI] - Finished 10.92.131.0/24 in 3039ms. Found 2 devices.
+[2025-12-02 18:07:19] [INFO] - Thread finished for: arp_scan
+[2025-12-02 18:07:27] [GUI] - Port scanning 10.92.131.0...
+[2025-12-02 18:07:27] [INFO] - Thread started for: scan_ports
+[2025-12-02 18:07:27] [INFO] - Starting Port Scan on 10.92.131.0
+[2025-12-02 18:07:27] [GUI] - Scanning 13 ports...
+[2025-12-02 18:07:41] [GUI] - Scan Complete. Found 0 open services.
+[2025-12-02 18:07:41] [INFO] - Thread finished for: scan_ports
+[2025-12-02 18:07:41] [GUI] - Task Completed.
+[2025-12-02 18:07:49] [GUI] - Port scanning 10.92.131.218...
+[2025-12-02 18:07:49] [INFO] - Thread started for: scan_ports
+[2025-12-02 18:07:49] [INFO] - Starting Port Scan on 10.92.131.218
+[2025-12-02 18:07:49] [GUI] - Scanning 13 ports...
+[2025-12-02 18:07:53] [GUI] - [TCP] Port 53 OPEN
+[2025-12-02 18:08:02] [GUI] - Scan Complete. Found 1 open services.
+[2025-12-02 18:08:02] [INFO] - Thread finished for: scan_ports
+[2025-12-02 18:08:02] [GUI] - Task Completed.
+[2025-12-02 18:08:05] [GUI] - Starting Traffic Monitor...
+[2025-12-02 18:08:05] [INFO] - Thread started for: monitor_traffic
+[2025-12-02 18:08:05] [INFO] - Starting Traffic Monitor...
+[2025-12-02 18:08:05] [GUI] - Initializing Sniffer...
+[2025-12-02 18:08:16] [GUI] - Signal sent to stop task...
+[2025-12-02 18:08:17] [WARN] - Thread cancelled/stopped for: monitor_traffic
+[2025-12-02 18:08:17] [GUI] - Task Completed.
+[2025-12-02 18:08:19] [GUI] - Pinging 10.92.131.218...
+[2025-12-02 18:08:19] [INFO] - Thread started for: ping_host
+[2025-12-02 18:08:19] [INFO] - ICMP Pinging 10.92.131.218...
+[2025-12-02 18:08:19] [INFO] - Thread finished for: ping_host
+[2025-12-02 18:08:19] [GUI] - Ping Result: 10.92.131.218 is ONLINE (RTT: 51.38ms)
+[2025-12-02 18:08:19] [GUI] - Task Completed.
+[2025-12-02 18:08:23] [GUI] - Pinging 10.92.131.218...
+[2025-12-02 18:08:23] [INFO] - Thread started for: ping_host
+[2025-12-02 18:08:23] [INFO] - ICMP Pinging 10.92.131.218...
+[2025-12-02 18:08:23] [INFO] - Thread finished for: ping_host
+[2025-12-02 18:08:23] [GUI] - Ping Result: 10.92.131.218 is ONLINE (RTT: 49.68ms)
+[2025-12-02 18:08:23] [GUI] - Task Completed.
+[2025-12-02 18:12:06] [GUI] - Reset target to local subnet: 10.92.131.0/24
+[2025-12-02 18:12:06] [GUI] - App started. Local IP: 10.92.131.139
+[2025-12-02 18:15:03] [GUI] - Reset target to local subnet: 10.92.131.0/24
+[2025-12-02 18:15:03] [GUI] - App started. Local IP: 10.92.131.139
+[2025-12-02 18:15:24] [GUI] - Reset target to local subnet: 10.92.131.0/24
+[2025-12-02 18:15:24] [GUI] - App started. Local IP: 10.92.131.139
+[2025-12-02 18:17:42] [GUI] - Reset target to local subnet: 10.92.131.0/24
+[2025-12-02 18:17:42] [GUI] - App started. Local IP: 10.92.131.139
+[2025-12-02 18:17:47] [GUI] - Pinging 10.92.131.0...
+[2025-12-02 18:17:47] [INFO] - Thread started for: ping_host
+[2025-12-02 18:17:47] [INFO] - ICMP Pinging 10.92.131.0...
+[2025-12-02 18:17:48] [INFO] - Thread finished for: ping_host
+[2025-12-02 18:17:48] [GUI] - Ping Result: 10.92.131.0 is ONLINE (RTT: 1083.11ms)
+[2025-12-02 18:17:48] [GUI] - Task Completed.
+[2025-12-02 18:17:54] [GUI] - Pinging 8.8.8.8...
+[2025-12-02 18:17:54] [INFO] - Thread started for: ping_host
+[2025-12-02 18:17:54] [INFO] - ICMP Pinging 8.8.8.8...
+[2025-12-02 18:17:56] [INFO] - ICMP failed for 8.8.8.8. Trying TCP probes...
+[2025-12-02 18:17:57] [INFO] - TCP:443 Success
+[2025-12-02 18:17:57] [INFO] - Thread finished for: ping_host
+[2025-12-02 18:17:57] [GUI] - Ping Result: 8.8.8.8 is ONLINE (RTT: 76.56279997900128ms)
+[2025-12-02 18:17:57] [GUI] - Task Completed.
+[2025-12-02 18:18:22] [GUI] - Reset target to local subnet: 10.92.131.0/24
+[2025-12-02 18:18:22] [GUI] - App started. Local IP: 10.92.131.139
+[2025-12-02 18:21:14] [GUI] - Reset target to local subnet: 10.92.131.0/24
+[2025-12-02 18:21:14] [GUI] - App started. Local IP: 10.92.131.139
+[2025-12-02 18:24:15] [GUI] - Reset target to local subnet: 10.92.131.0/24
+[2025-12-02 18:24:15] [GUI] - App started. Local IP: 10.92.131.139
