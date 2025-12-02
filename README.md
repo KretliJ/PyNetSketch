@@ -26,7 +26,7 @@
   * utils.py: Helper functions for logging and background thread management.
   * report_utils.py: Logic for exporting data to CSV/HTML.
   * assets/: Resources path.
-  * LOGS/: Internal logging folder
+  * LOGS/: Internal logging folder (auto creation).
   
   NOTE: This is subject to change as development moves forward.
 
@@ -69,4 +69,4 @@
   This tool is intended for Educational Purposes Only (my own or otherwise). Please use it only on networks you own or have explicit permission to scan. The developer assume no liability for misuse.
   Built with ❤️ using Python & Tkinter.
 
-<details><summary><b>Extras for software engineering nerds:</b></summary></details>
+<details><summary><b>Extras for software engineering nerds (such as me)</b></summary><img alt="ClassDiagram 2025-2" src="https://github.com/KretliJ/PyNetSketch/blob/main/projectDiagrams/ClassDiagram.png"><img alt="SequenceDiagram 2025-2" src="https://github.com/KretliJ/PyNetSketch/blob/main/projectDiagrams/SequenceDiagram.png"><img alt="UserFlow 2025-2" src="https://github.com/KretliJ/PyNetSketch/blob/main/projectDiagrams/UserFlow.png"><img alt="ModeloEstados 2025-2" src="https://github.com/KretliJ/CSI104_TP/blob/main/Diagrams/DiagramaEstados.png"></details>
