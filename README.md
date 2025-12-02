@@ -1,3 +1,5 @@
+<img alt="LogoPNS" src="https://github.com/KretliJ/PyNetSketch/blob/main/assets/app_icon.png">
+
 # PyNetSketch 📡
   PyNetSketch is a robust, Python-based network management and reconnaissance tool designed as a Proof of Concept (PoC) for students and network enthusiasts. It combines scanning capabilities with a user-friendly GUI to visualize network topologies and traffic in real-time.
 
@@ -32,7 +34,8 @@
 
 ### 🛠️ Prerequisites
   * Python 3.8+
-  * Npcap (Windows only): Required for Scapy to sniff/send packets. Download from nmap.org/npcap. Ensure you check "Install with WinPcap API-compatible Mode".
+  * ~~Npcap (Windows only): Required for Scapy to sniff/send packets. Download from nmap.org/npcap. Ensure you check "Install with WinPcap API-compatible Mode".~~
+    * (v.1.2) - This requirement is now handled when initiating the application.
 
 ### 📦 Installation
   Clone the repository:
@@ -64,7 +67,11 @@
     ```
     sudo python3 gui_app.py
     ```
-    
+### 🛠️ Version prototyping
+  * v1.0 - Basic functionality. ARP Scan, Ping, Trcrt
+  * v1.1 - Basic functionality. Monitor, Port Scan, Topology Draw, Exporting.
+  * v1.2 - Solved dependency handling.
+ 
 ### 📜 License
   This project is licensed under the MIT License.
 
