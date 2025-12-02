@@ -50,8 +50,11 @@
 
 ### 🚀 Usage
   Running the Application
-  Note: You must run this application with Administrator/Root privileges because it constructs raw network packets (ARP, TCP SYN).
+  
+  Note: This application constructs raw network packets (ARP, TCP SYN). Administrator/Root privileges are necessary. Source code is open and available for review.
+  
   Windows:
+  
   Open PowerShell or Command Prompt as Administrator and run:
     ```
     python gui_app.py
@@ -66,7 +69,10 @@
   This project is licensed under the MIT License.
 
 ### ⚠️ Disclaimer
-  This tool is intended for Educational Purposes Only (my own or otherwise). Please use it only on networks you own or have explicit permission to scan. The developer assume no liability for misuse.
+  This tool is intended for Educational Purposes Only (my own or otherwise). 
+  
+  Please use it only on networks you own or have explicit permission to scan. The developer assume no liability for misuse.
+  
   Built with ❤️ using Python & Tkinter.
 
-<details><summary><b>Extras for software engineering nerds (such as me)</b></summary><img alt="ClassDiagram 2025-2" src="https://github.com/KretliJ/PyNetSketch/blob/main/projectDiagrams/ClassDiagram.png"><img alt="SequenceDiagram 2025-2" src="https://github.com/KretliJ/PyNetSketch/blob/main/projectDiagrams/SequenceDiagram.png"><img alt="UserFlow 2025-2" src="https://github.com/KretliJ/PyNetSketch/blob/main/projectDiagrams/UserFlow.png"><img alt="ModeloEstados 2025-2" src="https://github.com/KretliJ/CSI104_TP/blob/main/Diagrams/DiagramaEstados.png"></details>
+<details><summary><b>Extras for software engineering nerds (such as me)</b></summary><img alt="ClassDiagram 2025-2" src="https://github.com/KretliJ/PyNetSketch/blob/main/projectDiagrams/ClassDiagram.png"><img alt="SequenceDiagram 2025-2" src="https://github.com/KretliJ/PyNetSketch/blob/main/projectDiagrams/SequenceDiagram.png"><img alt="UserFlow 2025-2" src="https://github.com/KretliJ/PyNetSketch/blob/main/projectDiagrams/UserFlow.png"></details>
