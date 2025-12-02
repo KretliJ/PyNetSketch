@@ -578,3 +578,85 @@
 [2025-12-02 18:34:53] [GUI] - App started. Local IP: 10.92.131.139
 [2025-12-02 18:36:07] [GUI] - Reset target to local subnet: 10.92.131.0/24
 [2025-12-02 18:36:07] [GUI] - App started. Local IP: 10.92.131.139
+[2025-12-02 19:29:09] [GUI] - Reset target to local subnet: 192.168.3.0/24
+[2025-12-02 19:29:09] [GUI] - App started. Local IP: 192.168.3.22
+[2025-12-02 19:29:24] [GUI] - Scanning 192.168.3.0/24-192.168.15.0/24...
+[2025-12-02 19:29:24] [INFO] - Thread started for: arp_scan
+[2025-12-02 19:29:24] [INFO] - Processing scan targets: ['192.168.3.0/24', '192.168.4.0/24', '192.168.5.0/24', '192.168.6.0/24', '192.168.7.0/24', '192.168.8.0/24', '192.168.9.0/24', '192.168.10.0/24', '192.168.11.0/24', '192.168.12.0/24', '192.168.13.0/24', '192.168.14.0/24', '192.168.15.0/24']
+[2025-12-02 19:29:24] [GUI] - Scanning 192.168.3.0/24 via \Device\NPF_{9F98E4ED-5E49-4FA0-AE59-93679514AA52}
+[2025-12-02 19:29:30] [INFO] - Finished 192.168.3.0/24 in 3108ms. Found 6 devices.
+[2025-12-02 19:29:30] [GUI] - Finished 192.168.3.0/24 in 3108ms. Found 6 devices.
+[2025-12-02 19:29:30] [GUI] - Scanning 192.168.4.0/24 via \Device\NPF_{9F98E4ED-5E49-4FA0-AE59-93679514AA52}
+[2025-12-02 19:29:34] [INFO] - Finished 192.168.4.0/24 in 3244ms. Found 6 devices.
+[2025-12-02 19:29:34] [GUI] - Finished 192.168.4.0/24 in 3244ms. Found 6 devices.
+[2025-12-02 19:29:34] [GUI] - Scanning 192.168.5.0/24 via \Device\NPF_{9F98E4ED-5E49-4FA0-AE59-93679514AA52}
+[2025-12-02 19:29:37] [INFO] - Finished 192.168.5.0/24 in 3338ms. Found 6 devices.
+[2025-12-02 19:29:37] [GUI] - Finished 192.168.5.0/24 in 3338ms. Found 6 devices.
+[2025-12-02 19:29:37] [GUI] - Scanning 192.168.6.0/24 via \Device\NPF_{9F98E4ED-5E49-4FA0-AE59-93679514AA52}
+[2025-12-02 19:29:40] [INFO] - Finished 192.168.6.0/24 in 3175ms. Found 6 devices.
+[2025-12-02 19:29:40] [GUI] - Finished 192.168.6.0/24 in 3175ms. Found 6 devices.
+[2025-12-02 19:29:40] [GUI] - Scanning 192.168.7.0/24 via \Device\NPF_{9F98E4ED-5E49-4FA0-AE59-93679514AA52}
+[2025-12-02 19:29:43] [INFO] - Finished 192.168.7.0/24 in 3098ms. Found 6 devices.
+[2025-12-02 19:29:43] [GUI] - Finished 192.168.7.0/24 in 3098ms. Found 6 devices.
+[2025-12-02 19:29:43] [GUI] - Scanning 192.168.8.0/24 via \Device\NPF_{9F98E4ED-5E49-4FA0-AE59-93679514AA52}
+[2025-12-02 19:29:47] [INFO] - Finished 192.168.8.0/24 in 3627ms. Found 6 devices.
+[2025-12-02 19:29:47] [GUI] - Finished 192.168.8.0/24 in 3627ms. Found 6 devices.
+[2025-12-02 19:29:47] [GUI] - Scanning 192.168.9.0/24 via \Device\NPF_{9F98E4ED-5E49-4FA0-AE59-93679514AA52}
+[2025-12-02 19:29:50] [INFO] - Finished 192.168.9.0/24 in 3084ms. Found 6 devices.
+[2025-12-02 19:29:50] [GUI] - Finished 192.168.9.0/24 in 3084ms. Found 6 devices.
+[2025-12-02 19:29:50] [GUI] - Scanning 192.168.10.0/24 via \Device\NPF_{9F98E4ED-5E49-4FA0-AE59-93679514AA52}
+[2025-12-02 19:29:53] [INFO] - Finished 192.168.10.0/24 in 3075ms. Found 6 devices.
+[2025-12-02 19:29:53] [GUI] - Finished 192.168.10.0/24 in 3075ms. Found 6 devices.
+[2025-12-02 19:29:53] [GUI] - Scanning 192.168.11.0/24 via \Device\NPF_{9F98E4ED-5E49-4FA0-AE59-93679514AA52}
+[2025-12-02 19:29:57] [INFO] - Finished 192.168.11.0/24 in 3376ms. Found 6 devices.
+[2025-12-02 19:29:57] [GUI] - Finished 192.168.11.0/24 in 3376ms. Found 6 devices.
+[2025-12-02 19:29:57] [GUI] - Scanning 192.168.12.0/24 via \Device\NPF_{9F98E4ED-5E49-4FA0-AE59-93679514AA52}
+[2025-12-02 19:30:00] [INFO] - Finished 192.168.12.0/24 in 3115ms. Found 6 devices.
+[2025-12-02 19:30:00] [GUI] - Finished 192.168.12.0/24 in 3115ms. Found 6 devices.
+[2025-12-02 19:30:00] [GUI] - Scanning 192.168.13.0/24 via \Device\NPF_{9F98E4ED-5E49-4FA0-AE59-93679514AA52}
+[2025-12-02 19:30:03] [INFO] - Finished 192.168.13.0/24 in 3102ms. Found 6 devices.
+[2025-12-02 19:30:03] [GUI] - Finished 192.168.13.0/24 in 3102ms. Found 6 devices.
+[2025-12-02 19:30:03] [GUI] - Scanning 192.168.14.0/24 via \Device\NPF_{9F98E4ED-5E49-4FA0-AE59-93679514AA52}
+[2025-12-02 19:30:06] [INFO] - Finished 192.168.14.0/24 in 3447ms. Found 6 devices.
+[2025-12-02 19:30:06] [GUI] - Finished 192.168.14.0/24 in 3447ms. Found 6 devices.
+[2025-12-02 19:30:06] [GUI] - Scanning 192.168.15.0/24 via \Device\NPF_{9F98E4ED-5E49-4FA0-AE59-93679514AA52}
+[2025-12-02 19:30:09] [INFO] - Finished 192.168.15.0/24 in 3113ms. Found 6 devices.
+[2025-12-02 19:30:09] [GUI] - Finished 192.168.15.0/24 in 3113ms. Found 6 devices.
+[2025-12-02 19:30:09] [INFO] - Thread finished for: arp_scan
+[2025-12-02 19:30:53] [GUI] - Scanning 192.168.15.0/24...
+[2025-12-02 19:30:53] [INFO] - Thread started for: arp_scan
+[2025-12-02 19:30:53] [INFO] - Processing scan targets: ['192.168.15.0/24']
+[2025-12-02 19:30:53] [GUI] - Scanning 192.168.15.0/24 via \Device\NPF_{9F98E4ED-5E49-4FA0-AE59-93679514AA52}
+[2025-12-02 19:30:56] [INFO] - Finished 192.168.15.0/24 in 3232ms. Found 0 devices.
+[2025-12-02 19:30:56] [GUI] - Finished 192.168.15.0/24 in 3232ms. Found 0 devices.
+[2025-12-02 19:30:56] [INFO] - Thread finished for: arp_scan
+[2025-12-02 19:31:02] [GUI] - Scanning 192.168.15.1/24...
+[2025-12-02 19:31:02] [INFO] - Thread started for: arp_scan
+[2025-12-02 19:31:02] [INFO] - Processing scan targets: ['192.168.15.1/24']
+[2025-12-02 19:31:02] [GUI] - Scanning 192.168.15.1/24 via \Device\NPF_{9F98E4ED-5E49-4FA0-AE59-93679514AA52}
+[2025-12-02 19:31:05] [INFO] - Finished 192.168.15.1/24 in 3033ms. Found 0 devices.
+[2025-12-02 19:31:05] [GUI] - Finished 192.168.15.1/24 in 3033ms. Found 0 devices.
+[2025-12-02 19:31:05] [INFO] - Thread finished for: arp_scan
+[2025-12-02 19:40:29] [GUI] - Reset target to local subnet: 192.168.3.0/24
+[2025-12-02 19:40:29] [GUI] - App started. Local IP: 192.168.3.22
+[2025-12-02 19:40:35] [GUI] - Pinging 192.168.3.0...
+[2025-12-02 19:40:35] [INFO] - Thread started for: ping_host
+[2025-12-02 19:40:35] [INFO] - ICMP Pinging 192.168.3.0...
+[2025-12-02 19:40:37] [GUI] - ICMP failed. Trying TCP Ping fallback...
+[2025-12-02 19:40:37] [INFO] - ICMP failed for 192.168.3.0. Trying TCP probes...
+[2025-12-02 19:40:41] [INFO] - Thread finished for: ping_host
+[2025-12-02 19:40:41] [GUI] - Ping Result: 192.168.3.0 is OFFLINE
+[2025-12-02 19:40:41] [GUI] - Task Completed.
+[2025-12-02 19:40:49] [GUI] - Pinging 192.168.3.1...
+[2025-12-02 19:40:49] [INFO] - Thread started for: ping_host
+[2025-12-02 19:40:49] [INFO] - ICMP Pinging 192.168.3.1...
+[2025-12-02 19:40:49] [INFO] - Thread finished for: ping_host
+[2025-12-02 19:40:49] [GUI] - Ping Result: 192.168.3.1 is ONLINE (RTT: 56.51ms)
+[2025-12-02 19:40:49] [GUI] - Task Completed.
+[2025-12-02 19:40:55] [GUI] - Scanning 192.168.3.1/24...
+[2025-12-02 19:40:55] [INFO] - Thread started for: arp_scan
+[2025-12-02 19:40:55] [INFO] - Processing scan targets: ['192.168.3.1/24']
+[2025-12-02 19:40:55] [GUI] - Scanning 192.168.3.1/24 via \Device\NPF_{9F98E4ED-5E49-4FA0-AE59-93679514AA52}
+[2025-12-02 19:41:01] [INFO] - Finished 192.168.3.1/24 in 3251ms. Found 6 devices.
+[2025-12-02 19:41:01] [GUI] - Finished 192.168.3.1/24 in 3251ms. Found 6 devices.
+[2025-12-02 19:41:01] [INFO] - Thread finished for: arp_scan

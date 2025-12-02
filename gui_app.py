@@ -1,3 +1,4 @@
+import sys
 import tkinter as tk
 from tkinter import ttk, messagebox, scrolledtext, simpledialog, Menu
 import math
@@ -7,6 +8,40 @@ import utils
 import report_utils
 import os # Added for path handling
 import platform # Added for OS check
+import webbrowser
+
+#TODO: Improve comment readability
+
+# Foces npcap verification for windows only
+def check_npcap():
+    """
+    Checks if Npcap is installed on Windows.
+    If not found, prompts the user to download it.
+    """
+    if platform.system() != "Windows":
+        return
+
+    # Standard location for Npcap driver DLL
+    npcap_path = os.path.join(os.environ["WINDIR"], "System32", "Npcap", "wpcap.dll")
+    
+    if not os.path.exists(npcap_path):
+        # Create a temporary hidden root just for the messagebox
+        temp_root = tk.Tk()
+        temp_root.withdraw() 
+        
+        msg = (
+            "Npcap is required for packet capturing functions (ARP, Traceroute, Traffic).\n\n"
+            "It appears to be missing on your system.\n"
+            "Would you like to download it now from nmap.org?\n\n"
+            "NOTE: Please install with 'WinPcap API-compatible Mode' enabled."
+        )
+        
+        if messagebox.askyesno("Missing Dependency", msg):
+            webbrowser.open("https://nmap.org/npcap/")
+            sys.exit(0) # Close app so user can install
+        else:
+            messagebox.showwarning("Warning", "PyNetSketch will continue, but scanning features may crash or fail.")
+            temp_root.destroy()
 
 class NetworkApp:
     def __init__(self, root):
@@ -473,7 +508,9 @@ class NetworkApp:
                 break
 
 if __name__ == "__main__":
-    # 1. Taskbar Icon Fix for Windows
+    # 1. Check Npcap (Windows Only)
+    check_npcap()    
+    # 2. Taskbar Icon Fix for Windows
     if platform.system() == "Windows":
         try:
             import ctypes
@@ -484,6 +521,6 @@ if __name__ == "__main__":
 
     root = tk.Tk()
     
-    # 2. Initialize App (Icon loading is now INSIDE the class)
+    # 3. Initialize App (Icon loading is inside the class)
     app = NetworkApp(root)
     root.mainloop()
