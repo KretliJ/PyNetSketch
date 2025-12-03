@@ -3,6 +3,8 @@
 # PyNetSketch 📡
   PyNetSketch is a robust, Python-based network management and reconnaissance tool designed as a Proof of Concept (PoC) for students and network enthusiasts. It combines scanning capabilities with a user-friendly GUI to visualize network topologies and traffic in real-time.
 
+Note: This project does not currently provide a pre-compiled executable.
+
 ### 🌟 Key Features
   * Hybrid Engine (Python + Rust): Critical scanning tasks are offloaded to a compiled Rust core for better execution performance.
   * Multi-Mode Scanning:
