@@ -2,8 +2,10 @@ import os
 import time
 import threading
 
-# Use os.path.join for cross-platform compatibility
-LOG_FILE = os.path.join("LOGS", "gen_log.txt")
+# FIX: Use absolute path to ensure LOGS is always inside the project folder,
+# even if the script is run from a different directory (e.g. parent folder).
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+LOG_FILE = os.path.join(BASE_DIR, "LOGS", "gen_log.txt")
 
 def _log_operation(message: str, level: str = "INFO", destination=LOG_FILE):
     """

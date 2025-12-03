@@ -1,0 +1,13 @@
+[package]
+name = "pynetsketch_core"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "pynetsketch_core"
+crate-type = ["cdylib"]
+
+[dependencies]
+pyo3 = { version = "0.23.3", features = ["extension-module"] }
+# Need rayon for easy parallelism
+rayon = "1.10"

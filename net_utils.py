@@ -9,6 +9,15 @@ import re
 from scapy.all import ARP, Ether, srp, IP, ICMP, TCP, sr1, conf, sniff
 import utils
 
+# --- IMPORT RUST CORE ---
+try:
+    import pynetsketch_core
+    RUST_AVAILABLE = True
+    print("SUCCESS: Rust acceleration module loaded.")
+except ImportError as e:
+    RUST_AVAILABLE = False
+    print(f"WARNING: Could not load Rust module ({e}). Running in legacy Python mode.")
+
 # Suppress Scapy verbosity
 conf.verb = 0
 
@@ -30,10 +39,15 @@ def get_local_ip():
     return IP
 
 def tcp_ping(target_ip, port=80, timeout=1):
-    """
-    Performs a TCP SYN ping (Connect).
-    Useful when ICMP is blocked.
-    """
+    """Performs a TCP SYN ping (Connect)."""
+    # Use Rust if available for potentially lower overhead, though single ping is fast in Py too
+    if RUST_AVAILABLE:
+        try:
+            is_open, latency = pynetsketch_core.rust_tcp_ping(target_ip, port, int(timeout*1000))
+            return is_open, latency
+        except Exception:
+            pass # Fallback to python
+
     try:
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         sock.settimeout(timeout)
@@ -50,12 +64,9 @@ def tcp_ping(target_ip, port=80, timeout=1):
         return False, 0
 
 def ping_host(target_ip, stop_event=None, progress_callback=None):
-    """
-    Pings a host. Tries ICMP first, then falls back to TCP Ping (Port 80/443/53/853).
-    """
+    """Pings a host. Tries ICMP first, then falls back to TCP Ping."""
     if stop_event and stop_event.is_set(): return False, 0
     
-    # 1. Try Standard ICMP Ping
     os_type = get_os_type()
     param = '-n' if os_type.lower() == 'windows' else '-c'
     command = ['ping', param, '1', target_ip]
@@ -67,7 +78,6 @@ def ping_host(target_ip, stop_event=None, progress_callback=None):
     
     try:
         start_time = time.perf_counter()
-        # Short timeout for ICMP so we can fail fast and try TCP
         result = subprocess.run(
             command, 
             stdout=subprocess.PIPE, 
@@ -79,7 +89,6 @@ def ping_host(target_ip, stop_event=None, progress_callback=None):
         
         if result.returncode == 0:
             icmp_success = True
-            # Parse RTT
             match = re.search(r"time[=<]([\d\.]+)", result.stdout, re.IGNORECASE)
             if match:
                 duration_ms = float(match.group(1))
@@ -91,8 +100,6 @@ def ping_host(target_ip, stop_event=None, progress_callback=None):
     if icmp_success:
         return True, round(duration_ms, 2)
     
-    # 2. Fallback: TCP Ping (Smart Probe)
-    # If ICMP blocked, try common ports: 80 (Web), 443 (Web), 53 (DNS), 853 (DoT)
     if progress_callback: progress_callback("ICMP failed. Trying TCP Ping fallback...")
     utils._log_operation(f"ICMP failed for {target_ip}. Trying TCP probes...")
     
@@ -189,7 +196,7 @@ def _parse_target_input(input_str):
         except Exception: return [input_str]
     return [input_str]
 
-def perform_traceroute(target_ip, max_hops=30, stop_event=None, progress_callback=None):
+def perform_traceroute(target_ip, max_hops=30, stop_event=None, progress_callback=None, resolve_dns=True):
     try:
         hops = []
         consecutive_timeouts = [] 
@@ -233,17 +240,18 @@ def perform_traceroute(target_ip, max_hops=30, stop_event=None, progress_callbac
                 if progress_callback: progress_callback(f"Hop {ttl}: * Request timed out ({rtt_ms:.1f}ms)")
                 hops.append(hop_data)
             else:
-                # -- REPORT HIDDEN NODES --
                 if consecutive_timeouts:
                     for hidden_ttl in consecutive_timeouts:
                         msg = f"    [Analysis] Hop {hidden_ttl} is likely a HIDDEN NODE (Firewall/CGNAT)"
                         utils._log_operation(msg, "INFO")
                         if progress_callback: progress_callback(msg)
                     consecutive_timeouts = [] # Reset once reported
+ 
 
                 hostname = ""
-                try: hostname = socket.gethostbyaddr(reply.src)[0]
-                except Exception: pass 
+                if resolve_dns:
+                    try: hostname = socket.gethostbyaddr(reply.src)[0]
+                    except Exception: pass 
                 hop_data.update({'ip': reply.src, 'hostname': hostname})
                 hops.append(hop_data)
                 
@@ -256,13 +264,45 @@ def perform_traceroute(target_ip, max_hops=30, stop_event=None, progress_callbac
         return []
 
 def scan_ports(target_ip, ports=None, stop_event=None, progress_callback=None):
-    if ports is None: ports = [21, 22, 23, 25, 53, 80, 110, 135, 139, 443, 445, 3389, 8080]
+    if ports is None:
+        ports = [21, 22, 23, 25, 53, 80, 110, 135, 139, 443, 445, 3389, 8080]
+    
     open_services = []
     utils._log_operation(f"Starting Port Scan on {target_ip}")
-    if progress_callback: progress_callback(f"Scanning {len(ports)} ports...")
+    
+    # --- RUST IMPLEMENTATION ---
+    if RUST_AVAILABLE:
+        if progress_callback: progress_callback(f"[RUST] Scanning {len(ports)} ports on {target_ip}...")
+        try:
+            # Helper to pipe Rust logs to Python GUI
+            def rust_logger_adapter(msg):
+                utils._log_operation(msg)
+                if progress_callback: progress_callback(msg)
+
+            start_t = time.perf_counter()
+            # Pass the logger callback to Rust
+            open_ports_int = pynetsketch_core.rust_scan_ports(target_ip, ports, rust_logger_adapter)
+            duration = (time.perf_counter() - start_t) * 1000
+            
+            for p in open_ports_int:
+                open_services.append(f"[RUST] Port {p} OPEN")
+                
+            if progress_callback: progress_callback(f"Rust Scan finished in {duration:.2f}ms")
+            return open_services
+            
+        except Exception as e:
+            utils._log_operation(f"Rust scan failed ({e}). Falling back to Python.", "ERROR")
+            # Fall through to Python implementation below
+    
+    # --- PYTHON FALLBACK IMPLEMENTATION ---
+    if progress_callback: progress_callback(f"[PYTHON] Scanning {len(ports)} ports...")
     
     for i, port in enumerate(ports):
-        if stop_event and stop_event.is_set(): break
+        if stop_event and stop_event.is_set():
+            if progress_callback: progress_callback("Port scan stopped.")
+            break
+            
+        # TCP
         try:
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             sock.settimeout(0.5)
@@ -272,7 +312,8 @@ def scan_ports(target_ip, ports=None, stop_event=None, progress_callback=None):
                 if progress_callback: progress_callback(msg)
             sock.close()
         except: pass
-        
+
+        # UDP
         try:
             sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
             sock.settimeout(0.5)
