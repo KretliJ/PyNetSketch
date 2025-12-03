@@ -14,7 +14,7 @@
     * Wake-on-LAN (WoL): Wake up devices remotely via the right-click context menu.
     * Export Reports: Save scan findings to CSV or HTML reports.
     * Non-Blocking UI: All network tasks run in background threads, keeping the interface responsive.
-
+    
 ### 🛠️ Modes
   * Ping Host: Enter an IP (e.g., 8.8.8.8) to check latency and status.
   * Trace Route: Enter an IP to see the hop-by-hop path.
@@ -67,6 +67,10 @@
     ```
     sudo python3 gui_app.py
     ```
+
+  ![TracertGIF](projectDiagrams/tracert.gif)
+  ![TracertGIF](projectDiagrams/ARPScan.gif)
+  
 ### 🛠️ Version prototyping
   * v1.0 - Basic functionality. ARP Scan, Ping, Trcrt
   * v1.1 - Basic functionality. Monitor, Port Scan, Topology Draw, Exporting.
