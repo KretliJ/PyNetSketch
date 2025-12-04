@@ -40,7 +40,7 @@ def get_local_ip():
 
 def tcp_ping(target_ip, port=80, timeout=1):
     """Performs a TCP SYN ping (Connect)."""
-    # Use Rust if available for potentially lower overhead, though single ping is fast in Py too
+    # Use Rust if available for potentially lower overhead
     if RUST_AVAILABLE:
         try:
             is_open, latency = pynetsketch_core.rust_tcp_ping(target_ip, port, int(timeout*1000))
@@ -147,17 +147,25 @@ def arp_scan(network_cidr, stop_event=None, progress_callback=None):
         if stop_event and stop_event.is_set(): break
         try:
             target_ip_base = subnet.split('/')[0]
+            
+            # Use Scapy to find the correct route interface
             route = conf.route.route(target_ip_base)
             active_iface = route[0]
             
-            if progress_callback: progress_callback(f"Scanning {subnet} via {active_iface}")
+            # Ensure iface is string for logging
+            iface_name = str(active_iface)
+            
+            if progress_callback: progress_callback(f"Scanning {subnet} via {iface_name}")
             
             arp = ARP(pdst=subnet)
             ether = Ether(dst="ff:ff:ff:ff:ff:ff")
             packet = ether/arp
             
             start_t = time.perf_counter()
+            
+            # srp = Send and Receive Packet (Layer 2)
             result = srp(packet, timeout=2, verbose=0, iface=active_iface)[0]
+            
             duration = (time.perf_counter() - start_t) * 1000
             
             for sent, received in result:
@@ -170,9 +178,15 @@ def arp_scan(network_cidr, stop_event=None, progress_callback=None):
             msg = f"Finished {subnet} in {duration:.0f}ms. Found {len(all_devices)} devices."
             utils._log_operation(msg)
             if progress_callback: progress_callback(msg)
+            
         except Exception as e:
-            utils._log_operation(f"Scan failed for {subnet}: {e}", "ERROR")
+            # ENHANCED ERROR LOGGING
+            # Prints the Exception Type and raw representation to diagnose empty error messages
+            error_msg = f"Scan failed for {subnet}: [{type(e).__name__}] {repr(e)}"
+            utils._log_operation(error_msg, "ERROR")
+            if progress_callback: progress_callback(f"Error: {type(e).__name__}. Check Logs.")
             continue
+            
     return all_devices
 
 def _parse_target_input(input_str):
@@ -351,8 +365,9 @@ def monitor_traffic(interface=None, stop_event=None, progress_callback=None):
             packets = sniff(timeout=1, count=0)
             count = len(packets)
             duration = time.time() - start_t
-            if duration < 0.1: duration = 1.0
-            if progress_callback: progress_callback(count)
+            if duration < 0.1: duration = 1.0 # Prevent div by zero
+            pps = count / duration
+            if progress_callback: progress_callback(pps)
     except Exception as e:
         if progress_callback: progress_callback(f"Sniffer error: {e}")
 
