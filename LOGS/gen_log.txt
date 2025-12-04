@@ -194,3 +194,9 @@
 [2025-12-03 23:56:20] [GUI] - Hop 9: 1.1.1.1 - 69.8ms
 [2025-12-03 23:56:20] [INFO] - Thread finished for: perform_traceroute
 [2025-12-03 23:56:20] [GUI] - Task Completed in 3.2s.
+[2025-12-04 01:03:46] [INFO] - ICMP Pinging 8.8.8.8...
+[2025-12-04 01:03:55] [INFO] - Determining best trace method for 8.8.8.8...
+[2025-12-04 01:03:55] [INFO] - Tracing using ICMP
+[2025-12-04 01:04:32] [INFO] -     [Analysis] Hop 5 is likely a HIDDEN NODE (Firewall/CGNAT)
+[2025-12-04 01:04:32] [INFO] -     [Analysis] Hop 6 is likely a HIDDEN NODE (Firewall/CGNAT)
+[2025-12-04 01:04:32] [INFO] -     [Analysis] Hop 7 is likely a HIDDEN NODE (Firewall/CGNAT)

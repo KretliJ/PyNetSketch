@@ -1,11 +1,20 @@
 import os
 import time
 import threading
+import logging 
+import platform
+import subprocess
 
-# FIX: Use absolute path to ensure LOGS is always inside the project folder,
-# even if the script is run from a different directory (e.g. parent folder).
+# Use os.path.join for cross-platform compatibility
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 LOG_FILE = os.path.join(BASE_DIR, "LOGS", "gen_log.txt")
+
+def suppress_scapy_warnings():
+    """
+    Globally suppresses Scapy runtime warnings (like 'MAC address not found').
+    Call this once at application startup.
+    """
+    logging.getLogger("scapy.runtime").setLevel(logging.ERROR)
 
 def _log_operation(message: str, level: str = "INFO", destination=LOG_FILE):
     """
@@ -26,6 +35,32 @@ def _log_operation(message: str, level: str = "INFO", destination=LOG_FILE):
                 
     except Exception as e:
         print(f"Failure in writing log '{destination}'. Error: {e}")
+
+def configure_firewall():
+    """
+    Tenta adicionar regras ao Windows Firewall para permitir conexões de entrada
+    nas portas 5050 (TCP) e 5051 (UDP). Requer privilégios de Admin.
+    Returns: (bool, str) -> (Success, Message)
+    """
+    if platform.system() != "Windows":
+        return False, "Firewall: N/A (Non-Windows)"
+
+    try:
+        # Regra TCP
+        subprocess.run(
+            'netsh advfirewall firewall add rule name="PyNetSketch TCP" dir=in action=allow protocol=TCP localport=5050',
+            shell=True, check=False, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
+        )
+        # Regra UDP
+        subprocess.run(
+            'netsh advfirewall firewall add rule name="PyNetSketch Discovery" dir=in action=allow protocol=UDP localport=5051',
+            shell=True, check=False, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
+        )
+        
+        return True, "✅ Firewall Configurado (Portas 5050/5051 Abertas)"
+        
+    except Exception as e:
+        return False, f"⚠️ Erro ao configurar Firewall: {e}"
 
 def run_in_background(target_func, callback_func, progress_callback=None, *args, **kwargs):
     """

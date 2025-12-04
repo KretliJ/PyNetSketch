@@ -60,30 +60,57 @@ class NetworkServerMode:
         self.root = root
         set_app_icon(self.root) # Aplica ícone
         self.root.title(f"PyNetSketch Server - {session_name}")
-        self.root.geometry("450x300")
+        self.root.geometry("500x450") # Increased height for better log visibility
         
         # Interface Visual
-        ttk.Label(root, text="📡 Modo Sonda Ativo", font=("Arial", 14, "bold")).pack(pady=(15, 5))
-        ttk.Label(root, text=f"Sessão: {session_name}", font=("Arial", 11)).pack()
+        header_frame = ttk.Frame(root)
+        header_frame.pack(pady=(15, 5))
         
-        self.ip_lbl = ttk.Label(root, text=f"IP Local: {net_utils.get_local_ip()}")
-        self.ip_lbl.pack(pady=5)
+        ttk.Label(header_frame, text="📡 Modo Sonda Ativo", font=("Arial", 14, "bold")).pack()
+        ttk.Label(header_frame, text=f"Sessão: {session_name}", font=("Arial", 11)).pack()
+        
+        info_frame = ttk.LabelFrame(root, text="Informações de Conexão", padding=10)
+        info_frame.pack(fill="x", padx=10, pady=5)
+        
+        local_ip = net_utils.get_local_ip()
+        ttk.Label(info_frame, text=f"IP Local: {local_ip}", font=("Consolas", 10, "bold")).pack(anchor="w")
+        ttk.Label(info_frame, text=f"Porta de Comando (TCP): {host_functions.CMD_PORT}").pack(anchor="w")
+        ttk.Label(info_frame, text=f"Porta de Descoberta (UDP): {host_functions.DISCOVERY_PORT}").pack(anchor="w")
+        
+        # Firewall Status Label
+        self.fw_label = ttk.Label(info_frame, text="Configurando Firewall...", foreground="orange", font=("Arial", 8))
+        self.fw_label.pack(anchor="w", pady=(5,0))
         
         ttk.Label(root, text="Log de Eventos:", font=("Arial", 9, "bold")).pack(anchor="w", padx=10)
 
         # Área de Logs do Servidor
-        self.log_area = scrolledtext.ScrolledText(root, height=8, width=50, state='disabled', font=("Consolas", 8))
-        self.log_area.pack(pady=5, padx=10)
+        self.log_area = scrolledtext.ScrolledText(root, height=10, width=50, state='disabled', font=("Consolas", 8))
+        self.log_area.pack(fill="both", expand=True, padx=10, pady=5)
         
-        ttk.Button(root, text="Parar Servidor", command=self.stop_server).pack(pady=10)
+        btn_frame = ttk.Frame(root)
+        btn_frame.pack(pady=10)
+        ttk.Button(btn_frame, text="Parar Servidor", command=self.stop_server).pack(side="left", padx=5)
+        ttk.Button(btn_frame, text="Limpar Log", command=self.clear_log).pack(side="left", padx=5)
         
         # --- INSTANCIA O HOST MANAGER ---
         self.server_manager = host_functions.ProbeServer(
-            port=5050, 
+            port=host_functions.CMD_PORT, 
             session_name=session_name, 
             log_callback=self.update_log
         )
         self.server_manager.start()
+        
+        # --- AUTO-CONFIG FIREWALL (Chamando de utils) ---
+        self.root.after(1000, self.run_firewall_setup)
+
+    def run_firewall_setup(self):
+        """Wrapper para chamar a função de firewall do utils e atualizar a UI."""
+        success, msg = utils.configure_firewall()
+        color = "green" if success else "grey"
+        if "Erro" in msg: color = "red"
+        
+        self.fw_label.config(text=msg, foreground=color)
+        self.update_log(msg)
 
     def update_log(self, message):
         """Callback thread-safe para atualizar a GUI a partir do Controller."""
@@ -94,6 +121,11 @@ class NetworkServerMode:
         self.log_area.config(state='normal')
         self.log_area.insert(tk.END, f"> {message}\n")
         self.log_area.see(tk.END)
+        self.log_area.config(state='disabled')
+
+    def clear_log(self):
+        self.log_area.config(state='normal')
+        self.log_area.delete(1.0, tk.END)
         self.log_area.config(state='disabled')
 
     def stop_server(self):
@@ -139,6 +171,10 @@ class NetworkApp:
 
         self.fill_local_ip()
         self.log_to_console(f"App started. Local IP: {self.local_ip}")
+
+    def setup_icon(self):
+        # Redundant if set_app_icon is used globally, but kept for safety in standalone mode
+        set_app_icon(self.root)
 
     def create_top_bar(self):
         control_frame = ttk.LabelFrame(self.root, text="Controls", padding=10)
@@ -211,7 +247,6 @@ class NetworkApp:
 
         # 5. Persistent Logs
         self.tab_logs = ttk.Frame(self.notebook)
-        # CORREÇÃO: Adicionando tab_logs ao notebook (antes estava adicionando tab_traffic novamente)
         self.notebook.add(self.tab_logs, text="Persistent Logs")
         
         # Toolbar da aba de logs
@@ -255,7 +290,7 @@ class NetworkApp:
     def show_about_dialog(self):
         messagebox.showinfo(
             "About PyNetSketch", 
-            "PyNetSketch v1.4\n\n"
+            "PyNetSketch v1.3\n\n"
             "A Python-based Network Scanner & Visualization Tool.\n"
             "Proof of Concept (PoC)\n\n"
             "Created for Educational Purposes by KretliJ.\n"
