@@ -318,3 +318,50 @@
 [2025-12-04 01:58:57] [GUI] - Finished 192.168.3.0/24 in 2153ms. Found 4 devices.
 [2025-12-04 01:58:57] [INFO] - Thread finished for: arp_scan
 [2025-12-04 01:58:57] [GUI] - Scan Finished in 5.5s.
+[2025-12-04 02:04:51] [GUI] - Reset target to local subnet: 192.168.3.0/24
+[2025-12-04 02:04:51] [GUI] - App started. Local IP: 192.168.3.2
+[2025-12-04 02:05:34] [GUI] - Tracing 1.1.1.1 (DNS: Disabled)...
+[2025-12-04 02:05:34] [INFO] - Thread started for: perform_traceroute
+[2025-12-04 02:05:34] [INFO] - Determining best trace method for 1.1.1.1...
+[2025-12-04 02:05:34] [GUI] - Probing 1.1.1.1...
+[2025-12-04 02:05:34] [INFO] - Tracing using ICMP
+[2025-12-04 02:05:34] [GUI] - Hop 1: 192.168.3.1 - 2.7ms
+[2025-12-04 02:05:34] [GUI] - Hop 2: 192.168.15.1 - 2.8ms
+[2025-12-04 02:05:34] [GUI] - Hop 3: 179.245.162.1 - 3.5ms
+[2025-12-04 02:05:34] [GUI] - Hop 4: 201.1.224.138 - 24.5ms
+[2025-12-04 02:05:35] [GUI] - Hop 5: * Request timed out (1045.8ms)
+[2025-12-04 02:05:35] [INFO] -     [Analysis] Hop 5 is likely a HIDDEN NODE (Firewall/CGNAT)
+[2025-12-04 02:05:35] [GUI] -     [Analysis] Hop 5 is likely a HIDDEN NODE (Firewall/CGNAT)
+[2025-12-04 02:05:35] [GUI] - Hop 6: 152.255.195.61 - 28.7ms
+[2025-12-04 02:05:36] [GUI] - Hop 7: * Request timed out (1012.0ms)
+[2025-12-04 02:05:37] [GUI] - Hop 8: * Request timed out (1018.6ms)
+[2025-12-04 02:05:37] [INFO] -     [Analysis] Hop 7 is likely a HIDDEN NODE (Firewall/CGNAT)
+[2025-12-04 02:05:37] [GUI] -     [Analysis] Hop 7 is likely a HIDDEN NODE (Firewall/CGNAT)
+[2025-12-04 02:05:37] [INFO] -     [Analysis] Hop 8 is likely a HIDDEN NODE (Firewall/CGNAT)
+[2025-12-04 02:05:37] [GUI] -     [Analysis] Hop 8 is likely a HIDDEN NODE (Firewall/CGNAT)
+[2025-12-04 02:05:37] [GUI] - Hop 9: 1.1.1.1 - 25.6ms
+[2025-12-04 02:05:37] [INFO] - Thread finished for: perform_traceroute
+[2025-12-04 02:05:37] [GUI] - Task Completed in 3.2s.
+[2025-12-04 02:06:45] [GUI] - Reset target to local subnet: 192.168.3.0/24
+[2025-12-04 02:07:04] [GUI] - Tracing 1.1.1.1 (DNS: Disabled)...
+[2025-12-04 02:07:04] [INFO] - Thread started for: perform_traceroute
+[2025-12-04 02:07:04] [INFO] - Determining best trace method for 1.1.1.1...
+[2025-12-04 02:07:04] [GUI] - Probing 1.1.1.1...
+[2025-12-04 02:07:04] [INFO] - Tracing using ICMP
+[2025-12-04 02:07:04] [GUI] - Hop 1: 192.168.3.1 - 2.3ms
+[2025-12-04 02:07:04] [GUI] - Hop 2: 192.168.15.1 - 3.1ms
+[2025-12-04 02:07:04] [GUI] - Hop 3: 179.245.162.1 - 3.8ms
+[2025-12-04 02:07:04] [GUI] - Hop 4: 201.1.224.138 - 24.2ms
+[2025-12-04 02:07:05] [GUI] - Hop 5: * Request timed out (1002.2ms)
+[2025-12-04 02:07:05] [INFO] -     [Analysis] Hop 5 is likely a HIDDEN NODE (Firewall/CGNAT)
+[2025-12-04 02:07:05] [GUI] -     [Analysis] Hop 5 is likely a HIDDEN NODE (Firewall/CGNAT)
+[2025-12-04 02:07:05] [GUI] - Hop 6: 152.255.195.61 - 28.6ms
+[2025-12-04 02:07:06] [GUI] - Hop 7: * Request timed out (1002.6ms)
+[2025-12-04 02:07:07] [GUI] - Hop 8: * Request timed out (1002.8ms)
+[2025-12-04 02:07:07] [INFO] -     [Analysis] Hop 7 is likely a HIDDEN NODE (Firewall/CGNAT)
+[2025-12-04 02:07:07] [GUI] -     [Analysis] Hop 7 is likely a HIDDEN NODE (Firewall/CGNAT)
+[2025-12-04 02:07:07] [INFO] -     [Analysis] Hop 8 is likely a HIDDEN NODE (Firewall/CGNAT)
+[2025-12-04 02:07:07] [GUI] -     [Analysis] Hop 8 is likely a HIDDEN NODE (Firewall/CGNAT)
+[2025-12-04 02:07:07] [GUI] - Hop 9: 1.1.1.1 - 107.1ms
+[2025-12-04 02:07:07] [INFO] - Thread finished for: perform_traceroute
+[2025-12-04 02:07:07] [GUI] - Task Completed in 3.2s.
