@@ -1,12 +1,14 @@
 <img alt="LogoPNS" src="https://github.com/KretliJ/PyNetSketch/blob/main/assets/app_icon.png">
 
 # PyNetSketch 📡
-  PyNetSketch is a robust, Python-based network management and reconnaissance tool designed as a Proof of Concept (PoC) for students and network enthusiasts. It combines scanning capabilities with a user-friendly GUI to visualize network topologies and traffic in real-time.
+  PyNetSketch is a robust, Python-based network management and reconnaissance tool designed as a Proof of Concept (PoC) for students and network enthusiasts. It features a hybrid architecture combining a high-performance Rust core with a Python frontend (optional), and now supports a distributed mobile ecosystem.
 
 Note: This project does not currently provide a pre-compiled executable.
 
 ### 🌟 Key Features
   * Hybrid Engine (Python + Rust): Critical scanning tasks are offloaded to a compiled Rust core for better execution performance.
+  * Distributed Architecture (New!): operates in two modes: Standalone Desktop or Remote Probe Server for mobile clients.
+  * Mobile Companion Support: Fully compatible with the PyNetSketch Mobile app for Android/iOS.
   * Multi-Mode Scanning:
     * Ping Host: Smart availability check using ICMP, falling back to TCP (Ports 80, 443, 53, 853) if blocked by firewalls.
     * Trace Route: TCP-SYN based traceroute to bypass standard ICMP blocks, featuring "Hidden Node" detection for firewalls/CGNAT.
@@ -20,12 +22,13 @@ Note: This project does not currently provide a pre-compiled executable.
   * Non-Blocking UI: All network tasks run in background threads, keeping the interface responsive.
     
 ### 🛠️ Modes
-  * Ping Host: Enter an IP (e.g., 8.8.8.8) to check latency and status.
-  * Trace Route: Enter an IP to see the hop-by-hop path.
-  * Tracert no DNS: path tracing without hostname lookups.
-  * ARP Scan: Enter a subnet (192.168.1.0/24) or a range (192.168.1.0/24-192.168.10.0/24) to find all local devices.
-  * Port Scan: Enter a specific IP to scan for open services.
-  * Traffic Monitor: Select this mode to view the live traffic graph.
+  * 🖥️ Standalone (GUI): The classic desktop experience. Runs the Tkinter GUI locally.
+    * Best for: Local diagnostics, single-user scenarios.
+
+  * 📡 Server (Remote Probe): Turns a machine into a network probe that listens for commands from any mobile devices running the companion app.
+    * Auto-Discovery: Broadcasts its presence via UDP so mobile apps can find it instantly.
+    * Remote Control: Accepts JSON commands (Ping, Scan, Trace) via TCP sockets from the mobile app.
+    * Bypass Restrictions: Allows mobile devices to perform raw socket operations (like ARP scans) by offloading them to the PC.
 
 ### 📂 Project Structure
   * gui_app.py: Main entry point. Handles the Tkinter GUI, threading, and visualization logic.
@@ -41,7 +44,7 @@ Note: This project does not currently provide a pre-compiled executable.
   * Python 3.8+
   * Rust (optional, for compiling the core module): curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
   * ~~Npcap (Windows only): Required for Scapy to sniff/send packets. Download from nmap.org/npcap. Ensure you check "Install with WinPcap API-compatible Mode".~~
-    * (v.1.2) - This requirement is now handled when initiating the application.
+    * (v.1.2) - This requirement is now handled when initiating the application. Windows only.
 
 ### 📦 Installation
   Clone the repository:
@@ -79,13 +82,17 @@ Note: This project does not currently provide a pre-compiled executable.
 
   ![TracertGIF](projectDiagrams/tracert.gif)
   ![TracertGIF](projectDiagrams/ARPScan.gif)
-  
+
 ### 🛠️ Version prototyping
   * v1.0 - Basic functionality. ARP Scan, Ping, Trcrt
   * v1.1 - Basic functionality. Monitor, Port Scan, Topology Draw, Exporting.
   * v1.2 - Solved dependency handling.
   * v1.3 - Optimization Update. Rust integration (Hybrid Engine), "No DNS" mode, Console Timer/Spinner.
- 
+  * v1.4 - Distributed Server Mode, Auto-Discovery Protocol, Mobile App Integration
+
+### 📱 Mobile App
+  To control this tool from your phone, download the [PyNetSketch Mobile App](https://github.com/KretliJ/PyNetSketch_Mobile) (Flutter).
+  
 ### 📜 License
   This project is licensed under the MIT License.
 
