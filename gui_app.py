@@ -3,49 +3,110 @@ import tkinter as tk
 from tkinter import ttk, messagebox, scrolledtext, simpledialog, Menu
 import math
 import collections
-import time # Added for elapsed time tracking
+import time
 import net_utils
 import utils
 import report_utils
 import os 
 import platform 
 import webbrowser
+import host_functions  # Importa o novo controlador do servidor
 
-# Foces npcap verification for windows only
+# --- CONFIGURAÇÃO GLOBAL E UTILITÁRIOS ---
+
 def check_npcap():
-    """
-    Checks if Npcap is installed on Windows.
-    If not found, prompts the user to download it.
-    """
+    """Verifica se o Npcap está instalado no Windows."""
     if platform.system() != "Windows":
         return
-
-    # Standard location for Npcap driver DLL
     npcap_path = os.path.join(os.environ["WINDIR"], "System32", "Npcap", "wpcap.dll")
-    
     if not os.path.exists(npcap_path):
-        # Create a temporary hidden root just for the messagebox
         temp_root = tk.Tk()
         temp_root.withdraw() 
-        
-        msg = (
-            "Npcap is required for packet capturing functions (ARP, Traceroute, Traffic).\n\n"
-            "It appears to be missing on your system.\n"
-            "Would you like to download it now from nmap.org?\n\n"
-            "NOTE: Please install with 'WinPcap API-compatible Mode' enabled."
-        )
-        
+        msg = "Npcap is required. Download from nmap.org/npcap?"
         if messagebox.askyesno("Missing Dependency", msg):
             webbrowser.open("https://nmap.org/npcap/")
-            sys.exit(0) # Close app so user can install
+            sys.exit(0)
         else:
-            messagebox.showwarning("Warning", "PyNetSketch will continue, but scanning features may crash or fail.")
             temp_root.destroy()
 
+def set_app_icon(root):
+    """Carrega o ícone da aplicação de forma segura e cross-platform."""
+    try:
+        # Garante que pegamos o caminho absoluto base do script
+        base_path = os.path.dirname(os.path.abspath(__file__))
+        possible_paths = [
+            os.path.join(base_path, "assets", "app_icon.png"),
+            os.path.join(base_path, "app_icon.png")
+        ]
+        
+        icon_path = None
+        for p in possible_paths:
+            if os.path.exists(p):
+                icon_path = p
+                break
+        
+        if icon_path:
+            icon_img = tk.PhotoImage(file=icon_path)
+            root.iconphoto(True, icon_img)
+            # CRÍTICO: Manter referência para evitar Garbage Collection
+            root._icon_ref = icon_img 
+    except Exception as e:
+        print(f"Debug: Icon load error: {e}")
+
+
+# --- CLASSE DO MODO SERVIDOR (CONTROLADA POR HOST_FUNCTIONS) ---
+class NetworkServerMode:
+    def __init__(self, root, session_name="Unnamed Probe"):
+        self.root = root
+        set_app_icon(self.root) # Aplica ícone
+        self.root.title(f"PyNetSketch Server - {session_name}")
+        self.root.geometry("450x300")
+        
+        # Interface Visual
+        ttk.Label(root, text="📡 Modo Sonda Ativo", font=("Arial", 14, "bold")).pack(pady=(15, 5))
+        ttk.Label(root, text=f"Sessão: {session_name}", font=("Arial", 11)).pack()
+        
+        self.ip_lbl = ttk.Label(root, text=f"IP Local: {net_utils.get_local_ip()}")
+        self.ip_lbl.pack(pady=5)
+        
+        ttk.Label(root, text="Log de Eventos:", font=("Arial", 9, "bold")).pack(anchor="w", padx=10)
+
+        # Área de Logs do Servidor
+        self.log_area = scrolledtext.ScrolledText(root, height=8, width=50, state='disabled', font=("Consolas", 8))
+        self.log_area.pack(pady=5, padx=10)
+        
+        ttk.Button(root, text="Parar Servidor", command=self.stop_server).pack(pady=10)
+        
+        # --- INSTANCIA O HOST MANAGER ---
+        self.server_manager = host_functions.ProbeServer(
+            port=5050, 
+            session_name=session_name, 
+            log_callback=self.update_log
+        )
+        self.server_manager.start()
+
+    def update_log(self, message):
+        """Callback thread-safe para atualizar a GUI a partir do Controller."""
+        if self.root.winfo_exists():
+            self.root.after(0, lambda: self._append_text(message))
+
+    def _append_text(self, message):
+        self.log_area.config(state='normal')
+        self.log_area.insert(tk.END, f"> {message}\n")
+        self.log_area.see(tk.END)
+        self.log_area.config(state='disabled')
+
+    def stop_server(self):
+        self.server_manager.stop()
+        self.root.destroy()
+        sys.exit(0)
+
+# --- CLASSE DO MODO STANDALONE (GUI COMPLETA) ---
 class NetworkApp:
     def __init__(self, root):
         self.root = root
-        self.root.title("PyNetSketch")
+        set_app_icon(self.root) # Aplica ícone
+        self.root.title("PyNetSketch (Standalone)")
         self.root.geometry("1200x800") 
         
         self.style = ttk.Style()
@@ -75,32 +136,9 @@ class NetworkApp:
         self.create_top_bar() 
         self.create_tabs()
         self.create_bottom_bar() 
-        
-        self.setup_icon()
 
         self.fill_local_ip()
         self.log_to_console(f"App started. Local IP: {self.local_ip}")
-
-    def setup_icon(self):
-        """Loads the application icon in a cross-platform way"""
-        try:
-            base_path = os.path.dirname(__file__)
-            possible_paths = [
-                os.path.join(base_path, "assets", "app_icon.png"),
-                os.path.join(base_path, "app_icon.png")
-            ]
-            
-            icon_path = None
-            for p in possible_paths:
-                if os.path.exists(p):
-                    icon_path = p
-                    break
-            
-            if icon_path:
-                self.icon_img = tk.PhotoImage(file=icon_path)
-                self.root.iconphoto(True, self.icon_img)
-        except Exception as e:
-            print(f"Debug: Icon load error: {e}")
 
     def create_top_bar(self):
         control_frame = ttk.LabelFrame(self.root, text="Controls", padding=10)
@@ -118,7 +156,6 @@ class NetworkApp:
         ttk.Label(control_frame, text="Mode:").pack(side="left", padx=(5, 2))
         self.mode_var = tk.StringVar(value="Ping Host")
         self.mode_combo = ttk.Combobox(control_frame, textvariable=self.mode_var, state="readonly", width=18)
-        # Added "Tracert no DNS" to the values list
         self.mode_combo['values'] = ("Ping Host", "Trace Route", "Tracert no DNS", "ARP Scan", "Port Scan", "Traffic Monitor")
         self.mode_combo.pack(side="left", padx=5)
         self.mode_combo.bind("<<ComboboxSelected>>", self.on_mode_change)
@@ -172,6 +209,43 @@ class NetworkApp:
         self.traffic_canvas = tk.Canvas(self.tab_traffic, bg="#222222") 
         self.traffic_canvas.pack(fill="both", expand=True, padx=5, pady=5)
 
+        # 5. Persistent Logs
+        self.tab_logs = ttk.Frame(self.notebook)
+        # CORREÇÃO: Adicionando tab_logs ao notebook (antes estava adicionando tab_traffic novamente)
+        self.notebook.add(self.tab_logs, text="Persistent Logs")
+        
+        # Toolbar da aba de logs
+        logs_toolbar = ttk.Frame(self.tab_logs)
+        logs_toolbar.pack(fill="x", padx=5, pady=5)
+        ttk.Button(logs_toolbar, text="🔄 Atualizar Logs", command=self.load_persistent_logs).pack(side="left")
+        
+        # Display de Texto
+        self.log_display = scrolledtext.ScrolledText(self.tab_logs, state='disabled', font=("Consolas", 9))
+        self.log_display.pack(fill="both", expand=True, padx=5, pady=5)
+        
+        # Carrega logs na inicialização
+        self.load_persistent_logs()
+
+    def load_persistent_logs(self):
+        """Lê o arquivo de log do disco e exibe na aba Persistent Logs."""
+        self.log_display.config(state='normal')
+        self.log_display.delete(1.0, tk.END)
+        
+        log_path = utils.LOG_FILE
+        if os.path.exists(log_path):
+            try:
+                with open(log_path, "r", encoding="utf-8") as f:
+                    content = f.read()
+                    self.log_display.insert(tk.END, content)
+                    # Scroll automático para o final
+                    self.log_display.see(tk.END)
+            except Exception as e:
+                 self.log_display.insert(tk.END, f"Erro ao ler arquivo de log: {e}")
+        else:
+             self.log_display.insert(tk.END, "Arquivo de log não encontrado ainda (nenhuma operação realizada).")
+             
+        self.log_display.config(state='disabled')
+
     def create_bottom_bar(self):
         bottom_frame = ttk.Frame(self.root)
         bottom_frame.pack(side="bottom", fill="x", padx=10, pady=5)
@@ -181,7 +255,7 @@ class NetworkApp:
     def show_about_dialog(self):
         messagebox.showinfo(
             "About PyNetSketch", 
-            "PyNetSketch v1.2.1\n\n"
+            "PyNetSketch v1.4\n\n"
             "A Python-based Network Scanner & Visualization Tool.\n"
             "Proof of Concept (PoC)\n\n"
             "Created for Educational Purposes by KretliJ.\n"
@@ -203,78 +277,56 @@ class NetworkApp:
             self.notebook.select(self.tab_traffic)
         elif mode == "ARP Scan":
             self.notebook.select(self.tab_scanner)
+        elif mode == "Persistent Log":
+             self.notebook.select(self.tab_logs)
+             self.load_persistent_logs()
         else:
             self.notebook.select(self.tab_console)
 
     def set_task_running(self, running, stop_event=None):
-        """Updates UI state based on whether a task is running and toggles spinner"""
         if running:
             self.start_btn.config(state="disabled")
             self.stop_btn.config(state="normal")
             self.mode_combo.config(state="disabled")
             self.current_stop_event = stop_event
             
-            # Start Spinner & Timer
             self.spinner_running = True
-            self.task_start_time = time.time() # Capture start time
-
+            self.task_start_time = time.time()
             self.console_text.config(state='normal')
-            # Insert initial block with a "spinner" tag so we can delete it easily
-            # Format: Char \n Time
             self.console_text.insert(tk.END, f"{self.spinner_chars[0]}\n0.0s", "spinner")
             self.console_text.config(state='disabled')
             self._run_spinner()
-            
         else:
             self.start_btn.config(state="normal")
             self.stop_btn.config(state="disabled")
             self.mode_combo.config(state="readonly")
             self.current_stop_event = None
             
-            # Stop Spinner
             self.spinner_running = False
             self.console_text.config(state='normal')
-            
-            # Robust deletion using the tag
-            try:
-                self.console_text.delete("spinner.first", "spinner.last")
-            except Exception:
-                pass # Tag might not exist if cleared elsewhere
-                
-            self.console_text.config(state='disabled')
-
-    def _run_spinner(self):
-        """Recursive loop to animate the CLI spinner and timer"""
-        if not self.spinner_running:
-            return
-
-        try:
-            # Calculate elapsed
-            elapsed = time.time() - self.task_start_time
-            
-            self.console_text.config(state='normal')
-            
-            # Remove old spinner block
             try:
                 self.console_text.delete("spinner.first", "spinner.last")
             except Exception:
                 pass
+            self.console_text.config(state='disabled')
 
-            # Update char
+    def _run_spinner(self):
+        if not self.spinner_running:
+            return
+        try:
+            elapsed = time.time() - self.task_start_time
+            self.console_text.config(state='normal')
+            try:
+                self.console_text.delete("spinner.first", "spinner.last")
+            except Exception:
+                pass
             self.spinner_idx = (self.spinner_idx + 1) % len(self.spinner_chars)
-            
-            # Insert new block
             text = f"{self.spinner_chars[self.spinner_idx]}\n{elapsed:.1f}s"
             self.console_text.insert(tk.END, text, "spinner")
-            
             self.console_text.see(tk.END)
             self.console_text.config(state='disabled')
-            
-            # Schedule next frame (100ms)
             self.root.after(100, self._run_spinner)
-            
         except Exception as e:
-            # Fallback if widget is destroyed
             print(f"Spinner error: {e}")
 
     def stop_current_task(self):
@@ -289,22 +341,16 @@ class NetworkApp:
 
     def _update_console_widget(self, message):
         self.console_text.config(state='normal')
-        
-        # Temporarily remove spinner block so log inserts ABOVE it
         if self.spinner_running:
             try:
                 self.console_text.delete("spinner.first", "spinner.last")
             except Exception:
                 pass
-
         self.console_text.insert(tk.END, f">> {message}\n")
-        
-        # Restore spinner block at the bottom
         if self.spinner_running:
             elapsed = time.time() - self.task_start_time
             text = f"{self.spinner_chars[self.spinner_idx]}\n{elapsed:.1f}s"
             self.console_text.insert(tk.END, text, "spinner")
-
         self.console_text.see(tk.END)
         self.console_text.config(state='disabled')
 
@@ -345,9 +391,7 @@ class NetworkApp:
             
         elif mode == "Trace Route" or mode == "Tracert no DNS":
             target = target.split("/")[0]
-            # Determine DNS preference based on mode
             resolve_dns = (mode == "Trace Route")
-            
             self.log_to_console(f"Tracing {target} (DNS: {'Enabled' if resolve_dns else 'Disabled'})...")
             
             evt = utils.run_in_background(net_utils.perform_traceroute, 
@@ -360,7 +404,6 @@ class NetworkApp:
         elif mode == "ARP Scan":
             self.log_to_console(f"Scanning {target}...")
             for i in self.tree.get_children(): self.tree.delete(i)
-            
             evt = utils.run_in_background(net_utils.arp_scan, 
                                           self.handle_scan_result, 
                                           progress_callback=self.log_to_console,
@@ -392,12 +435,10 @@ class NetworkApp:
         self.root.after(0, self._finalize_task_ui, result_msg)
 
     def _finalize_task_ui(self, result_msg):
-        # Calculate duration before resetting state
         elapsed_str = ""
         if self.task_start_time:
             duration = time.time() - self.task_start_time
             elapsed_str = f" in {duration:.1f}s"
-
         self.set_task_running(False)
         if result_msg and isinstance(result_msg, str):
             self.log_to_console(result_msg)
@@ -407,25 +448,19 @@ class NetworkApp:
         self.root.after(0, self._process_scan_data, devices)
 
     def _process_scan_data(self, devices):
-        # Calculate duration before resetting state
         elapsed_str = ""
         if self.task_start_time:
             duration = time.time() - self.task_start_time
             elapsed_str = f" in {duration:.1f}s"
-
         self.set_task_running(False)
-        
         self.log_to_console(f"Scan Finished{elapsed_str}.")
-
         if not devices: return
         self.latest_scan_results = devices
-        
         for dev in devices:
             vendor = dev.get('vendor', 'Unknown')
             if vendor == 'Unknown':
                 vendor = net_utils.resolve_mac_vendor(dev['mac'])
             self.tree.insert("", tk.END, values=(dev['ip'], dev['mac'], vendor))
-        
         self.draw_topology_map()
 
     def handle_traffic_update(self, data):
@@ -462,7 +497,6 @@ class NetworkApp:
         if not sel: return
         item = self.tree.item(sel[0])
         ip = item['values'][0]
-        
         self.mode_var.set("Port Scan")
         self.target_entry.delete(0, tk.END)
         self.target_entry.insert(0, ip)
@@ -476,11 +510,9 @@ class NetworkApp:
         top.geometry("300x150")
         
         ttk.Label(top, text="Select Format:").pack(pady=10)
-        
         def do_export(fmt):
             top.destroy()
             report_utils.export_results(self.latest_scan_results, fmt)
-
         ttk.Button(top, text="CSV (Excel)", command=lambda: do_export("csv")).pack(pady=5)
         ttk.Button(top, text="HTML (Web/PDF)", command=lambda: do_export("html")).pack(pady=5)
 
@@ -498,7 +530,7 @@ class NetworkApp:
         h_factor = (h - 20) / max_val
         
         self.traffic_canvas.create_line(0, h-20, w, h-20, fill="gray")
-        self.traffic_canvas.create_text(10, 10, text=f"Max: {max_val} pkts", fill="white", anchor="nw")
+        self.traffic_canvas.create_text(10, 10, text=f"Max: {max_val} pps", fill="white", anchor="nw")
 
         points = []
         for i, val in enumerate(data):
@@ -546,12 +578,10 @@ class NetworkApp:
         total = len(devices)
         if total == 0: return
         cur_r = 120; placed = 0; step_r = 60
-        
         while placed < total:
             cap = max(1, int((2*math.pi*cur_r)/35))
             count = min(total - placed, cap)
             angle_step = 360/count
-            
             for i in range(count):
                 dev = devices[placed+i]
                 rad = math.radians(i*angle_step)
@@ -560,7 +590,6 @@ class NetworkApp:
                 dash = (2,4) if cur_r > 120 else (2,2)
                 self.canvas.create_line(gx, gy, dx, dy, fill="#dddddd", dash=dash)
                 self.draw_node(dx, dy, f".{dev['ip'].split('.')[-1]}", "green", False, dev['ip'])
-            
             placed += count
             cur_r += step_r
 
@@ -586,7 +615,8 @@ class NetworkApp:
                 messagebox.showinfo(f"Details: {ip}", f"IP: {ip}\nMAC: {mac}\nVendor: {vendor}")
                 break
 
-if __name__ == "__main__":
+# --- INICIALIZAÇÃO E LAUNCHER ---
+def main_launcher():
     check_npcap()    
     if platform.system() == "Windows":
         try:
@@ -596,6 +626,47 @@ if __name__ == "__main__":
         except Exception:
             pass
 
-    root = tk.Tk()
-    app = NetworkApp(root)
-    root.mainloop()
+    # Janela de Seleção (Launcher)
+    selection_window = tk.Tk()
+    set_app_icon(selection_window) # Ícone na janela de seleção
+    selection_window.title("PyNetSketch - Launcher")
+    selection_window.geometry("350x250")
+    
+    style = ttk.Style()
+    style.configure("Big.TButton", font=("Arial", 12))
+    
+    ttk.Label(selection_window, text="Selecione o Modo de Operação:", font=("Arial", 11)).pack(pady=20)
+    
+    # Armazena estado da seleção para decidir qual classe instanciar depois
+    selection_state = {"mode": None, "session_name": "My PyNetSketch Probe"}
+
+    def select_standalone():
+        selection_state["mode"] = "standalone"
+        selection_window.destroy()
+
+    def select_server():
+        # Pergunta o nome da sessão para identificação no mobile
+        name = simpledialog.askstring("Session Name", "Nome desta sonda/servidor:", initialvalue="Lab Probe 01")
+        if name:
+            selection_state["mode"] = "server"
+            selection_state["session_name"] = name
+            selection_window.destroy()
+
+    ttk.Button(selection_window, text="🖥️ Standalone (GUI)", command=select_standalone, width=25, style="Big.TButton").pack(pady=10)
+    ttk.Button(selection_window, text="📡 Server (Remote Probe)", command=select_server, width=25, style="Big.TButton").pack(pady=10)
+    
+    selection_window.mainloop()
+
+    # Inicia a aplicação real baseada na escolha
+    if selection_state["mode"] == "standalone":
+        root = tk.Tk()
+        app = NetworkApp(root)
+        root.mainloop()
+    elif selection_state["mode"] == "server":
+        root = tk.Tk()
+        # Instancia o modo servidor com o nome da sessão escolhido
+        app = NetworkServerMode(root, session_name=selection_state["session_name"])
+        root.mainloop()
+
+if __name__ == "__main__":
+    main_launcher()
