@@ -79,8 +79,7 @@ Note: This project does not currently provide a pre-compiled executable.
     ```
     sudo python3 gui_app.py
     ```
-
-  ![TracertGIF](projectDiagrams/tracert.gif)
+    
   ![TracertGIF](projectDiagrams/ARPScan.gif)
 
 ### 🛠️ Version prototyping
