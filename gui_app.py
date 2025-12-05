@@ -10,7 +10,7 @@ import report_utils
 import os 
 import platform 
 import webbrowser
-import host_functions  # Importa o novo controlador do servidor
+import host_functions 
 
 # --- CONFIGURAÇÃO GLOBAL E UTILITÁRIOS ---
 
@@ -53,6 +53,8 @@ def set_app_icon(root):
     except Exception as e:
         print(f"Debug: Icon load error: {e}")
 
+# Tkinter can be wonderful, as it can make you want to defenestrate. I wonder if I prefer to center a div to this. 
+# I hope you are experienced with this before taking a dive. Good luck
 
 # --- CLASSE DO MODO SERVIDOR (CONTROLADA POR HOST_FUNCTIONS) ---
 class NetworkServerMode:

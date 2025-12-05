@@ -10,6 +10,8 @@ from scapy.all import ARP, Ether, srp, IP, ICMP, TCP, sr1, conf, sniff
 import utils
 
 # --- IMPORT RUST CORE ---
+# This is important for python implementation fallback
+# Application will be slower, but shouldn't crash
 try:
     import pynetsketch_core
     RUST_AVAILABLE = True
@@ -39,8 +41,8 @@ def get_local_ip():
     return IP
 
 def tcp_ping(target_ip, port=80, timeout=1):
-    """Performs a TCP SYN ping (Connect)."""
-    # Use Rust if available for potentially lower overhead
+    # Performs a TCP SYN ping (Connect).
+    # Where it starts to look toward lowering overhead
     if RUST_AVAILABLE:
         try:
             is_open, latency = pynetsketch_core.rust_tcp_ping(target_ip, port, int(timeout*1000))
@@ -64,7 +66,7 @@ def tcp_ping(target_ip, port=80, timeout=1):
         return False, 0
 
 def ping_host(target_ip, stop_event=None, progress_callback=None):
-    """Pings a host. Tries ICMP first, then falls back to TCP Ping."""
+    # Pings a host. Tries ICMP first, then falls back to TCP
     if stop_event and stop_event.is_set(): return False, 0
     
     os_type = get_os_type()
@@ -77,6 +79,7 @@ def ping_host(target_ip, stop_event=None, progress_callback=None):
     duration_ms = 0
     
     try:
+        # Most operations will count time
         start_time = time.perf_counter()
         result = subprocess.run(
             command, 
@@ -101,6 +104,7 @@ def ping_host(target_ip, stop_event=None, progress_callback=None):
         return True, round(duration_ms, 2)
     
     if progress_callback: progress_callback("ICMP failed. Trying TCP Ping fallback...")
+    # Many operations call writing to text log for debug
     utils._log_operation(f"ICMP failed for {target_ip}. Trying TCP probes...")
     
     fallback_ports = [80, 443, 53, 853]
@@ -115,6 +119,8 @@ def ping_host(target_ip, stop_event=None, progress_callback=None):
             
     return False, 0
 
+# Resolve the manufacturer of a device via macvendors API to show in relevant modes
+# Returns vendor if found. If not, assumes MAC is randomized (in a range) or returns Unknown if all else fails 
 def resolve_mac_vendor(mac_address):
     mac = mac_address.upper()
     if len(mac) > 1 and mac[1] in ['2', '6', 'A', 'E']:
@@ -138,11 +144,16 @@ def resolve_mac_vendor(mac_address):
         prefix = mac[:8]
         return conf.manufdb.get(prefix) or "Unknown Vendor"
 
+# Main function for python ARP table scan
+# This isn't handled by rust since the added complexity did not justify possible performance gains at the time
+# Returns list with found devices in provided range
 def arp_scan(network_cidr, stop_event=None, progress_callback=None):
     all_devices = []
+    # Reads the return from _parse_target_input to check if the scan is a range
     target_subnets = _parse_target_input(network_cidr)
     utils._log_operation(f"Processing scan targets: {target_subnets}")
 
+    # Iterates through subnet ranges
     for subnet in target_subnets:
         if stop_event and stop_event.is_set(): break
         try:
@@ -152,7 +163,7 @@ def arp_scan(network_cidr, stop_event=None, progress_callback=None):
             route = conf.route.route(target_ip_base)
             active_iface = route[0]
             
-            # Ensure iface is string for logging
+            # Ensures iface is string for logging
             iface_name = str(active_iface)
             
             if progress_callback: progress_callback(f"Scanning {subnet} via {iface_name}")
@@ -168,6 +179,7 @@ def arp_scan(network_cidr, stop_event=None, progress_callback=None):
             
             duration = (time.perf_counter() - start_t) * 1000
             
+            # Iterates through results, adds them to found devices
             for sent, received in result:
                 if stop_event and stop_event.is_set(): break
                 if not any(d['ip'] == received.psrc for d in all_devices):
@@ -189,6 +201,7 @@ def arp_scan(network_cidr, stop_event=None, progress_callback=None):
             
     return all_devices
 
+# Parsing of range start and end for use by arp_scan()
 def _parse_target_input(input_str):
     targets = []
     input_str = input_str.strip()
@@ -210,8 +223,12 @@ def _parse_target_input(input_str):
         except Exception: return [input_str]
     return [input_str]
 
+# Rust implementation avoided for same reason as above
+# Has proven faster than windows' native tracert whether DNS resolving is true or false (TODO: Testing comparisons)
+# Returns list of hops
 def perform_traceroute(target_ip, max_hops=30, stop_event=None, progress_callback=None, resolve_dns=True):
     try:
+        # Tries to determine best method for trace (Fallback on failure)
         hops = []
         consecutive_timeouts = [] 
         utils._log_operation(f"Determining best trace method for {target_ip}...")
@@ -226,6 +243,7 @@ def perform_traceroute(target_ip, max_hops=30, stop_event=None, progress_callbac
         selected_method_name = "TCP:80 (Fallback)" 
         packet_generator = methods[1][1]
 
+        # Generates packets based on chosen method
         for name, generator in methods:
             if stop_event and stop_event.is_set(): return []
             try:
@@ -239,6 +257,7 @@ def perform_traceroute(target_ip, max_hops=30, stop_event=None, progress_callbac
 
         utils._log_operation(f"Tracing using {selected_method_name}")
         
+        # Sends requests iteratively up to the last hop (breaks up to max if final isn't found)
         for ttl in range(1, max_hops + 1):
             if stop_event and stop_event.is_set(): break
             pkt = packet_generator(ttl)
@@ -255,6 +274,7 @@ def perform_traceroute(target_ip, max_hops=30, stop_event=None, progress_callbac
                 hops.append(hop_data)
             else:
                 if consecutive_timeouts:
+                    # This analyzes the possibility that an unresponsive node might be online but simply not responding 
                     for hidden_ttl in consecutive_timeouts:
                         msg = f"    [Analysis] Hop {hidden_ttl} is likely a HIDDEN NODE (Firewall/CGNAT)"
                         utils._log_operation(msg, "INFO")
@@ -263,6 +283,7 @@ def perform_traceroute(target_ip, max_hops=30, stop_event=None, progress_callbac
  
 
                 hostname = ""
+                # DNS resolution section if applicable
                 if resolve_dns:
                     try: hostname = socket.gethostbyaddr(reply.src)[0]
                     except Exception: pass 
@@ -277,6 +298,8 @@ def perform_traceroute(target_ip, max_hops=30, stop_event=None, progress_callbac
         utils._log_operation(f"Traceroute failed: {e}", "ERROR")
         return []
 
+# Port scanning from rust with fallback to python. 
+# Returns list with open ports
 def scan_ports(target_ip, ports=None, stop_event=None, progress_callback=None):
     if ports is None:
         ports = [21, 22, 23, 25, 53, 80, 110, 135, 139, 443, 445, 3389, 8080]
@@ -288,13 +311,13 @@ def scan_ports(target_ip, ports=None, stop_event=None, progress_callback=None):
     if RUST_AVAILABLE:
         if progress_callback: progress_callback(f"[RUST] Scanning {len(ports)} ports on {target_ip}...")
         try:
-            # Helper to pipe Rust logs to Python GUI
+            # Helper pipes Rust logs to Python GUI
             def rust_logger_adapter(msg):
                 utils._log_operation(msg)
                 if progress_callback: progress_callback(msg)
 
             start_t = time.perf_counter()
-            # Pass the logger callback to Rust
+            # Pass logger callback to Rust
             open_ports_int = pynetsketch_core.rust_scan_ports(target_ip, ports, rust_logger_adapter)
             duration = (time.perf_counter() - start_t) * 1000
             
@@ -311,6 +334,7 @@ def scan_ports(target_ip, ports=None, stop_event=None, progress_callback=None):
     # --- PYTHON FALLBACK IMPLEMENTATION ---
     if progress_callback: progress_callback(f"[PYTHON] Scanning {len(ports)} ports...")
     
+    # Iterates through ports to scan
     for i, port in enumerate(ports):
         if stop_event and stop_event.is_set():
             if progress_callback: progress_callback("Port scan stopped.")
@@ -344,6 +368,8 @@ def scan_ports(target_ip, ports=None, stop_event=None, progress_callback=None):
     if progress_callback: progress_callback(f"Scan Complete. Found {len(open_services)} open services.")
     return open_services
 
+# Simple function that attempts to send a Wake-On-Lan packet to selected mac address
+# Returns success or failure
 def send_magic_packet(mac_address):
     try:
         mac_clean = mac_address.replace(":", "").replace("-", "")
@@ -356,6 +382,7 @@ def send_magic_packet(mac_address):
     except Exception as e:
         return False, str(e)
 
+# Hook function to start traffic monitor (TODO: Error 4 in README) 
 def monitor_traffic(interface=None, stop_event=None, progress_callback=None):
     utils._log_operation("Starting Traffic Monitor...")
     if progress_callback: progress_callback("Initializing Sniffer...")
@@ -371,6 +398,8 @@ def monitor_traffic(interface=None, stop_event=None, progress_callback=None):
     except Exception as e:
         if progress_callback: progress_callback(f"Sniffer error: {e}")
 
+# Function to organize the results of ARP table scans and group them by subnets
+# Returns a dictionary where keys are Gateway IPs as strings and values are lists of device dictionaries belonging to that subnet.
 def organize_scan_results_by_subnet(devices):
     subnets = {}
     for dev in devices:
