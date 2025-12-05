@@ -23,7 +23,7 @@ except ImportError as e:
 # Suppress Scapy verbosity
 conf.verb = 0
 
-# Cache to avoid hitting API rate limits
+# MAC Vendor cache
 VENDOR_CACHE = {}
 
 def get_os_type():
@@ -121,6 +121,8 @@ def ping_host(target_ip, stop_event=None, progress_callback=None):
 
 # Resolve the manufacturer of a device via macvendors API to show in relevant modes
 # Returns vendor if found. If not, assumes MAC is randomized (in a range) or returns Unknown if all else fails 
+# This used to call for an API, but that causes issues when dealing with large networks
+#   manufdb is faster with good enough identification capabilities
 def resolve_mac_vendor(mac_address):
     mac = mac_address.upper()
     if len(mac) > 1 and mac[1] in ['2', '6', 'A', 'E']:
@@ -139,9 +141,12 @@ def resolve_mac_vendor(mac_address):
             return "Too Many Requests (API Limit)"
         else:
             prefix = mac[:8]
+            # Use f-string to include the MAC address and status code in the log for better context
+            utils._log_operation(f"API failed for MAC {mac} (Status: {response.status_code}). Falling back to manufdb.", "WARN")
             return conf.manufdb.get(prefix) or "Unknown Vendor"
     except Exception as e:
         prefix = mac[:8]
+        utils._log_operation(f"MAC Vendor lookup failed for {mac}. Error: [{type(e).__name__}] {e}", "ERROR")
         return conf.manufdb.get(prefix) or "Unknown Vendor"
 
 # Main function for python ARP table scan

@@ -407,3 +407,46 @@
 [2025-12-05 14:26:34] [GUI] - Finished 172.20.21.0/24 in 3035ms. Found 99 devices.
 [2025-12-05 14:26:34] [INFO] - Thread finished for: arp_scan
 [2025-12-05 14:26:34] [GUI] - Scan Finished in 23.1s.
+[2025-12-05 16:01:27] [GUI] - Reset target to local subnet: 172.20.20.0/24
+[2025-12-05 16:01:27] [GUI] - App started. Local IP: 172.20.20.222
+[2025-12-05 16:01:31] [GUI] - Scanning 172.20.20.0/24...
+[2025-12-05 16:01:31] [INFO] - Thread started for: arp_scan
+[2025-12-05 16:01:31] [INFO] - Processing scan targets: ['172.20.20.0/24']
+[2025-12-05 16:01:31] [GUI] - Scanning 172.20.20.0/24 via \Device\NPF_{9F98E4ED-5E49-4FA0-AE59-93679514AA52}
+[2025-12-05 16:01:35] [ERROR] - MAC Vendor lookup failed: 
+[2025-12-05 16:01:35] [ERROR] - MAC Vendor lookup failed: 
+[2025-12-05 16:01:35] [ERROR] - MAC Vendor lookup failed: 
+[2025-12-05 16:01:35] [ERROR] - MAC Vendor lookup failed: 
+[2025-12-05 16:01:35] [ERROR] - MAC Vendor lookup failed: 
+[2025-12-05 16:01:35] [ERROR] - MAC Vendor lookup failed: 
+[2025-12-05 16:01:35] [ERROR] - MAC Vendor lookup failed: 
+[2025-12-05 16:01:35] [ERROR] - MAC Vendor lookup failed: 
+[2025-12-05 16:01:35] [ERROR] - MAC Vendor lookup failed: 
+[2025-12-05 16:01:35] [ERROR] - MAC Vendor lookup failed: 
+[2025-12-05 16:01:35] [ERROR] - MAC Vendor lookup failed: 
+[2025-12-05 16:01:35] [ERROR] - MAC Vendor lookup failed: 
+[2025-12-05 16:01:36] [ERROR] - MAC Vendor lookup failed: 
+[2025-12-05 16:01:36] [ERROR] - MAC Vendor lookup failed: 
+[2025-12-05 16:01:36] [ERROR] - MAC Vendor lookup failed: 
+[2025-12-05 16:01:36] [ERROR] - MAC Vendor lookup failed: 
+[2025-12-05 16:01:36] [ERROR] - MAC Vendor lookup failed: 
+[2025-12-05 16:01:36] [ERROR] - MAC Vendor lookup failed: 
+[2025-12-05 16:01:36] [ERROR] - MAC Vendor lookup failed: 
+[2025-12-05 16:01:36] [ERROR] - MAC Vendor lookup failed: 
+[2025-12-05 16:01:36] [ERROR] - MAC Vendor lookup failed: 
+[2025-12-05 16:01:36] [ERROR] - MAC Vendor lookup failed: 
+[2025-12-05 16:01:36] [ERROR] - MAC Vendor lookup failed: 
+[2025-12-05 16:01:36] [INFO] - Finished 172.20.20.0/24 in 3532ms. Found 92 devices.
+[2025-12-05 16:01:36] [GUI] - Finished 172.20.20.0/24 in 3532ms. Found 92 devices.
+[2025-12-05 16:01:36] [INFO] - Thread finished for: arp_scan
+[2025-12-05 16:01:36] [GUI] - Scan Finished in 4.6s.
+[2025-12-05 16:03:00] [GUI] - Reset target to local subnet: 172.20.20.0/24
+[2025-12-05 16:03:00] [GUI] - App started. Local IP: 172.20.20.222
+[2025-12-05 16:03:04] [GUI] - Scanning 172.20.20.0/24...
+[2025-12-05 16:03:04] [INFO] - Thread started for: arp_scan
+[2025-12-05 16:03:04] [INFO] - Processing scan targets: ['172.20.20.0/24']
+[2025-12-05 16:03:04] [GUI] - Scanning 172.20.20.0/24 via \Device\NPF_{9F98E4ED-5E49-4FA0-AE59-93679514AA52}
+[2025-12-05 16:03:23] [INFO] - Finished 172.20.20.0/24 in 3371ms. Found 85 devices.
+[2025-12-05 16:03:23] [GUI] - Finished 172.20.20.0/24 in 3371ms. Found 85 devices.
+[2025-12-05 16:03:23] [INFO] - Thread finished for: arp_scan
+[2025-12-05 16:03:23] [GUI] - Scan Finished in 19.4s.
