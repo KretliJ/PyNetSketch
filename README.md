@@ -3,7 +3,7 @@
 # PyNetSketch 📡
   PyNetSketch is a robust, Python-based network management and reconnaissance tool designed as a Proof of Concept (PoC) for students and network enthusiasts. It features a hybrid architecture combining a high-performance Rust core with a Python frontend (optional), and now supports a distributed mobile ecosystem.
 
-Note: This project does not currently provide a pre-compiled executable.
+Note: This project does not currently provide a full release executable.
 
 ### 🌟 Key Features
   * Hybrid Engine (Python + Rust): Critical scanning tasks are offloaded to a compiled Rust core for better execution performance.
@@ -88,6 +88,7 @@ Note: This project does not currently provide a pre-compiled executable.
   * v1.2 - Solved dependency handling.
   * v1.3 - Optimization Update. Rust integration (Hybrid Engine), "No DNS" mode, Console Timer/Spinner.
   * v1.4 - Distributed Server Mode, Auto-Discovery Protocol, Mobile App Integration
+  * v1.5 - Pre-release executable, fixes and error documentation.
 
 ### 📱 Mobile App
   To control this tool from your phone, download the [PyNetSketch Mobile App](https://github.com/KretliJ/PyNetSketch_Mobile) (Flutter).
