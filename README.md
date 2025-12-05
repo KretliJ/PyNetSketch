@@ -91,7 +91,9 @@ Note: This project does not currently provide a full release executable.
   * v1.5 - Pre-release executable, fixes and error documentation.
 
 ## ⚠️ Known Limitations (v1.5 Debug)
-
+<details>
+<summary><strong>Click to expand</strong></summary>
+  
 ### 1. Large Subnet Scans (The "Atomic Scapy" Issue)
 **Symptom:** Scanning a `/16` network (65,536 hosts) causes the application to "freeze" or become unresponsive to the "STOP" button.
 
@@ -116,6 +118,35 @@ Note: This project does not currently provide a full release executable.
 **Workaround:** Logs are being generated, but they are buried in your system's temporary folder and deleted when the app closes.
 
 **Future Fix:** Update the path detection logic to check for `sys.frozen` and use `sys.executable` (the exe path) instead of `__file__`.
+
+### 4. Traffic Monitor shows "0 pps" (Flatline)
+**Symptom:** The Traffic Monitor graph remains flat at 0 packets per second, even when the computer is actively using the internet.
+
+**Reason:** The `monitor_traffic` function currently calls Scapy's `sniff()` without specifying an interface (`iface=None`). On Windows, Scapy often defaults to the Loopback adapter (`127.0.0.1`) or a virtual adapter (Hyper-V/VMware) instead of the active Wi-Fi/Ethernet card.
+
+**Future Fix:** Apply the same route-based interface detection logic used in the ARP module to force `sniff()` to bind to the primary internet-facing adapter.
+```
+def monitor_traffic(interface=None, stop_event=None, progress_callback=None):
+    utils._log_operation("Starting Traffic Monitor...")
+    if progress_callback: progress_callback("Initializing Sniffer...")
+    
+    # TODO: BUG - WRONG INTERFACE SELECTION
+    # Currently: sniff() defaults to conf.iface, which might be Loopback on Windows.
+    # FIX: Auto-detect interface like in arp_scan:
+    # try:
+    #     route = conf.route.route("8.8.8.8")
+    #     interface = route[0]
+    # except: interface = None
+    
+    try:
+        while not (stop_event and stop_event.is_set()):
+            start_t = time.time()
+            # If interface is None, it guesses (often wrongly on Windows)
+            packets = sniff(timeout=1, count=0, iface=interface) 
+            count = len(packets)
+            # ... rest of loop ...
+```
+</details>
 
 ## 📱 Mobile App
   To control this tool from your phone, download the [PyNetSketch Mobile App](https://github.com/KretliJ/PyNetSketch_Mobile) (Flutter).
