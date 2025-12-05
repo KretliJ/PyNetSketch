@@ -5,7 +5,7 @@
 
 Note: This project does not currently provide a full release executable.
 
-### 🌟 Key Features
+## 🌟 Key Features
   * Hybrid Engine (Python + Rust): Critical scanning tasks are offloaded to a compiled Rust core for better execution performance.
   * Distributed Architecture (New!): operates in two modes: Standalone Desktop or Remote Probe Server for mobile clients.
   * Mobile Companion Support: Fully compatible with the PyNetSketch Mobile app for Android/iOS.
@@ -21,7 +21,7 @@ Note: This project does not currently provide a full release executable.
   * Export Reports: Save scan findings to CSV or HTML reports.
   * Non-Blocking UI: All network tasks run in background threads, keeping the interface responsive.
     
-### 🛠️ Modes
+## 🛠️ Modes
   * 🖥️ Standalone (GUI): The classic desktop experience. Runs the Tkinter GUI locally.
     * Best for: Local diagnostics, single-user scenarios.
 
@@ -30,7 +30,7 @@ Note: This project does not currently provide a full release executable.
     * Remote Control: Accepts JSON commands (Ping, Scan, Trace) via TCP sockets from the mobile app.
     * Bypass Restrictions: Allows mobile devices to perform raw socket operations (like ARP scans) by offloading them to the PC.
 
-### 📂 Project Structure
+## 📂 Project Structure
   * gui_app.py: Main entry point. Handles the Tkinter GUI, threading, and visualization logic.
   * net_utils.py: Contains raw socket and Scapy logic for scanning, pinging, and routing.
   * utils.py: Helper functions for logging and background thread management.
@@ -40,13 +40,13 @@ Note: This project does not currently provide a full release executable.
   
   NOTE: This is subject to change as development moves forward.
 
-### 🛠️ Prerequisites
+## 🛠️ Prerequisites (development only)
   * Python 3.8+
   * Rust (optional, for compiling the core module): curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
   * ~~Npcap (Windows only): Required for Scapy to sniff/send packets. Download from nmap.org/npcap. Ensure you check "Install with WinPcap API-compatible Mode".~~
     * (v.1.2) - This requirement is now handled when initiating the application. Windows only.
 
-### 📦 Installation
+## 📦 Installation
   Clone the repository:
     ```
     git clone https://github.com/yourusername/pynetsketch.git
@@ -63,7 +63,7 @@ Note: This project does not currently provide a full release executable.
     ```
   NOTE: This is subject to change as development moves forward.
 
-### 🚀 Usage
+## 🚀 Usage
   Running the Application
   
   Note: This application constructs raw network packets (ARP, TCP SYN). Administrator/Root privileges are necessary. Source code is open and available for review.
@@ -82,7 +82,7 @@ Note: This project does not currently provide a full release executable.
     
   ![TracertGIF](projectDiagrams/ARPScan.gif)
 
-### 🛠️ Version prototyping
+## 🛠️ Version prototyping
   * v1.0 - Basic functionality. ARP Scan, Ping, Trcrt
   * v1.1 - Basic functionality. Monitor, Port Scan, Topology Draw, Exporting.
   * v1.2 - Solved dependency handling.
@@ -90,13 +90,31 @@ Note: This project does not currently provide a full release executable.
   * v1.4 - Distributed Server Mode, Auto-Discovery Protocol, Mobile App Integration
   * v1.5 - Pre-release executable, fixes and error documentation.
 
-### 📱 Mobile App
+## ⚠️ Known Limitations (v1.5 Debug)
+
+### 1. Large Subnet Scans (The "Atomic Scapy" Issue)
+**Symptom:** Scanning a `/16` network (65,536 hosts) causes the application to "freeze" or become unresponsive to the "STOP" button.
+
+**Reason:** The current implementation passes the entire subnet to the underlying Scapy engine in a single atomic call. The Python Global Interpreter Lock (GIL) is held by the Scapy C-extensions until all packets are sent, preventing the GUI thread from interrupting the process.
+
+**Workaround:** Scan smaller subnets (e.g., `/24`) or wait for the operation to complete.
+
+**Future Fix:** Implement "Subnet Chunking" to break `/16` requests into 256 sequential `/24` scans, allowing for interruption between chunks. Implement visual feedback for each chunk.
+
+### 2. Rust Module Cancellation Latency
+**Symptom:** When running "Port Scan" or "TCP Ping" (Rust mode), clicking "STOP" does not halt the operation immediately.
+
+**Reason:** The Rust `pynetsketch_core` module uses `Rayon` for parallel iteration. Currently, the parallel threads do not poll the Python stop-event flag during execution. The operation will stop only after the current batch of threads finishes their work.
+
+**Future Fix:** Implement a shared `AtomicBool` or FFI callback to allow Python to interrupt the Rust thread pool instantly.
+
+## 📱 Mobile App
   To control this tool from your phone, download the [PyNetSketch Mobile App](https://github.com/KretliJ/PyNetSketch_Mobile) (Flutter).
   
-### 📜 License
+## 📜 License
   This project is licensed under the MIT License.
 
-### ⚠️ Disclaimer
+## ⚠️ Disclaimer
   This tool is intended for Educational Purposes Only (my own or otherwise). 
   
   Please use it only on networks you own or have explicit permission to scan. The developer assume no liability for misuse.
