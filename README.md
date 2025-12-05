@@ -13,7 +13,7 @@ Note: This project does not currently provide a full release executable.
     * Ping Host: Smart availability check using ICMP, falling back to TCP (Ports 80, 443, 53, 853) if blocked by firewalls.
     * Trace Route: TCP-SYN based traceroute to bypass standard ICMP blocks, featuring "Hidden Node" detection for firewalls/CGNAT.
     * Tracert (No DNS): traceroute mode that skips DNS resolution.
-    * ARP Table Scan: Fast local subnet discovery with MAC Address and Vendor resolution (via api.macvendors).
+    * ARP Table Scan: Fast local subnet discovery with MAC Address and Vendor resolution.
     * Port Scan: Checks common TCP and UDP ports to identify open services.
   * Traffic Monitor: Real-time line graph visualizing network packet traffic.
   * Visual Topology Mapper: Automatically generates a "hub-and-spoke" diagram of subnets and devices, grouped by subnet gateways.
