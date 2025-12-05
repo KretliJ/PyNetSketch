@@ -99,6 +99,8 @@ Note: This project does not currently provide a pre-compiled executable.
   This tool is intended for Educational Purposes Only (my own or otherwise). 
   
   Please use it only on networks you own or have explicit permission to scan. The developer assume no liability for misuse.
+
+  I don't want to make you stop using advanced tools, I want to show you the way towards them.
   
   Built with ❤️ using Python, Tkinter & Rust.
 
