@@ -108,6 +108,15 @@ Note: This project does not currently provide a full release executable.
 
 **Future Fix:** Implement a shared `AtomicBool` or FFI callback to allow Python to interrupt the Rust thread pool instantly.
 
+### 3. Logs Missing in Executable Mode
+**Symptom:** When running the compiled `.exe` file, the `LOGS` folder does not appear next to the executable.
+
+**Reason:** The application currently uses `os.path.abspath(__file__)` to determine the log location. In a PyInstaller "One-File" build, this path resolves to a temporary system directory (e.g., `%TEMP%/_MEIxxxx`) used by the bootloader, rather than the actual location of the `.exe` file.
+
+**Workaround:** Logs are being generated, but they are buried in your system's temporary folder and deleted when the app closes.
+
+**Future Fix:** Update the path detection logic to check for `sys.frozen` and use `sys.executable` (the exe path) instead of `__file__`.
+
 ## 📱 Mobile App
   To control this tool from your phone, download the [PyNetSketch Mobile App](https://github.com/KretliJ/PyNetSketch_Mobile) (Flutter).
   
