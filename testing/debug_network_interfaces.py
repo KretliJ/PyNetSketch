@@ -32,3 +32,7 @@ except Exception as e:
 print("\n=== INSTRUCTIONS ===")
 print("1. Look for the GUID that has your IP (192.168.3.x).")
 print("2. If it DOES NOT match the GUID Scapy used in your logs, Scapy is picking the wrong card.")
+user_response = input("Press Enter to continue, or type something fun: ")
+
+print(f"{user_response}")
+print("Closing...")
