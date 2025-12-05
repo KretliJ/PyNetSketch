@@ -365,3 +365,45 @@
 [2025-12-04 02:07:07] [GUI] - Hop 9: 1.1.1.1 - 107.1ms
 [2025-12-04 02:07:07] [INFO] - Thread finished for: perform_traceroute
 [2025-12-04 02:07:07] [GUI] - Task Completed in 3.2s.
+[2025-12-05 13:59:51] [GUI] - Reset target to local subnet: 172.20.20.0/24
+[2025-12-05 13:59:51] [GUI] - App started. Local IP: 172.20.20.222
+[2025-12-05 14:00:05] [GUI] - Scanning 172.20.20.0/24-172.20.21.0/24...
+[2025-12-05 14:00:05] [INFO] - Thread started for: arp_scan
+[2025-12-05 14:00:05] [INFO] - Processing scan targets: ['172.20.20.0/24', '172.20.21.0/24']
+[2025-12-05 14:00:05] [GUI] - Scanning 172.20.20.0/24 via \Device\NPF_{9F98E4ED-5E49-4FA0-AE59-93679514AA52}
+[2025-12-05 14:00:35] [INFO] - Finished 172.20.20.0/24 in 4548ms. Found 94 devices.
+[2025-12-05 14:00:35] [GUI] - Finished 172.20.20.0/24 in 4548ms. Found 94 devices.
+[2025-12-05 14:00:35] [GUI] - Scanning 172.20.21.0/24 via \Device\NPF_{9F98E4ED-5E49-4FA0-AE59-93679514AA52}
+[2025-12-05 14:00:42] [INFO] - Finished 172.20.21.0/24 in 3820ms. Found 97 devices.
+[2025-12-05 14:00:42] [GUI] - Finished 172.20.21.0/24 in 3820ms. Found 97 devices.
+[2025-12-05 14:00:42] [INFO] - Thread finished for: arp_scan
+[2025-12-05 14:00:42] [GUI] - Scan Finished in 36.3s.
+[2025-12-05 14:05:28] [INFO] - ICMP Pinging 8.8.8.8...
+[2025-12-05 14:05:44] [INFO] - Processing scan targets: ['172.20.20.0/24']
+[2025-12-05 14:06:06] [INFO] - Finished 172.20.20.0/24 in 4802ms. Found 90 devices.
+[2025-12-05 14:17:44] [GUI] - Reset target to local subnet: 172.20.20.0/24
+[2025-12-05 14:17:44] [GUI] - App started. Local IP: 172.20.20.222
+[2025-12-05 14:17:55] [GUI] - Scanning 172.20.20.0/24-172.20.21.0/24...
+[2025-12-05 14:17:55] [INFO] - Thread started for: arp_scan
+[2025-12-05 14:17:55] [INFO] - Processing scan targets: ['172.20.20.0/24', '172.20.21.0/24']
+[2025-12-05 14:17:55] [GUI] - Scanning 172.20.20.0/24 via \Device\NPF_{9F98E4ED-5E49-4FA0-AE59-93679514AA52}
+[2025-12-05 14:18:15] [INFO] - Finished 172.20.20.0/24 in 3113ms. Found 95 devices.
+[2025-12-05 14:18:15] [GUI] - Finished 172.20.20.0/24 in 3113ms. Found 95 devices.
+[2025-12-05 14:18:15] [GUI] - Scanning 172.20.21.0/24 via \Device\NPF_{9F98E4ED-5E49-4FA0-AE59-93679514AA52}
+[2025-12-05 14:18:21] [INFO] - Finished 172.20.21.0/24 in 3164ms. Found 98 devices.
+[2025-12-05 14:18:21] [GUI] - Finished 172.20.21.0/24 in 3164ms. Found 98 devices.
+[2025-12-05 14:18:21] [INFO] - Thread finished for: arp_scan
+[2025-12-05 14:18:21] [GUI] - Scan Finished in 26.1s.
+[2025-12-05 14:25:15] [GUI] - Reset target to local subnet: 172.20.20.0/24
+[2025-12-05 14:25:15] [GUI] - App started. Local IP: 172.20.20.222
+[2025-12-05 14:26:11] [GUI] - Scanning 172.20.20.0/24-172.20.21.0/24...
+[2025-12-05 14:26:11] [INFO] - Thread started for: arp_scan
+[2025-12-05 14:26:11] [INFO] - Processing scan targets: ['172.20.20.0/24', '172.20.21.0/24']
+[2025-12-05 14:26:11] [GUI] - Scanning 172.20.20.0/24 via \Device\NPF_{9F98E4ED-5E49-4FA0-AE59-93679514AA52}
+[2025-12-05 14:26:30] [INFO] - Finished 172.20.20.0/24 in 3116ms. Found 97 devices.
+[2025-12-05 14:26:30] [GUI] - Finished 172.20.20.0/24 in 3116ms. Found 97 devices.
+[2025-12-05 14:26:30] [GUI] - Scanning 172.20.21.0/24 via \Device\NPF_{9F98E4ED-5E49-4FA0-AE59-93679514AA52}
+[2025-12-05 14:26:34] [INFO] - Finished 172.20.21.0/24 in 3035ms. Found 99 devices.
+[2025-12-05 14:26:34] [GUI] - Finished 172.20.21.0/24 in 3035ms. Found 99 devices.
+[2025-12-05 14:26:34] [INFO] - Thread finished for: arp_scan
+[2025-12-05 14:26:34] [GUI] - Scan Finished in 23.1s.

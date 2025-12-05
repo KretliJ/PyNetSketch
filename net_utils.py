@@ -402,10 +402,52 @@ def monitor_traffic(interface=None, stop_event=None, progress_callback=None):
 # Returns a dictionary where keys are Gateway IPs as strings and values are lists of device dictionaries belonging to that subnet.
 def organize_scan_results_by_subnet(devices):
     subnets = {}
+    
+    # Defines default mask if not given
+    DEFAULT_MASK = "/24" 
+    
+    # Group by Network ID (X.Y.Z.0)
+    grouped_by_net_id = {}
     for dev in devices:
-        parts = dev['ip'].split('.')
-        if len(parts) == 4:
-            gw = f"{parts[0]}.{parts[1]}.{parts[2]}.1"
-            if gw not in subnets: subnets[gw] = []
-            subnets[gw].append(dev)
+        ip_addr = dev['ip']
+        try:
+            # Creates an IP network object from device's and mask's IP
+            network_id = str(ipaddress.ip_network(f"{ip_addr}{DEFAULT_MASK}", strict=False).network_address)
+            
+            if network_id not in grouped_by_net_id: 
+                grouped_by_net_id[network_id] = []
+            
+            # Store IP for futher analysis
+            grouped_by_net_id[network_id].append(ip_addr)
+            
+        except ValueError:
+            # Ignores invalid IPs (e.g.: 0.0.0.0 or 127.0.0.1)
+            continue 
+
+    # Determine cluster ID (main node)
+    # This version consider cluster ID as lowest valid IP found in subnet (.1, .2, etc.)
+    for network_id, ip_list in grouped_by_net_id.items():
+        # IPs to integer to find smallest
+        ip_ints = []
+        for ip_str in ip_list:
+            try:
+                ip_obj = ipaddress.IPv4Address(ip_str)
+                # Verifies if IP is not Network ID (.0) or Broadcast (.255)
+                if ip_obj != ipaddress.ip_network(f"{network_id}{DEFAULT_MASK}").network_address and \
+                   ip_obj != ipaddress.ip_network(f"{network_id}{DEFAULT_MASK}").broadcast_address:
+                    ip_ints.append(int(ip_obj))
+            except ValueError:
+                continue
+
+        if ip_ints:
+            # Selects IP with lowest value (Closest from .1m or .1 itself)
+            lowest_ip_int = min(ip_ints)
+            cluster_ip = str(ipaddress.IPv4Address(lowest_ip_int))
+        else:
+            # Fallback: No valid IPs, use network address as identifier
+            cluster_ip = network_id 
+        
+        # Group final devices using new Cluster ID
+        subnets[cluster_ip] = [dev for dev in devices if dev['ip'] in ip_list]
+            
     return subnets
