@@ -1,3 +1,30 @@
+# --- Python ---
 tempCodeRunnerFile.py
 npcap-installer.exe
 __pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+pip-log.txt
+
+# --- PyInstaller (Build Artifacts) ---
+build/
+dist/
+*.spec
+
+# --- Rust (Cargo) ---
+target/
+Cargo.lock
+
+# --- IDEs ---
+.vscode/
+.idea/
+*.swp
+
+# --- Local logs ---
+LOGS/
+*.log
