@@ -1,452 +1,50 @@
-[2025-12-03 19:54:07] [GUI] - Reset target to local subnet: 192.168.3.0/24
-[2025-12-03 19:54:07] [GUI] - App started. Local IP: 192.168.3.2
-[2025-12-03 19:54:28] [GUI] - Tracing 1.1.1.1 (DNS: Disabled)...
-[2025-12-03 19:54:28] [INFO] - Thread started for: perform_traceroute
-[2025-12-03 19:54:28] [INFO] - Determining best trace method for 1.1.1.1...
-[2025-12-03 19:54:28] [GUI] - Probing 1.1.1.1...
-[2025-12-03 19:54:28] [INFO] - Tracing using ICMP
-[2025-12-03 19:54:28] [GUI] - Hop 1: 192.168.3.1 - 2.8ms
-[2025-12-03 19:54:28] [GUI] - Hop 2: 192.168.15.1 - 3.6ms
-[2025-12-03 19:54:28] [GUI] - Hop 3: 179.245.162.1 - 3.9ms
-[2025-12-03 19:54:28] [GUI] - Hop 4: 201.1.224.138 - 28.6ms
-[2025-12-03 19:54:30] [GUI] - Hop 5: * Request timed out (1063.2ms)
-[2025-12-03 19:54:30] [INFO] -     [Analysis] Hop 5 is likely a HIDDEN NODE (Firewall/CGNAT)
-[2025-12-03 19:54:30] [GUI] -     [Analysis] Hop 5 is likely a HIDDEN NODE (Firewall/CGNAT)
-[2025-12-03 19:54:30] [GUI] - Hop 6: 152.255.212.181 - 27.9ms
-[2025-12-03 19:54:31] [GUI] - Hop 7: * Request timed out (1008.5ms)
-[2025-12-03 19:54:32] [GUI] - Hop 8: * Request timed out (1042.9ms)
-[2025-12-03 19:54:32] [INFO] -     [Analysis] Hop 7 is likely a HIDDEN NODE (Firewall/CGNAT)
-[2025-12-03 19:54:32] [GUI] -     [Analysis] Hop 7 is likely a HIDDEN NODE (Firewall/CGNAT)
-[2025-12-03 19:54:32] [INFO] -     [Analysis] Hop 8 is likely a HIDDEN NODE (Firewall/CGNAT)
-[2025-12-03 19:54:32] [GUI] -     [Analysis] Hop 8 is likely a HIDDEN NODE (Firewall/CGNAT)
-[2025-12-03 19:54:32] [GUI] - Hop 9: 1.1.1.1 - 26.3ms
-[2025-12-03 19:54:32] [INFO] - Thread finished for: perform_traceroute
-[2025-12-03 19:54:32] [GUI] - Task Completed in 3.3s.
-[2025-12-03 19:54:38] [GUI] - Reset target to local subnet: 192.168.3.0/24
-[2025-12-03 19:54:39] [GUI] - Scanning 192.168.3.0/24...
-[2025-12-03 19:54:39] [INFO] - Thread started for: arp_scan
-[2025-12-03 19:54:39] [INFO] - Processing scan targets: ['192.168.3.0/24']
-[2025-12-03 19:54:39] [GUI] - Scanning 192.168.3.0/24 via \Device\NPF_{FC528DED-1309-4AA5-B5B0-C17E8C41405D}
-[2025-12-03 19:54:43] [INFO] - Finished 192.168.3.0/24 in 2250ms. Found 3 devices.
-[2025-12-03 19:54:43] [GUI] - Finished 192.168.3.0/24 in 2250ms. Found 3 devices.
-[2025-12-03 19:54:43] [INFO] - Thread finished for: arp_scan
-[2025-12-03 19:54:43] [GUI] - Scan Finished in 4.4s.
-[2025-12-03 22:28:55] [GUI] - Reset target to local subnet: 192.168.3.0/24
-[2025-12-03 22:28:55] [GUI] - App started. Local IP: 192.168.3.2
-[2025-12-03 22:35:26] [GUI] - Reset target to local subnet: 192.168.3.0/24
-[2025-12-03 22:35:26] [GUI] - App started. Local IP: 192.168.3.2
-[2025-12-03 22:38:23] [GUI] - Reset target to local subnet: 192.168.3.0/24
-[2025-12-03 22:38:23] [GUI] - App started. Local IP: 192.168.3.2
-[2025-12-03 22:38:28] [GUI] - Tracing 8.8.8.8 (DNS: Disabled)...
-[2025-12-03 22:38:28] [INFO] - Thread started for: perform_traceroute
-[2025-12-03 22:38:28] [INFO] - Determining best trace method for 8.8.8.8...
-[2025-12-03 22:38:28] [GUI] - Probing 8.8.8.8...
-[2025-12-03 22:38:28] [INFO] - Tracing using ICMP
-[2025-12-03 22:38:28] [GUI] - Hop 1: 192.168.3.1 - 3.0ms
-[2025-12-03 22:38:28] [GUI] - Hop 2: 192.168.15.1 - 2.8ms
-[2025-12-03 22:38:28] [GUI] - Hop 3: 179.245.162.1 - 4.1ms
-[2025-12-03 22:38:28] [GUI] - Hop 4: 201.1.224.138 - 24.2ms
-[2025-12-03 22:38:29] [GUI] - Hop 5: * Request timed out (1003.0ms)
-[2025-12-03 22:38:30] [GUI] - Hop 6: * Request timed out (1006.4ms)
-[2025-12-03 22:38:31] [GUI] - Hop 7: * Request timed out (1002.6ms)
-[2025-12-03 22:38:31] [INFO] -     [Analysis] Hop 5 is likely a HIDDEN NODE (Firewall/CGNAT)
-[2025-12-03 22:38:31] [GUI] -     [Analysis] Hop 5 is likely a HIDDEN NODE (Firewall/CGNAT)
-[2025-12-03 22:38:31] [INFO] -     [Analysis] Hop 6 is likely a HIDDEN NODE (Firewall/CGNAT)
-[2025-12-03 22:38:31] [GUI] -     [Analysis] Hop 6 is likely a HIDDEN NODE (Firewall/CGNAT)
-[2025-12-03 22:38:31] [INFO] -     [Analysis] Hop 7 is likely a HIDDEN NODE (Firewall/CGNAT)
-[2025-12-03 22:38:31] [GUI] -     [Analysis] Hop 7 is likely a HIDDEN NODE (Firewall/CGNAT)
-[2025-12-03 22:38:31] [GUI] - Hop 8: 72.14.243.38 - 87.3ms
-[2025-12-03 22:38:31] [GUI] - Hop 9: 216.239.58.97 - 26.7ms
-[2025-12-03 22:38:31] [GUI] - Hop 10: 209.85.242.51 - 26.4ms
-[2025-12-03 22:38:32] [GUI] - Hop 11: 8.8.8.8 - 26.1ms
-[2025-12-03 22:38:32] [INFO] - Thread finished for: perform_traceroute
-[2025-12-03 22:38:32] [GUI] - Task Completed in 3.3s.
-[2025-12-03 23:14:21] [INFO] - Determining best trace method for 8.8.8.8...
-[2025-12-03 23:14:21] [INFO] - Tracing using ICMP
-[2025-12-03 23:14:47] [INFO] - ICMP Pinging 8.8.8.8...
-[2025-12-03 23:15:02] [INFO] -     [Analysis] Hop 5 is likely a HIDDEN NODE (Firewall/CGNAT)
-[2025-12-03 23:15:02] [INFO] -     [Analysis] Hop 6 is likely a HIDDEN NODE (Firewall/CGNAT)
-[2025-12-03 23:15:02] [INFO] -     [Analysis] Hop 7 is likely a HIDDEN NODE (Firewall/CGNAT)
-[2025-12-03 23:15:06] [INFO] - Starting Port Scan on 192.168.15.1
-[2025-12-03 23:15:06] [ERROR] - Rust scan failed (module 'pynetsketch_core' has no attribute 'rust_scan_ports'). Falling back to Python.
-[2025-12-03 23:15:33] [INFO] - Determining best trace method for 1.1.1.1...
-[2025-12-03 23:15:33] [INFO] - Tracing using ICMP
-[2025-12-03 23:16:07] [INFO] -     [Analysis] Hop 5 is likely a HIDDEN NODE (Firewall/CGNAT)
-[2025-12-03 23:16:10] [INFO] -     [Analysis] Hop 7 is likely a HIDDEN NODE (Firewall/CGNAT)
-[2025-12-03 23:16:10] [INFO] -     [Analysis] Hop 8 is likely a HIDDEN NODE (Firewall/CGNAT)
-[2025-12-03 23:21:46] [INFO] - Determining best trace method for 8.8.8.8...
-[2025-12-03 23:21:46] [INFO] - Tracing using ICMP
-[2025-12-03 23:22:23] [INFO] -     [Analysis] Hop 5 is likely a HIDDEN NODE (Firewall/CGNAT)
-[2025-12-03 23:22:23] [INFO] -     [Analysis] Hop 6 is likely a HIDDEN NODE (Firewall/CGNAT)
-[2025-12-03 23:22:23] [INFO] -     [Analysis] Hop 7 is likely a HIDDEN NODE (Firewall/CGNAT)
-[2025-12-03 23:25:21] [INFO] - ICMP Pinging 8.8.8.8...
-[2025-12-03 23:25:23] [INFO] - Starting Port Scan on 8.8.8.8
-[2025-12-03 23:25:23] [ERROR] - Rust scan failed (module 'pynetsketch_core' has no attribute 'rust_scan_ports'). Falling back to Python.
-[2025-12-03 23:25:52] [INFO] - ICMP Pinging 192.168.15.1...
-[2025-12-03 23:25:53] [INFO] - Starting Port Scan on 192.168.15.1
-[2025-12-03 23:25:53] [ERROR] - Rust scan failed (module 'pynetsketch_core' has no attribute 'rust_scan_ports'). Falling back to Python.
-[2025-12-03 23:26:09] [INFO] - Determining best trace method for 192.168.15.1...
-[2025-12-03 23:26:09] [INFO] - Tracing using ICMP
-[2025-12-03 23:27:57] [INFO] - ICMP Pinging 1.1.1.1...
-[2025-12-03 23:29:04] [INFO] - Determining best trace method for 8.8.8.8...
-[2025-12-03 23:29:04] [INFO] - Tracing using ICMP
-[2025-12-03 23:29:40] [INFO] -     [Analysis] Hop 5 is likely a HIDDEN NODE (Firewall/CGNAT)
-[2025-12-03 23:29:40] [INFO] -     [Analysis] Hop 6 is likely a HIDDEN NODE (Firewall/CGNAT)
-[2025-12-03 23:29:40] [INFO] -     [Analysis] Hop 7 is likely a HIDDEN NODE (Firewall/CGNAT)
-[2025-12-03 23:30:40] [INFO] - Determining best trace method for 8.8.8.8...
-[2025-12-03 23:30:40] [INFO] - Tracing using ICMP
-[2025-12-03 23:31:16] [INFO] -     [Analysis] Hop 5 is likely a HIDDEN NODE (Firewall/CGNAT)
-[2025-12-03 23:31:16] [INFO] -     [Analysis] Hop 6 is likely a HIDDEN NODE (Firewall/CGNAT)
-[2025-12-03 23:31:16] [INFO] -     [Analysis] Hop 7 is likely a HIDDEN NODE (Firewall/CGNAT)
-[2025-12-03 23:34:33] [INFO] - Determining best trace method for 8.8.8.8...
-[2025-12-03 23:34:33] [INFO] - Tracing using ICMP
-[2025-12-03 23:35:10] [INFO] -     [Analysis] Hop 5 is likely a HIDDEN NODE (Firewall/CGNAT)
-[2025-12-03 23:35:10] [INFO] -     [Analysis] Hop 6 is likely a HIDDEN NODE (Firewall/CGNAT)
-[2025-12-03 23:35:10] [INFO] -     [Analysis] Hop 7 is likely a HIDDEN NODE (Firewall/CGNAT)
-[2025-12-03 23:36:34] [INFO] - Starting Port Scan on 8.8.8.8
-[2025-12-03 23:36:34] [ERROR] - Rust scan failed (module 'pynetsketch_core' has no attribute 'rust_scan_ports'). Falling back to Python.
-[2025-12-03 23:36:50] [INFO] - ICMP Pinging 8.8.8.8...
-[2025-12-03 23:36:53] [INFO] - Determining best trace method for 8.8.8.8...
-[2025-12-03 23:36:53] [INFO] - Tracing using ICMP
-[2025-12-03 23:36:56] [INFO] -     [Analysis] Hop 5 is likely a HIDDEN NODE (Firewall/CGNAT)
-[2025-12-03 23:36:56] [INFO] -     [Analysis] Hop 6 is likely a HIDDEN NODE (Firewall/CGNAT)
-[2025-12-03 23:36:56] [INFO] -     [Analysis] Hop 7 is likely a HIDDEN NODE (Firewall/CGNAT)
-[2025-12-03 23:43:23] [INFO] - ICMP Pinging 8.8.8.8...
-[2025-12-03 23:43:26] [INFO] - Determining best trace method for 8.8.8.8...
-[2025-12-03 23:43:26] [INFO] - Tracing using ICMP
-[2025-12-03 23:43:29] [INFO] -     [Analysis] Hop 5 is likely a HIDDEN NODE (Firewall/CGNAT)
-[2025-12-03 23:43:29] [INFO] -     [Analysis] Hop 6 is likely a HIDDEN NODE (Firewall/CGNAT)
-[2025-12-03 23:43:29] [INFO] -     [Analysis] Hop 7 is likely a HIDDEN NODE (Firewall/CGNAT)
-[2025-12-03 23:47:24] [INFO] - Determining best trace method for 8.8.8.8...
-[2025-12-03 23:47:24] [INFO] - Tracing using ICMP
-[2025-12-03 23:47:27] [INFO] -     [Analysis] Hop 5 is likely a HIDDEN NODE (Firewall/CGNAT)
-[2025-12-03 23:47:27] [INFO] -     [Analysis] Hop 6 is likely a HIDDEN NODE (Firewall/CGNAT)
-[2025-12-03 23:47:27] [INFO] -     [Analysis] Hop 7 is likely a HIDDEN NODE (Firewall/CGNAT)
-[2025-12-03 23:47:58] [INFO] - ICMP Pinging 192.168.1.0/24...
-[2025-12-03 23:47:58] [INFO] - ICMP failed for 192.168.1.0/24. Trying TCP probes...
-[2025-12-03 23:48:04] [INFO] - ICMP Pinging 192.168.3.1/24...
-[2025-12-03 23:48:04] [INFO] - ICMP failed for 192.168.3.1/24. Trying TCP probes...
-[2025-12-03 23:48:05] [INFO] - ICMP Pinging 192.168.3.1/24...
-[2025-12-03 23:48:05] [INFO] - ICMP failed for 192.168.3.1/24. Trying TCP probes...
-[2025-12-03 23:48:06] [INFO] - ICMP Pinging 192.168.3.1/24...
-[2025-12-03 23:48:06] [INFO] - ICMP failed for 192.168.3.1/24. Trying TCP probes...
-[2025-12-03 23:48:09] [INFO] - ICMP Pinging 192.168.3.1...
-[2025-12-03 23:48:20] [INFO] - Processing scan targets: ['192.168.3.0/24']
-[2025-12-03 23:48:24] [INFO] - Finished 192.168.3.0/24 in 2285ms. Found 4 devices.
-[2025-12-03 23:48:31] [INFO] - Determining best trace method for 192.168.3.0/24...
-[2025-12-03 23:49:30] [INFO] - ICMP Pinging 192.168.3.0/24...
-[2025-12-03 23:49:30] [INFO] - ICMP failed for 192.168.3.0/24. Trying TCP probes...
-[2025-12-03 23:49:33] [INFO] - ICMP Pinging 192.168.3.1...
-[2025-12-03 23:49:34] [INFO] - Starting Port Scan on 192.168.3.1
-[2025-12-03 23:49:34] [ERROR] - Rust scan failed (module 'pynetsketch_core' has no attribute 'rust_scan_ports'). Falling back to Python.
-[2025-12-03 23:49:54] [INFO] - Determining best trace method for 1.1.1.1...
-[2025-12-03 23:49:54] [INFO] - Tracing using ICMP
-[2025-12-03 23:49:56] [INFO] -     [Analysis] Hop 5 is likely a HIDDEN NODE (Firewall/CGNAT)
-[2025-12-03 23:49:58] [INFO] -     [Analysis] Hop 7 is likely a HIDDEN NODE (Firewall/CGNAT)
-[2025-12-03 23:49:58] [INFO] -     [Analysis] Hop 8 is likely a HIDDEN NODE (Firewall/CGNAT)
-[2025-12-03 23:52:04] [INFO] - Starting Port Scan on 192.168.3.1/24
-[2025-12-03 23:52:04] [ERROR] - Rust scan failed (module 'pynetsketch_core' has no attribute 'rust_scan_ports'). Falling back to Python.
-[2025-12-03 23:52:08] [INFO] - Starting Port Scan on 192.168.3.1
-[2025-12-03 23:52:08] [ERROR] - Rust scan failed (module 'pynetsketch_core' has no attribute 'rust_scan_ports'). Falling back to Python.
-[2025-12-03 23:52:25] [INFO] - Determining best trace method for 1.1.1.1...
-[2025-12-03 23:52:26] [INFO] - Tracing using ICMP
-[2025-12-03 23:52:36] [INFO] - ICMP Pinging 1.1.1.1...
-[2025-12-03 23:52:37] [INFO] - Starting Port Scan on 1.1.1.1
-[2025-12-03 23:52:37] [ERROR] - Rust scan failed (module 'pynetsketch_core' has no attribute 'rust_scan_ports'). Falling back to Python.
-[2025-12-03 23:52:40] [INFO] - Processing scan targets: ['1.1.1.1']
-[2025-12-03 23:52:42] [INFO] - Finished 1.1.1.1 in 2005ms. Found 0 devices.
-[2025-12-03 23:55:54] [GUI] - Reset target to local subnet: 192.168.3.0/24
-[2025-12-03 23:55:54] [GUI] - App started. Local IP: 192.168.3.2
-[2025-12-03 23:55:56] [GUI] - Reset target to local subnet: 192.168.3.0/24
-[2025-12-03 23:55:58] [GUI] - Scanning 192.168.3.0/24...
-[2025-12-03 23:55:58] [INFO] - Thread started for: arp_scan
-[2025-12-03 23:55:58] [INFO] - Processing scan targets: ['192.168.3.0/24']
-[2025-12-03 23:55:58] [GUI] - Scanning 192.168.3.0/24 via \Device\NPF_{FC528DED-1309-4AA5-B5B0-C17E8C41405D}
-[2025-12-03 23:56:02] [INFO] - Finished 192.168.3.0/24 in 2152ms. Found 4 devices.
-[2025-12-03 23:56:02] [GUI] - Finished 192.168.3.0/24 in 2152ms. Found 4 devices.
-[2025-12-03 23:56:02] [INFO] - Thread finished for: arp_scan
-[2025-12-03 23:56:02] [GUI] - Scan Finished in 4.3s.
-[2025-12-03 23:56:14] [GUI] - Pinging 1.1.1.1...
-[2025-12-03 23:56:14] [INFO] - Thread started for: ping_host
-[2025-12-03 23:56:14] [INFO] - ICMP Pinging 1.1.1.1...
-[2025-12-03 23:56:15] [INFO] - Thread finished for: ping_host
-[2025-12-03 23:56:15] [GUI] - Ping Result: 1.1.1.1 is ONLINE (RTT: 35.34ms)
-[2025-12-03 23:56:15] [GUI] - Task Completed in 0.0s.
-[2025-12-03 23:56:17] [GUI] - Tracing 1.1.1.1 (DNS: Disabled)...
-[2025-12-03 23:56:17] [INFO] - Thread started for: perform_traceroute
-[2025-12-03 23:56:17] [INFO] - Determining best trace method for 1.1.1.1...
-[2025-12-03 23:56:17] [GUI] - Probing 1.1.1.1...
-[2025-12-03 23:56:17] [INFO] - Tracing using ICMP
-[2025-12-03 23:56:17] [GUI] - Hop 1: 192.168.3.1 - 2.3ms
-[2025-12-03 23:56:17] [GUI] - Hop 2: 192.168.15.1 - 2.7ms
-[2025-12-03 23:56:17] [GUI] - Hop 3: 179.245.162.1 - 3.9ms
-[2025-12-03 23:56:17] [GUI] - Hop 4: 201.1.224.138 - 24.2ms
-[2025-12-03 23:56:18] [GUI] - Hop 5: * Request timed out (1015.7ms)
-[2025-12-03 23:56:18] [INFO] -     [Analysis] Hop 5 is likely a HIDDEN NODE (Firewall/CGNAT)
-[2025-12-03 23:56:18] [GUI] -     [Analysis] Hop 5 is likely a HIDDEN NODE (Firewall/CGNAT)
-[2025-12-03 23:56:18] [GUI] - Hop 6: 152.255.195.61 - 28.2ms
-[2025-12-03 23:56:19] [GUI] - Hop 7: * Request timed out (1008.6ms)
-[2025-12-03 23:56:20] [GUI] - Hop 8: * Request timed out (1019.4ms)
-[2025-12-03 23:56:20] [INFO] -     [Analysis] Hop 7 is likely a HIDDEN NODE (Firewall/CGNAT)
-[2025-12-03 23:56:20] [GUI] -     [Analysis] Hop 7 is likely a HIDDEN NODE (Firewall/CGNAT)
-[2025-12-03 23:56:20] [INFO] -     [Analysis] Hop 8 is likely a HIDDEN NODE (Firewall/CGNAT)
-[2025-12-03 23:56:20] [GUI] -     [Analysis] Hop 8 is likely a HIDDEN NODE (Firewall/CGNAT)
-[2025-12-03 23:56:20] [GUI] - Hop 9: 1.1.1.1 - 69.8ms
-[2025-12-03 23:56:20] [INFO] - Thread finished for: perform_traceroute
-[2025-12-03 23:56:20] [GUI] - Task Completed in 3.2s.
-[2025-12-04 01:03:46] [INFO] - ICMP Pinging 8.8.8.8...
-[2025-12-04 01:03:55] [INFO] - Determining best trace method for 8.8.8.8...
-[2025-12-04 01:03:55] [INFO] - Tracing using ICMP
-[2025-12-04 01:04:32] [INFO] -     [Analysis] Hop 5 is likely a HIDDEN NODE (Firewall/CGNAT)
-[2025-12-04 01:04:32] [INFO] -     [Analysis] Hop 6 is likely a HIDDEN NODE (Firewall/CGNAT)
-[2025-12-04 01:04:32] [INFO] -     [Analysis] Hop 7 is likely a HIDDEN NODE (Firewall/CGNAT)
-[2025-12-04 01:39:36] [INFO] - Determining best trace method for 8.8.8.8...
-[2025-12-04 01:39:36] [INFO] - Tracing using ICMP
-[2025-12-04 01:39:39] [INFO] -     [Analysis] Hop 5 is likely a HIDDEN NODE (Firewall/CGNAT)
-[2025-12-04 01:39:39] [INFO] -     [Analysis] Hop 6 is likely a HIDDEN NODE (Firewall/CGNAT)
-[2025-12-04 01:39:39] [INFO] -     [Analysis] Hop 7 is likely a HIDDEN NODE (Firewall/CGNAT)
-[2025-12-04 01:39:47] [INFO] - Determining best trace method for 1.1.1.1...
-[2025-12-04 01:39:47] [INFO] - Tracing using ICMP
-[2025-12-04 01:39:50] [INFO] - Determining best trace method for 1.1.1.1...
-[2025-12-04 01:39:50] [INFO] - Tracing using ICMP
-[2025-12-04 01:39:51] [INFO] -     [Analysis] Hop 5 is likely a HIDDEN NODE (Firewall/CGNAT)
-[2025-12-04 01:39:53] [INFO] -     [Analysis] Hop 7 is likely a HIDDEN NODE (Firewall/CGNAT)
-[2025-12-04 01:39:53] [INFO] -     [Analysis] Hop 8 is likely a HIDDEN NODE (Firewall/CGNAT)
-[2025-12-04 01:40:21] [INFO] -     [Analysis] Hop 5 is likely a HIDDEN NODE (Firewall/CGNAT)
-[2025-12-04 01:40:23] [INFO] -     [Analysis] Hop 7 is likely a HIDDEN NODE (Firewall/CGNAT)
-[2025-12-04 01:40:23] [INFO] -     [Analysis] Hop 8 is likely a HIDDEN NODE (Firewall/CGNAT)
-[2025-12-04 01:43:06] [GUI] - Reset target to local subnet: 192.168.3.0/24
-[2025-12-04 01:43:06] [GUI] - App started. Local IP: 192.168.3.2
-[2025-12-04 01:44:14] [GUI] - Reset target to local subnet: 192.168.3.0/24
-[2025-12-04 01:44:18] [GUI] - Scanning 192.168.3.0/24...
-[2025-12-04 01:44:18] [INFO] - Thread started for: arp_scan
-[2025-12-04 01:44:18] [INFO] - Processing scan targets: ['192.168.3.0/24']
-[2025-12-04 01:44:18] [GUI] - Scanning 192.168.3.0/24 via \Device\NPF_{FC528DED-1309-4AA5-B5B0-C17E8C41405D}
-[2025-12-04 01:44:20] [ERROR] - Scan failed for 192.168.3.0/24: 
-[2025-12-04 01:44:20] [INFO] - Thread finished for: arp_scan
-[2025-12-04 01:44:20] [GUI] - Scan Finished in 2.8s.
-[2025-12-04 01:44:28] [GUI] - Scanning 192.168.15.0/24...
-[2025-12-04 01:44:28] [INFO] - Thread started for: arp_scan
-[2025-12-04 01:44:28] [INFO] - Processing scan targets: ['192.168.15.0/24']
-[2025-12-04 01:44:28] [GUI] - Scanning 192.168.15.0/24 via \Device\NPF_{FC528DED-1309-4AA5-B5B0-C17E8C41405D}
-[2025-12-04 01:44:30] [INFO] - Finished 192.168.15.0/24 in 2182ms. Found 0 devices.
-[2025-12-04 01:44:30] [GUI] - Finished 192.168.15.0/24 in 2182ms. Found 0 devices.
-[2025-12-04 01:44:30] [INFO] - Thread finished for: arp_scan
-[2025-12-04 01:44:30] [GUI] - Scan Finished in 2.2s.
-[2025-12-04 01:44:34] [GUI] - Scanning 192.168.3.0/24...
-[2025-12-04 01:44:34] [INFO] - Thread started for: arp_scan
-[2025-12-04 01:44:34] [INFO] - Processing scan targets: ['192.168.3.0/24']
-[2025-12-04 01:44:34] [GUI] - Scanning 192.168.3.0/24 via \Device\NPF_{FC528DED-1309-4AA5-B5B0-C17E8C41405D}
-[2025-12-04 01:44:37] [ERROR] - Scan failed for 192.168.3.0/24: 
-[2025-12-04 01:44:37] [INFO] - Thread finished for: arp_scan
-[2025-12-04 01:44:37] [GUI] - Scan Finished in 2.6s.
-[2025-12-04 01:44:42] [GUI] - Scanning 192.168.3.0/24...
-[2025-12-04 01:44:42] [INFO] - Thread started for: arp_scan
-[2025-12-04 01:44:42] [INFO] - Processing scan targets: ['192.168.3.0/24']
-[2025-12-04 01:44:42] [GUI] - Scanning 192.168.3.0/24 via \Device\NPF_{FC528DED-1309-4AA5-B5B0-C17E8C41405D}
-[2025-12-04 01:44:45] [ERROR] - Scan failed for 192.168.3.0/24: 
-[2025-12-04 01:44:45] [INFO] - Thread finished for: arp_scan
-[2025-12-04 01:44:45] [GUI] - Scan Finished in 2.7s.
-[2025-12-04 01:44:52] [GUI] - Pinging 192.168.3.0...
-[2025-12-04 01:44:52] [INFO] - Thread started for: ping_host
-[2025-12-04 01:44:52] [INFO] - ICMP Pinging 192.168.3.0...
-[2025-12-04 01:44:54] [GUI] - ICMP failed. Trying TCP Ping fallback...
-[2025-12-04 01:44:54] [INFO] - ICMP failed for 192.168.3.0. Trying TCP probes...
-[2025-12-04 01:44:56] [GUI] - Signal sent to stop task...
-[2025-12-04 01:44:57] [WARN] - Thread cancelled/stopped for: ping_host
-[2025-12-04 01:44:57] [GUI] - Ping Result: 192.168.3.0 is OFFLINE
-[2025-12-04 01:44:57] [GUI] - Task Completed in 5.0s.
-[2025-12-04 01:44:58] [GUI] - Pinging 192.168.3.1...
-[2025-12-04 01:44:58] [INFO] - Thread started for: ping_host
-[2025-12-04 01:44:58] [INFO] - ICMP Pinging 192.168.3.1...
-[2025-12-04 01:44:58] [INFO] - Thread finished for: ping_host
-[2025-12-04 01:44:58] [GUI] - Ping Result: 192.168.3.1 is ONLINE (RTT: 11.45ms)
-[2025-12-04 01:44:58] [GUI] - Task Completed in 0.0s.
-[2025-12-04 01:45:01] [GUI] - Pinging 192.168.15.1...
-[2025-12-04 01:45:01] [INFO] - Thread started for: ping_host
-[2025-12-04 01:45:01] [INFO] - ICMP Pinging 192.168.15.1...
-[2025-12-04 01:45:01] [INFO] - Thread finished for: ping_host
-[2025-12-04 01:45:01] [GUI] - Ping Result: 192.168.15.1 is ONLINE (RTT: 11.66ms)
-[2025-12-04 01:45:01] [GUI] - Task Completed in 0.0s.
-[2025-12-04 01:45:12] [GUI] - Tracing 8.8.8.8 (DNS: Disabled)...
-[2025-12-04 01:45:12] [INFO] - Thread started for: perform_traceroute
-[2025-12-04 01:45:12] [INFO] - Determining best trace method for 8.8.8.8...
-[2025-12-04 01:45:12] [GUI] - Probing 8.8.8.8...
-[2025-12-04 01:45:12] [INFO] - Tracing using ICMP
-[2025-12-04 01:45:12] [GUI] - Hop 1: 192.168.3.1 - 2.3ms
-[2025-12-04 01:45:12] [GUI] - Hop 2: 192.168.15.1 - 3.0ms
-[2025-12-04 01:45:12] [GUI] - Hop 3: 179.245.162.1 - 4.1ms
-[2025-12-04 01:45:12] [GUI] - Hop 4: 201.1.224.138 - 24.3ms
-[2025-12-04 01:45:13] [GUI] - Hop 5: * Request timed out (1005.7ms)
-[2025-12-04 01:45:14] [GUI] - Hop 6: * Request timed out (1090.8ms)
-[2025-12-04 01:45:15] [GUI] - Hop 7: * Request timed out (1006.9ms)
-[2025-12-04 01:45:15] [INFO] -     [Analysis] Hop 5 is likely a HIDDEN NODE (Firewall/CGNAT)
-[2025-12-04 01:45:15] [GUI] -     [Analysis] Hop 5 is likely a HIDDEN NODE (Firewall/CGNAT)
-[2025-12-04 01:45:15] [INFO] -     [Analysis] Hop 6 is likely a HIDDEN NODE (Firewall/CGNAT)
-[2025-12-04 01:45:15] [GUI] -     [Analysis] Hop 6 is likely a HIDDEN NODE (Firewall/CGNAT)
-[2025-12-04 01:45:15] [INFO] -     [Analysis] Hop 7 is likely a HIDDEN NODE (Firewall/CGNAT)
-[2025-12-04 01:45:15] [GUI] -     [Analysis] Hop 7 is likely a HIDDEN NODE (Firewall/CGNAT)
-[2025-12-04 01:45:15] [GUI] - Hop 8: 72.14.243.38 - 33.1ms
-[2025-12-04 01:45:15] [GUI] - Hop 9: 216.239.58.97 - 26.4ms
-[2025-12-04 01:45:15] [GUI] - Hop 10: 209.85.242.51 - 26.9ms
-[2025-12-04 01:45:15] [GUI] - Hop 11: 8.8.8.8 - 26.5ms
-[2025-12-04 01:45:15] [INFO] - Thread finished for: perform_traceroute
-[2025-12-04 01:45:15] [GUI] - Task Completed in 3.3s.
-[2025-12-04 01:45:33] [GUI] - Scanning 192.168.3.0/24...
-[2025-12-04 01:45:33] [INFO] - Thread started for: arp_scan
-[2025-12-04 01:45:33] [INFO] - Processing scan targets: ['192.168.3.0/24']
-[2025-12-04 01:45:33] [GUI] - Scanning 192.168.3.0/24 via \Device\NPF_{FC528DED-1309-4AA5-B5B0-C17E8C41405D}
-[2025-12-04 01:45:36] [ERROR] - Scan failed for 192.168.3.0/24: 
-[2025-12-04 01:45:36] [INFO] - Thread finished for: arp_scan
-[2025-12-04 01:45:36] [GUI] - Scan Finished in 2.8s.
-[2025-12-04 01:52:21] [GUI] - Reset target to local subnet: 192.168.3.0/24
-[2025-12-04 01:52:21] [GUI] - App started. Local IP: 192.168.3.2
-[2025-12-04 01:52:25] [GUI] - Scanning 192.168.3.0/24...
-[2025-12-04 01:52:25] [INFO] - Thread started for: arp_scan
-[2025-12-04 01:52:25] [INFO] - Processing scan targets: ['192.168.3.0/24']
-[2025-12-04 01:52:25] [GUI] - Scanning 192.168.3.0/24 via \Device\NPF_{FC528DED-1309-4AA5-B5B0-C17E8C41405D}
-[2025-12-04 01:52:28] [ERROR] - Scan failed for 192.168.3.0/24: 
-[2025-12-04 01:52:28] [INFO] - Thread finished for: arp_scan
-[2025-12-04 01:52:28] [GUI] - Scan Finished in 2.8s.
-[2025-12-04 01:58:49] [GUI] - Reset target to local subnet: 192.168.3.0/24
-[2025-12-04 01:58:49] [GUI] - App started. Local IP: 192.168.3.2
-[2025-12-04 01:58:51] [GUI] - Scanning 192.168.3.0/24...
-[2025-12-04 01:58:51] [INFO] - Thread started for: arp_scan
-[2025-12-04 01:58:51] [INFO] - Processing scan targets: ['192.168.3.0/24']
-[2025-12-04 01:58:51] [GUI] - Scanning 192.168.3.0/24 via \Device\NPF_{FC528DED-1309-4AA5-B5B0-C17E8C41405D}
-[2025-12-04 01:58:57] [INFO] - Finished 192.168.3.0/24 in 2153ms. Found 4 devices.
-[2025-12-04 01:58:57] [GUI] - Finished 192.168.3.0/24 in 2153ms. Found 4 devices.
-[2025-12-04 01:58:57] [INFO] - Thread finished for: arp_scan
-[2025-12-04 01:58:57] [GUI] - Scan Finished in 5.5s.
-[2025-12-04 02:04:51] [GUI] - Reset target to local subnet: 192.168.3.0/24
-[2025-12-04 02:04:51] [GUI] - App started. Local IP: 192.168.3.2
-[2025-12-04 02:05:34] [GUI] - Tracing 1.1.1.1 (DNS: Disabled)...
-[2025-12-04 02:05:34] [INFO] - Thread started for: perform_traceroute
-[2025-12-04 02:05:34] [INFO] - Determining best trace method for 1.1.1.1...
-[2025-12-04 02:05:34] [GUI] - Probing 1.1.1.1...
-[2025-12-04 02:05:34] [INFO] - Tracing using ICMP
-[2025-12-04 02:05:34] [GUI] - Hop 1: 192.168.3.1 - 2.7ms
-[2025-12-04 02:05:34] [GUI] - Hop 2: 192.168.15.1 - 2.8ms
-[2025-12-04 02:05:34] [GUI] - Hop 3: 179.245.162.1 - 3.5ms
-[2025-12-04 02:05:34] [GUI] - Hop 4: 201.1.224.138 - 24.5ms
-[2025-12-04 02:05:35] [GUI] - Hop 5: * Request timed out (1045.8ms)
-[2025-12-04 02:05:35] [INFO] -     [Analysis] Hop 5 is likely a HIDDEN NODE (Firewall/CGNAT)
-[2025-12-04 02:05:35] [GUI] -     [Analysis] Hop 5 is likely a HIDDEN NODE (Firewall/CGNAT)
-[2025-12-04 02:05:35] [GUI] - Hop 6: 152.255.195.61 - 28.7ms
-[2025-12-04 02:05:36] [GUI] - Hop 7: * Request timed out (1012.0ms)
-[2025-12-04 02:05:37] [GUI] - Hop 8: * Request timed out (1018.6ms)
-[2025-12-04 02:05:37] [INFO] -     [Analysis] Hop 7 is likely a HIDDEN NODE (Firewall/CGNAT)
-[2025-12-04 02:05:37] [GUI] -     [Analysis] Hop 7 is likely a HIDDEN NODE (Firewall/CGNAT)
-[2025-12-04 02:05:37] [INFO] -     [Analysis] Hop 8 is likely a HIDDEN NODE (Firewall/CGNAT)
-[2025-12-04 02:05:37] [GUI] -     [Analysis] Hop 8 is likely a HIDDEN NODE (Firewall/CGNAT)
-[2025-12-04 02:05:37] [GUI] - Hop 9: 1.1.1.1 - 25.6ms
-[2025-12-04 02:05:37] [INFO] - Thread finished for: perform_traceroute
-[2025-12-04 02:05:37] [GUI] - Task Completed in 3.2s.
-[2025-12-04 02:06:45] [GUI] - Reset target to local subnet: 192.168.3.0/24
-[2025-12-04 02:07:04] [GUI] - Tracing 1.1.1.1 (DNS: Disabled)...
-[2025-12-04 02:07:04] [INFO] - Thread started for: perform_traceroute
-[2025-12-04 02:07:04] [INFO] - Determining best trace method for 1.1.1.1...
-[2025-12-04 02:07:04] [GUI] - Probing 1.1.1.1...
-[2025-12-04 02:07:04] [INFO] - Tracing using ICMP
-[2025-12-04 02:07:04] [GUI] - Hop 1: 192.168.3.1 - 2.3ms
-[2025-12-04 02:07:04] [GUI] - Hop 2: 192.168.15.1 - 3.1ms
-[2025-12-04 02:07:04] [GUI] - Hop 3: 179.245.162.1 - 3.8ms
-[2025-12-04 02:07:04] [GUI] - Hop 4: 201.1.224.138 - 24.2ms
-[2025-12-04 02:07:05] [GUI] - Hop 5: * Request timed out (1002.2ms)
-[2025-12-04 02:07:05] [INFO] -     [Analysis] Hop 5 is likely a HIDDEN NODE (Firewall/CGNAT)
-[2025-12-04 02:07:05] [GUI] -     [Analysis] Hop 5 is likely a HIDDEN NODE (Firewall/CGNAT)
-[2025-12-04 02:07:05] [GUI] - Hop 6: 152.255.195.61 - 28.6ms
-[2025-12-04 02:07:06] [GUI] - Hop 7: * Request timed out (1002.6ms)
-[2025-12-04 02:07:07] [GUI] - Hop 8: * Request timed out (1002.8ms)
-[2025-12-04 02:07:07] [INFO] -     [Analysis] Hop 7 is likely a HIDDEN NODE (Firewall/CGNAT)
-[2025-12-04 02:07:07] [GUI] -     [Analysis] Hop 7 is likely a HIDDEN NODE (Firewall/CGNAT)
-[2025-12-04 02:07:07] [INFO] -     [Analysis] Hop 8 is likely a HIDDEN NODE (Firewall/CGNAT)
-[2025-12-04 02:07:07] [GUI] -     [Analysis] Hop 8 is likely a HIDDEN NODE (Firewall/CGNAT)
-[2025-12-04 02:07:07] [GUI] - Hop 9: 1.1.1.1 - 107.1ms
-[2025-12-04 02:07:07] [INFO] - Thread finished for: perform_traceroute
-[2025-12-04 02:07:07] [GUI] - Task Completed in 3.2s.
-[2025-12-05 13:59:51] [GUI] - Reset target to local subnet: 172.20.20.0/24
-[2025-12-05 13:59:51] [GUI] - App started. Local IP: 172.20.20.222
-[2025-12-05 14:00:05] [GUI] - Scanning 172.20.20.0/24-172.20.21.0/24...
-[2025-12-05 14:00:05] [INFO] - Thread started for: arp_scan
-[2025-12-05 14:00:05] [INFO] - Processing scan targets: ['172.20.20.0/24', '172.20.21.0/24']
-[2025-12-05 14:00:05] [GUI] - Scanning 172.20.20.0/24 via \Device\NPF_{9F98E4ED-5E49-4FA0-AE59-93679514AA52}
-[2025-12-05 14:00:35] [INFO] - Finished 172.20.20.0/24 in 4548ms. Found 94 devices.
-[2025-12-05 14:00:35] [GUI] - Finished 172.20.20.0/24 in 4548ms. Found 94 devices.
-[2025-12-05 14:00:35] [GUI] - Scanning 172.20.21.0/24 via \Device\NPF_{9F98E4ED-5E49-4FA0-AE59-93679514AA52}
-[2025-12-05 14:00:42] [INFO] - Finished 172.20.21.0/24 in 3820ms. Found 97 devices.
-[2025-12-05 14:00:42] [GUI] - Finished 172.20.21.0/24 in 3820ms. Found 97 devices.
-[2025-12-05 14:00:42] [INFO] - Thread finished for: arp_scan
-[2025-12-05 14:00:42] [GUI] - Scan Finished in 36.3s.
-[2025-12-05 14:05:28] [INFO] - ICMP Pinging 8.8.8.8...
-[2025-12-05 14:05:44] [INFO] - Processing scan targets: ['172.20.20.0/24']
-[2025-12-05 14:06:06] [INFO] - Finished 172.20.20.0/24 in 4802ms. Found 90 devices.
-[2025-12-05 14:17:44] [GUI] - Reset target to local subnet: 172.20.20.0/24
-[2025-12-05 14:17:44] [GUI] - App started. Local IP: 172.20.20.222
-[2025-12-05 14:17:55] [GUI] - Scanning 172.20.20.0/24-172.20.21.0/24...
-[2025-12-05 14:17:55] [INFO] - Thread started for: arp_scan
-[2025-12-05 14:17:55] [INFO] - Processing scan targets: ['172.20.20.0/24', '172.20.21.0/24']
-[2025-12-05 14:17:55] [GUI] - Scanning 172.20.20.0/24 via \Device\NPF_{9F98E4ED-5E49-4FA0-AE59-93679514AA52}
-[2025-12-05 14:18:15] [INFO] - Finished 172.20.20.0/24 in 3113ms. Found 95 devices.
-[2025-12-05 14:18:15] [GUI] - Finished 172.20.20.0/24 in 3113ms. Found 95 devices.
-[2025-12-05 14:18:15] [GUI] - Scanning 172.20.21.0/24 via \Device\NPF_{9F98E4ED-5E49-4FA0-AE59-93679514AA52}
-[2025-12-05 14:18:21] [INFO] - Finished 172.20.21.0/24 in 3164ms. Found 98 devices.
-[2025-12-05 14:18:21] [GUI] - Finished 172.20.21.0/24 in 3164ms. Found 98 devices.
-[2025-12-05 14:18:21] [INFO] - Thread finished for: arp_scan
-[2025-12-05 14:18:21] [GUI] - Scan Finished in 26.1s.
-[2025-12-05 14:25:15] [GUI] - Reset target to local subnet: 172.20.20.0/24
-[2025-12-05 14:25:15] [GUI] - App started. Local IP: 172.20.20.222
-[2025-12-05 14:26:11] [GUI] - Scanning 172.20.20.0/24-172.20.21.0/24...
-[2025-12-05 14:26:11] [INFO] - Thread started for: arp_scan
-[2025-12-05 14:26:11] [INFO] - Processing scan targets: ['172.20.20.0/24', '172.20.21.0/24']
-[2025-12-05 14:26:11] [GUI] - Scanning 172.20.20.0/24 via \Device\NPF_{9F98E4ED-5E49-4FA0-AE59-93679514AA52}
-[2025-12-05 14:26:30] [INFO] - Finished 172.20.20.0/24 in 3116ms. Found 97 devices.
-[2025-12-05 14:26:30] [GUI] - Finished 172.20.20.0/24 in 3116ms. Found 97 devices.
-[2025-12-05 14:26:30] [GUI] - Scanning 172.20.21.0/24 via \Device\NPF_{9F98E4ED-5E49-4FA0-AE59-93679514AA52}
-[2025-12-05 14:26:34] [INFO] - Finished 172.20.21.0/24 in 3035ms. Found 99 devices.
-[2025-12-05 14:26:34] [GUI] - Finished 172.20.21.0/24 in 3035ms. Found 99 devices.
-[2025-12-05 14:26:34] [INFO] - Thread finished for: arp_scan
-[2025-12-05 14:26:34] [GUI] - Scan Finished in 23.1s.
-[2025-12-05 16:01:27] [GUI] - Reset target to local subnet: 172.20.20.0/24
-[2025-12-05 16:01:27] [GUI] - App started. Local IP: 172.20.20.222
-[2025-12-05 16:01:31] [GUI] - Scanning 172.20.20.0/24...
-[2025-12-05 16:01:31] [INFO] - Thread started for: arp_scan
-[2025-12-05 16:01:31] [INFO] - Processing scan targets: ['172.20.20.0/24']
-[2025-12-05 16:01:31] [GUI] - Scanning 172.20.20.0/24 via \Device\NPF_{9F98E4ED-5E49-4FA0-AE59-93679514AA52}
-[2025-12-05 16:01:35] [ERROR] - MAC Vendor lookup failed: 
-[2025-12-05 16:01:35] [ERROR] - MAC Vendor lookup failed: 
-[2025-12-05 16:01:35] [ERROR] - MAC Vendor lookup failed: 
-[2025-12-05 16:01:35] [ERROR] - MAC Vendor lookup failed: 
-[2025-12-05 16:01:35] [ERROR] - MAC Vendor lookup failed: 
-[2025-12-05 16:01:35] [ERROR] - MAC Vendor lookup failed: 
-[2025-12-05 16:01:35] [ERROR] - MAC Vendor lookup failed: 
-[2025-12-05 16:01:35] [ERROR] - MAC Vendor lookup failed: 
-[2025-12-05 16:01:35] [ERROR] - MAC Vendor lookup failed: 
-[2025-12-05 16:01:35] [ERROR] - MAC Vendor lookup failed: 
-[2025-12-05 16:01:35] [ERROR] - MAC Vendor lookup failed: 
-[2025-12-05 16:01:35] [ERROR] - MAC Vendor lookup failed: 
-[2025-12-05 16:01:36] [ERROR] - MAC Vendor lookup failed: 
-[2025-12-05 16:01:36] [ERROR] - MAC Vendor lookup failed: 
-[2025-12-05 16:01:36] [ERROR] - MAC Vendor lookup failed: 
-[2025-12-05 16:01:36] [ERROR] - MAC Vendor lookup failed: 
-[2025-12-05 16:01:36] [ERROR] - MAC Vendor lookup failed: 
-[2025-12-05 16:01:36] [ERROR] - MAC Vendor lookup failed: 
-[2025-12-05 16:01:36] [ERROR] - MAC Vendor lookup failed: 
-[2025-12-05 16:01:36] [ERROR] - MAC Vendor lookup failed: 
-[2025-12-05 16:01:36] [ERROR] - MAC Vendor lookup failed: 
-[2025-12-05 16:01:36] [ERROR] - MAC Vendor lookup failed: 
-[2025-12-05 16:01:36] [ERROR] - MAC Vendor lookup failed: 
-[2025-12-05 16:01:36] [INFO] - Finished 172.20.20.0/24 in 3532ms. Found 92 devices.
-[2025-12-05 16:01:36] [GUI] - Finished 172.20.20.0/24 in 3532ms. Found 92 devices.
-[2025-12-05 16:01:36] [INFO] - Thread finished for: arp_scan
-[2025-12-05 16:01:36] [GUI] - Scan Finished in 4.6s.
-[2025-12-05 16:03:00] [GUI] - Reset target to local subnet: 172.20.20.0/24
-[2025-12-05 16:03:00] [GUI] - App started. Local IP: 172.20.20.222
-[2025-12-05 16:03:04] [GUI] - Scanning 172.20.20.0/24...
-[2025-12-05 16:03:04] [INFO] - Thread started for: arp_scan
-[2025-12-05 16:03:04] [INFO] - Processing scan targets: ['172.20.20.0/24']
-[2025-12-05 16:03:04] [GUI] - Scanning 172.20.20.0/24 via \Device\NPF_{9F98E4ED-5E49-4FA0-AE59-93679514AA52}
-[2025-12-05 16:03:23] [INFO] - Finished 172.20.20.0/24 in 3371ms. Found 85 devices.
-[2025-12-05 16:03:23] [GUI] - Finished 172.20.20.0/24 in 3371ms. Found 85 devices.
-[2025-12-05 16:03:23] [INFO] - Thread finished for: arp_scan
-[2025-12-05 16:03:23] [GUI] - Scan Finished in 19.4s.
+[2025-12-05 16:11:00] [MANUAL] - This is a debug log. Normally would be added to gitignore but it helps to have this accessible across devices[2025-12-05 16:12:01] [GUI] - Reset target to local subnet: 172.20.20.0/24
+[2025-12-05 16:12:01] [GUI] - App started. Local IP: 172.20.20.222
+[2025-12-05 16:12:15] [GUI] - Scanning 172.20.20.0/24-172.20.21.0/24...
+[2025-12-05 16:12:15] [INFO] - Thread started for: arp_scan
+[2025-12-05 16:12:15] [INFO] - Processing scan targets: ['172.20.20.0/24', '172.20.21.0/24']
+[2025-12-05 16:12:15] [GUI] - Scanning 172.20.20.0/24 via \Device\NPF_{9F98E4ED-5E49-4FA0-AE59-93679514AA52}
+[2025-12-05 16:12:32] [INFO] - Finished 172.20.20.0/24 in 3525ms. Found 85 devices.
+[2025-12-05 16:12:32] [GUI] - Finished 172.20.20.0/24 in 3525ms. Found 85 devices.
+[2025-12-05 16:12:32] [GUI] - Scanning 172.20.21.0/24 via \Device\NPF_{9F98E4ED-5E49-4FA0-AE59-93679514AA52}
+[2025-12-05 16:12:37] [INFO] - Finished 172.20.21.0/24 in 3209ms. Found 88 devices.
+[2025-12-05 16:12:37] [GUI] - Finished 172.20.21.0/24 in 3209ms. Found 88 devices.
+[2025-12-05 16:12:37] [INFO] - Thread finished for: arp_scan
+[2025-12-05 16:12:37] [GUI] - Scan Finished in 21.3s.
+[2025-12-05 16:13:31] [GUI] - Tracing 8.8.8.8 (DNS: Disabled)...
+[2025-12-05 16:13:31] [INFO] - Thread started for: perform_traceroute
+[2025-12-05 16:13:31] [INFO] - Determining best trace method for 8.8.8.8...
+[2025-12-05 16:13:31] [GUI] - Probing 8.8.8.8...
+[2025-12-05 16:13:31] [INFO] - Tracing using ICMP
+[2025-12-05 16:13:31] [GUI] - Hop 1: 172.20.20.2 - 29.5ms
+[2025-12-05 16:13:31] [GUI] - Hop 2: 200.19.158.9 - 23.0ms
+[2025-12-05 16:13:32] [GUI] - Hop 3: * Request timed out (1046.3ms)
+[2025-12-05 16:13:32] [INFO] -     [Analysis] Hop 3 is likely a HIDDEN NODE (Firewall/CGNAT)
+[2025-12-05 16:13:32] [GUI] -     [Analysis] Hop 3 is likely a HIDDEN NODE (Firewall/CGNAT)
+[2025-12-05 16:13:32] [GUI] - Hop 4: 200.131.0.36 - 14.7ms
+[2025-12-05 16:13:32] [GUI] - Hop 5: 200.131.0.32 - 15.7ms
+[2025-12-05 16:13:32] [GUI] - Hop 6: 170.79.214.120 - 15.3ms
+[2025-12-05 16:13:32] [GUI] - Hop 7: 170.79.213.199 - 14.3ms
+[2025-12-05 16:13:32] [GUI] - Hop 8: 45.6.52.32 - 18.5ms
+[2025-12-05 16:13:32] [GUI] - Hop 9: 192.178.99.109 - 19.8ms
+[2025-12-05 16:13:32] [GUI] - Hop 10: 142.251.245.47 - 15.4ms
+[2025-12-05 16:13:32] [GUI] - Hop 11: 8.8.8.8 - 15.9ms
+[2025-12-05 16:13:32] [INFO] - Thread finished for: perform_traceroute
+[2025-12-05 16:13:32] [GUI] - Task Completed in 1.3s.
+[2025-12-05 16:13:40] [GUI] - Tracing 1.1.1.1 (DNS: Enabled)...
+[2025-12-05 16:13:40] [INFO] - Thread started for: perform_traceroute
+[2025-12-05 16:13:41] [INFO] - Determining best trace method for 1.1.1.1...
+[2025-12-05 16:13:41] [GUI] - Probing 1.1.1.1...
+[2025-12-05 16:13:41] [INFO] - Tracing using ICMP
+[2025-12-05 16:13:46] [GUI] - Hop 1: 172.20.20.2 - 21.6ms
+[2025-12-05 16:13:50] [GUI] - Hop 2: 200.19.158.9 (ufop-joaomonlevade-interno-gw.pop-mg.rnp.br) - 19.6ms
+[2025-12-05 16:13:55] [GUI] - Hop 3: 200.19.158.212 (ufop-joaomonlevade-gw.pop-mg.rnp.br) - 15.1ms
+[2025-12-05 16:13:59] [GUI] - Hop 4: 200.131.0.36 (bmg2-dmg2.pop-mg.rnp.br) - 28.9ms
+[2025-12-05 16:14:04] [GUI] - Hop 5: 200.131.0.32 (bmg1-bmg2.pop-mg.rnp.br) - 27.7ms
+[2025-12-05 16:14:09] [GUI] - Hop 6: 170.79.214.120 (cmg1-bmg1.bkb.rnp.br) - 19.3ms
+[2025-12-05 16:14:13] [GUI] - Hop 7: 170.79.213.199 (crj1-cmg1-telebras.bkb.rnp.br) - 24.1ms
+[2025-12-05 16:14:18] [GUI] - Hop 8: 45.6.52.203 (as13335.riodejaneiro.rj.ix.br) - 27.3ms
+[2025-12-05 16:14:22] [GUI] - Hop 9: 172.69.3.23 - 23.4ms
+[2025-12-05 16:14:27] [GUI] - Hop 10: 1.1.1.1 (one.one.one.one) - 22.8ms
+[2025-12-05 16:14:27] [INFO] - Thread finished for: perform_traceroute
+[2025-12-05 16:14:27] [GUI] - Task Completed in 46.6s.
