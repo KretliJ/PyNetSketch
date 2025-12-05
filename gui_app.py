@@ -290,7 +290,7 @@ class NetworkApp:
     def show_about_dialog(self):
         messagebox.showinfo(
             "About PyNetSketch", 
-            "PyNetSketch v1.3\n\n"
+            "PyNetSketch v1.5\n\n"
             "A Python-based Network Scanner & Visualization Tool.\n"
             "Proof of Concept (PoC)\n\n"
             "Created for Educational Purposes by KretliJ.\n"
