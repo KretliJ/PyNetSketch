@@ -125,25 +125,21 @@ def ping_host(target_ip, stop_event=None, progress_callback=None):
 # This used to call for an API, but that causes issues when dealing with large networks
 #   manufdb is faster with good enough identification capabilities
 def resolve_mac_vendor(mac_address):
-    """
-    Resolves MAC vendor using ONLY local Scapy manufdb (offline).
-    Includes circuit-breaker logic to stop log flooding on DB failure.
-    """
-    # 0. Check if we already marked the DB as broken to prevent log floods
+   # Checks DB was already marked as broken to prevent log floods
     if VENDOR_CACHE.get("scapy_db_broken", False):
         return "Unknown Vendor (DB Error)"
 
     mac = mac_address.upper()
     
-    # 1. Check for Locally Administered Addresses
+    # Check for Locally Administered Addresses
     if len(mac) > 1 and mac[1] in ['2', '6', 'A', 'E']:
         return "Randomized / Virtual (LAA)"
 
-    # 2. Check local memory cache
+    # Check local memory cache
     if mac in VENDOR_CACHE:
         return VENDOR_CACHE[mac]
 
-    # 3. Lookup in Scapy's internal database
+    # Lookup in Scapy's internal database
     try:
         # Check existence
         if not hasattr(conf, "manufdb") or conf.manufdb is None:
@@ -160,7 +156,7 @@ def resolve_mac_vendor(mac_address):
         except KeyError:
             vendor = None
         except AttributeError:
-            # This catches the specific error from your logs (missing .get or getattr fail)
+            # This catches the specific error from missing .get or getattr fail
             raise AttributeError("Manufdb object does not support access")
 
         if vendor:
@@ -168,7 +164,7 @@ def resolve_mac_vendor(mac_address):
             return vendor
             
     except AttributeError as e:
-        # The specific crash you saw. Log once, then disable.
+        # Specific DB crash. Log once, then disable.
         if not VENDOR_CACHE.get("scapy_db_broken"):
             utils._log_operation(f"Critical Scapy DB Failure: {e}. Disabling vendor resolution.", "ERROR")
             VENDOR_CACHE["scapy_db_broken"] = True
@@ -176,7 +172,8 @@ def resolve_mac_vendor(mac_address):
         
     except Exception:
         # Catch-all for other weirdness, simplified logging
-        # We don't log this anymore to keep logs clean unless it's unique
+        # Don't log this anymore to keep logs clean unless it's an unique future error
+        # TODO: Fix this when unit testing is implemented
         pass
 
     return "Unknown Vendor"
