@@ -9,12 +9,14 @@ import re
 from scapy.all import ARP, Ether, srp, IP, ICMP, TCP, sr1, conf, sniff
 import utils
 import traceback
-
+    
 # --- IMPORT RUST CORE ---
 # This is important for python implementation fallback
 # Application will be slower, but shouldn't crash
 try:
     import pynetsketch_core
+    print(f"DEBUG: Loaded Rust module from: {pynetsketch_core.__file__}") # <--- ADD THIS
+    print(f"DEBUG: Available functions: {dir(pynetsketch_core)}")          # <--- ADD THIS
     RUST_AVAILABLE = True
     print("SUCCESS: Rust acceleration module loaded.")
 except ImportError as e:

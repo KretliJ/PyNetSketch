@@ -167,3 +167,52 @@
 [2025-12-09 14:14:00] [GUI] - Finished 172.20.20.0/24-172.20.21.0/24- in 2026ms. Found 0 devices.
 [2025-12-09 14:14:00] [INFO] - Thread finished for: arp_scan
 [2025-12-09 14:14:00] [GUI] - Scan Finished in 2.0s.
+[2025-12-09 14:33:34] [GUI] - Reset target to local subnet: 172.20.20.0/24
+[2025-12-09 14:33:34] [GUI] - App started. Local IP: 172.20.20.253
+[2025-12-09 14:33:47] [GUI] - Scanning 172.20.20.0/24...
+[2025-12-09 14:33:47] [INFO] - Thread started for: arp_scan
+[2025-12-09 14:33:47] [INFO] - Processing scan targets: ['172.20.20.0/24']
+[2025-12-09 14:33:47] [GUI] - Scanning 172.20.20.0/24 via \Device\NPF_{9F98E4ED-5E49-4FA0-AE59-93679514AA52}
+[2025-12-09 14:33:51] [INFO] - Finished 172.20.20.0/24 in 3616ms. Found 108 devices.
+[2025-12-09 14:33:51] [GUI] - Finished 172.20.20.0/24 in 3616ms. Found 108 devices.
+[2025-12-09 14:33:51] [INFO] - Thread finished for: arp_scan
+[2025-12-09 14:33:51] [GUI] - Scan Finished in 3.7s.
+[2025-12-09 14:34:27] [GUI] - Port scanning 172.20.20.186...
+[2025-12-09 14:34:27] [INFO] - Thread started for: scan_ports
+[2025-12-09 14:34:27] [INFO] - Starting Port Scan on 172.20.20.186
+[2025-12-09 14:34:27] [GUI] - [RUST] Scanning 13 ports on 172.20.20.186...
+[2025-12-09 14:34:27] [ERROR] - Rust scan failed (module 'pynetsketch_core' has no attribute 'rust_scan_ports'). Falling back to Python.
+[2025-12-09 14:34:27] [GUI] - [PYTHON] Scanning 13 ports...
+[2025-12-09 14:34:41] [GUI] - Scan Complete. Found 0 open services.
+[2025-12-09 14:34:41] [INFO] - Thread finished for: scan_ports
+[2025-12-09 14:34:41] [GUI] - Task Completed in 13.2s.
+[2025-12-09 14:49:51] [GUI] - Reset target to local subnet: 172.20.20.0/24
+[2025-12-09 14:49:51] [GUI] - App started. Local IP: 172.20.20.253
+[2025-12-09 14:49:57] [GUI] - Scanning 172.20.20.0/24...
+[2025-12-09 14:49:57] [INFO] - Thread started for: arp_scan
+[2025-12-09 14:49:57] [INFO] - Processing scan targets: ['172.20.20.0/24']
+[2025-12-09 14:49:57] [GUI] - Scanning 172.20.20.0/24 via \Device\NPF_{9F98E4ED-5E49-4FA0-AE59-93679514AA52}
+[2025-12-09 14:50:00] [INFO] - Finished 172.20.20.0/24 in 3123ms. Found 94 devices.
+[2025-12-09 14:50:00] [GUI] - Finished 172.20.20.0/24 in 3123ms. Found 94 devices.
+[2025-12-09 14:50:00] [INFO] - Thread finished for: arp_scan
+[2025-12-09 14:50:00] [GUI] - Scan Finished in 3.2s.
+[2025-12-09 14:50:17] [GUI] - Port scanning 172.20.20.2...
+[2025-12-09 14:50:17] [INFO] - Thread started for: scan_ports
+[2025-12-09 14:50:17] [INFO] - Starting Port Scan on 172.20.20.2
+[2025-12-09 14:50:17] [GUI] - [RUST] Scanning 13 ports on 172.20.20.2...
+[2025-12-09 14:50:17] [ERROR] - Rust scan failed (module 'pynetsketch_core' has no attribute 'rust_scan_ports'). Falling back to Python.
+[2025-12-09 14:50:17] [GUI] - [PYTHON] Scanning 13 ports...
+[2025-12-09 14:50:30] [GUI] - Scan Complete. Found 0 open services.
+[2025-12-09 14:50:30] [INFO] - Thread finished for: scan_ports
+[2025-12-09 14:50:30] [GUI] - Task Completed in 13.3s.
+[2025-12-09 14:55:08] [GUI] - Reset target to local subnet: 172.20.20.0/24
+[2025-12-09 14:55:08] [GUI] - App started. Local IP: 172.20.20.253
+[2025-12-09 14:55:19] [GUI] - Port scanning 172.20.20.2...
+[2025-12-09 14:55:19] [INFO] - Thread started for: scan_ports
+[2025-12-09 14:55:19] [INFO] - Starting Port Scan on 172.20.20.2
+[2025-12-09 14:55:19] [GUI] - [RUST] Scanning 13 ports on 172.20.20.2...
+[2025-12-09 14:55:19] [ERROR] - Rust scan failed (module 'pynetsketch_core' has no attribute 'rust_scan_ports'). Falling back to Python.
+[2025-12-09 14:55:19] [GUI] - [PYTHON] Scanning 13 ports...
+[2025-12-09 14:55:33] [GUI] - Scan Complete. Found 0 open services.
+[2025-12-09 14:55:33] [INFO] - Thread finished for: scan_ports
+[2025-12-09 14:55:33] [GUI] - Task Completed in 13.3s.
