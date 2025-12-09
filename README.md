@@ -52,38 +52,60 @@ The project adheres to a modular design pattern:
 
 * **Python 3.11+**
 * **Rust Toolchain** (for compiling the core): `curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh`
-* **Npcap (Windows):** Required for packet capture. Download from [nmap.org/npcap](https://nmap.org/npcap/).
-    * *Development Requirement:* To compile the Rust core on Windows, you must download the **Npcap SDK** and set the `LIB` environment variable to point to `Packet.lib`.
 
-## 📦 Installation & Compilation (For developers)
+## 📦 Installation & Compilation for Development
 
-1.  **Clone the repository:**
-    ```bash
-    git clone [https://github.com/yourusername/pynetsketch.git](https://github.com/yourusername/pynetsketch.git)
-    cd pynetsketch
-    ```
+### 🐧 Linux (Debian/Ubuntu/Kali)
 
-2.  **Install Python dependencies:**
-    ```bash
-    pip install scapy requests pillow maturin
-    ```
+* libpcap headers: Required for compiling the Rust core packet capture features.
+```
+sudo apt-get install libpcap-dev
+```
 
-3.  **Compile Rust Core (Optional for Performance):**
-    The Rust source is located in `rust_src` to avoid import shadowing.
-    ```bash
-    cd rust_src
-    # Ensure Npcap SDK is linked (Windows only)
-    python -m venv venv
-    source venv/bin/activate
-    # Or .\venv\Scripts\activate on Windows
-    maturin develop --release
-    cd ..
-    ```
-4.  **Run:**
-    ```bash
-    # Admin privileges required for Raw Sockets
-    .\rust_src\.venv\Scripts\python.exe gui_app.py
-    ```
+### 🪟 Windows
+* **Npcap Driver:** Download from [nmap.org/npcap](https://nmap.org/npcap/). Though this chack is handled during the startup cycle
+* **Npcap SDK:** To compile the Rust core, download the **Npcap SDK** and set the `LIB` environment variable to point to `Packet.lib`. Extract in a known folder (C:\NpcapSDK)
+
+### 1: Configure venv 
+
+**Linux**
+```
+python3 -m venv .venv
+source .venv/bin/activate
+```
+**Windows**
+```
+python -m venv .venv
+.\.venv\Scripts\activate
+```
+### 2: Install dependencies
+```
+pip install scapy requests pillow maturin
+```
+### 3: Compile Rust core
+**Linux**
+```
+cd rust_src
+maturin develop --release
+cd ..
+```
+**Windows**
+```
+$env:LIB = "C:\NpcapSDK\Lib\x64;" + $env:LIB # Ignore if already in PATH
+cd rust_src
+maturin develop --release
+cd ..
+```
+### 4: Execute
+**Linux**
+```
+# Point to the venv python executable to ensure dependencies are found
+sudo ./.venv/bin/python gui_app.py
+```
+**Windows**
+```
+python gui_app.py
+```
 
 ## 🛠️ Version History
 
