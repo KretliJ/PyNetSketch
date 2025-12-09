@@ -294,8 +294,19 @@ class NetworkApp:
             self.notebook.select(self.tab_traffic)
             self.tab_traffic.reset_data()
             
-            evt = utils.run_in_background(net_utils.monitor_traffic, self.handle_generic_finish, 
-                                          progress_callback=self.handle_traffic_update)
+            # >>>> NOVO CÓDIGO AQUI <<<<
+            # Pega o filtro da UI
+            filter_ip = self.tab_traffic.get_filter_ip()
+            if filter_ip:
+                self.log_to_console(f"Applying filter: Host {filter_ip}")
+            
+            # Passa o filtro para a função do net_utils
+            evt = utils.run_in_background(
+                net_utils.monitor_traffic, 
+                self.handle_generic_finish, 
+                progress_callback=self.handle_traffic_update,
+                filter_ip=filter_ip  # Argumento novo
+            )
             self.set_task_running(True, evt)
 
     # --- Result Handlers ---
@@ -334,7 +345,8 @@ class NetworkApp:
         try:
             if isinstance(data, str):
                 self.log_to_console(data)
-            elif isinstance(data, (int, float)):
+            # Aceita tuple, list, int ou float
+            elif isinstance(data, (int, float, tuple, list)):
                 self.root.after(0, self.tab_traffic.add_data_point, data)
         except Exception as e:
             print(f"Graph update error: {e}")

@@ -418,22 +418,68 @@ def send_magic_packet(mac_address):
     except Exception as e:
         return False, str(e)
 
-# Hook function to start traffic monitor (TODO: Error 4 in README) 
-def monitor_traffic(interface=None, stop_event=None, progress_callback=None):
-    utils._log_operation("Starting Traffic Monitor...")
-    if progress_callback: progress_callback("Initializing Sniffer...")
+def monitor_traffic(interface=None, filter_ip=None, stop_event=None, progress_callback=None):
+    """
+    Monitora tráfego reportando (Total, Filtrado).
+    """
+    utils._log_operation(f"Starting Traffic Monitor (Filter: {filter_ip if filter_ip else 'None'})...")
+    
+    # ... (Bloco de detecção de interface permanece igual) ...
+    # 1. Determina interface (código anterior de tradução de nomes)
+    target_interface_name = interface
+    if target_interface_name is None:
+        if not conf.iface: conf.route.route("8.8.8.8")
+        target_interface_name = conf.iface.name
+    # ...
+
+    # --- RUST IMPLEMENTATION ---
+    if RUST_AVAILABLE:
+        try:
+            # ... (Código de tradução de GUID permanece igual) ...
+            
+            # Callback agora recebe uma TUPLA ou LISTA
+            def bridge_callback(stats):
+                if stop_event and stop_event.is_set(): pass 
+                if progress_callback:
+                    # stats é (total_pps, filtered_pps)
+                    progress_callback(stats)
+
+            pynetsketch_core.start_sniffer(bridge_callback, target_interface_name, filter_ip)
+            return
+
+        except Exception as e:
+            utils._log_operation(f"Rust sniffer failed: {e}. Falling back to Scapy.", "ERROR")
+    
+    # --- PYTHON FALLBACK (SCAPY) ---
+    if progress_callback: progress_callback("Initializing Scapy Sniffer (Slow Mode)...")
     try:
+        # ATENÇÃO: Removemos o filtro BPF do kernel para poder contar o TOTAL.
+        # Faremos a filtragem manualmente no Python (Lento, mas funcional).
+        
         while not (stop_event and stop_event.is_set()):
-            start_t = time.time()
-            packets = sniff(timeout=1, count=0)
-            count = len(packets)
-            duration = time.time() - start_t
-            if duration < 0.1: duration = 1.0 # Prevent div by zero
-            pps = count / duration
-            if progress_callback: progress_callback(pps)
+            total_count = 0
+            filtered_count = 0
+            
+            def count_pkt(pkt):
+                nonlocal total_count, filtered_count
+                total_count += 1
+                
+                if filter_ip:
+                    if IP in pkt:
+                        if pkt[IP].src == filter_ip or pkt[IP].dst == filter_ip:
+                            filtered_count += 1
+                else:
+                    filtered_count += 1
+
+            # store=0 e timeout curto para manter responsividade
+            sniff(prn=count_pkt, timeout=1, store=0)
+            
+            if progress_callback: 
+                progress_callback((total_count, filtered_count))
+            
     except Exception as e:
         if progress_callback: progress_callback(f"Sniffer error: {e}")
-
+        
 # Function to organize the results of ARP table scans and group them by subnets
 # Returns a dictionary where keys are Gateway IPs as strings and values are lists of device dictionaries belonging to that subnet.
 def organize_scan_results_by_subnet(devices):
