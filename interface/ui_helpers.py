@@ -1,10 +1,15 @@
 import os
+import sys
 import tkinter as tk
 
 def set_app_icon(root):
     """Safely loads the application icon."""
     try:
-        base_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        # PyInstaller logic (sys._MEIPASS is temp folder where it unzips)
+        if getattr(sys, 'frozen', False):
+            base_path = sys._MEIPASS
+        else:
+            base_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
         possible_paths = [
             os.path.join(base_path, "assets", "app_icon.png"),
             os.path.join(base_path, "app_icon.png")

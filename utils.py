@@ -1,26 +1,29 @@
 import os
+import sys
 import time
 import threading
 import logging 
 import platform
 import subprocess
 
-# Use os.path.join for cross-platform compatibility
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+def get_executable_dir():
+    # Returns dir where executable is located
+    if getattr(sys, 'frozen', False):
+        # Running as compiled
+        return os.path.dirname(sys.executable)
+    else:
+        # Running as .py script
+        return os.path.dirname(os.path.abspath(__file__))
+
+BASE_DIR = get_executable_dir()
 LOG_FILE = os.path.join(BASE_DIR, "LOGS", "gen_log.txt")
 
 def suppress_scapy_warnings():
-    """
-    Globally suppresses Scapy runtime warnings (like 'MAC address not found').
-    Call this once at application startup.
-    """
+    # Globally suppresses Scapy verbosity.
     logging.getLogger("scapy.runtime").setLevel(logging.ERROR)
 
 def _log_operation(message: str, level: str = "INFO", destination=LOG_FILE):
-    """
-    Logs operations to a file with a timestamp.
-    Creates the directory if it doesn't exist.
-    """
+     # Logs operations to a file with a timestamp.
     try:
         folder = os.path.dirname(destination)
         if folder and not os.path.exists(folder):
@@ -37,11 +40,9 @@ def _log_operation(message: str, level: str = "INFO", destination=LOG_FILE):
         print(f"Failure in writing log '{destination}'. Error: {e}")
 
 def configure_firewall():
-    """
-    Tenta adicionar regras ao Windows Firewall para permitir conexões de entrada
-    nas portas 5050 (TCP) e 5051 (UDP). Requer privilégios de Admin.
-    Returns: (bool, str) -> (Success, Message)
-    """
+    # Tries adding windows firewall rules to allow inbound on ports 5050 and 5051 for TCP and UDP. Requires admin
+    # Returns: (bool, str) -> (Success, Message)
+    
     if platform.system() != "Windows":
         return False, "Firewall: N/A (Non-Windows)"
 
@@ -57,15 +58,14 @@ def configure_firewall():
             shell=True, check=False, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
         )
         
-        return True, "✅ Firewall Configurado (Portas 5050/5051 Abertas)"
+        return True, "✅ Firewall Configured (Ports 5050/5051 open)"
         
     except Exception as e:
-        return False, f"⚠️ Erro ao configurar Firewall: {e}"
+        return False, f"⚠️ Error configuring Firewall: {e}"
 
 def run_in_background(target_func, callback_func, progress_callback=None, *args, **kwargs):
-    """
-    Runs a specific function in a separate thread.
-    """
+    # Runs a specific function in a separate thread.
+    
     stop_event = threading.Event()
     
     def wrapper():
