@@ -420,62 +420,82 @@ def send_magic_packet(mac_address):
 
 def monitor_traffic(interface=None, filter_ip=None, stop_event=None, progress_callback=None):
     """
-    Monitora tráfego reportando (Total, Filtrado).
+    Monitora tráfego com Estratégia de Seleção de Interface Robusta.
     """
     utils._log_operation(f"Starting Traffic Monitor (Filter: {filter_ip if filter_ip else 'None'})...")
     
-    # ... (Bloco de detecção de interface permanece igual) ...
-    # 1. Determina interface (código anterior de tradução de nomes)
-    target_interface_name = interface
-    if target_interface_name is None:
+    # 1. Scapy Default
+    if interface is None:
         if not conf.iface: conf.route.route("8.8.8.8")
-        target_interface_name = conf.iface.name
-    # ...
+        target_interface_name = conf.iface.name 
+    else:
+        target_interface_name = interface
 
     # --- RUST IMPLEMENTATION ---
     if RUST_AVAILABLE:
         try:
-            # ... (Código de tradução de GUID permanece igual) ...
+            # 2. Introspecção: O que o Rust enxerga?
+            rust_ifaces = pynetsketch_core.rust_list_interfaces()
             
-            # Callback agora recebe uma TUPLA ou LISTA
+            # Se o nome que temos (ex: "Wi-Fi") não está na lista técnica do Rust...
+            if target_interface_name not in rust_ifaces:
+                utils._log_operation(f"DEBUG: '{target_interface_name}' not in Rust list. Attempting Adapter translation...", "WARN")
+                found_match = None
+                
+                # Tenta traduzir via GUID
+                if platform.system() == "Windows" and hasattr(conf.iface, "guid"):
+                    scapy_guid = conf.iface.guid
+                    for r_iface in rust_ifaces:
+                        if scapy_guid in r_iface:
+                            found_match = r_iface
+                            utils._log_operation(f"SUCCESS: Adapter mapped '{target_interface_name}' -> '{found_match}'")
+                            break
+                
+                # DECISÃO ARQUITETURAL:
+                if found_match:
+                    target_interface_name = found_match
+                else:
+                    # Se não conseguimos traduzir, NÃO mande o nome "Wi-Fi" pro Rust.
+                    # Mande None. Isso diz ao Rust: "Escolha você a melhor interface".
+                    utils._log_operation("FAILED: Could not map interface. Delegating selection to Rust (Auto-Detect).", "WARN")
+                    target_interface_name = None 
+
+            # 3. Execução
+            if progress_callback: 
+                if target_interface_name:
+                    progress_callback(f"Initializing Rust Sniffer on {target_interface_name}...")
+                else:
+                    progress_callback("Initializing Rust Sniffer (Auto-Select)...")
+            
             def bridge_callback(stats):
                 if stop_event and stop_event.is_set(): pass 
-                if progress_callback:
-                    # stats é (total_pps, filtered_pps)
-                    progress_callback(stats)
+                if progress_callback: progress_callback(stats)
 
+            # Passa o nome corrigido (ou None)
             pynetsketch_core.start_sniffer(bridge_callback, target_interface_name, filter_ip)
             return
 
         except Exception as e:
             utils._log_operation(f"Rust sniffer failed: {e}. Falling back to Scapy.", "ERROR")
     
-    # --- PYTHON FALLBACK (SCAPY) ---
+    # --- PYTHON FALLBACK ---
     if progress_callback: progress_callback("Initializing Scapy Sniffer (Slow Mode)...")
     try:
-        # ATENÇÃO: Removemos o filtro BPF do kernel para poder contar o TOTAL.
-        # Faremos a filtragem manualmente no Python (Lento, mas funcional).
-        
+        bpf_filter = f"host {filter_ip}" if filter_ip else None
         while not (stop_event and stop_event.is_set()):
             total_count = 0
             filtered_count = 0
-            
-            def count_pkt(pkt):
+            def count_pkt(p):
                 nonlocal total_count, filtered_count
                 total_count += 1
-                
-                if filter_ip:
-                    if IP in pkt:
-                        if pkt[IP].src == filter_ip or pkt[IP].dst == filter_ip:
-                            filtered_count += 1
-                else:
+                if filter_ip and IP in p:
+                    if p[IP].src == filter_ip or p[IP].dst == filter_ip:
+                        filtered_count += 1
+                elif not filter_ip:
                     filtered_count += 1
 
-            # store=0 e timeout curto para manter responsividade
             sniff(prn=count_pkt, timeout=1, store=0)
-            
-            if progress_callback: 
-                progress_callback((total_count, filtered_count))
+            if progress_callback: progress_callback((total_count, filtered_count))
             
     except Exception as e:
         if progress_callback: progress_callback(f"Sniffer error: {e}")
