@@ -73,10 +73,12 @@ The project adheres to a modular design pattern:
     ```bash
     cd rust_src
     # Ensure Npcap SDK is linked (Windows only)
+    python -m venv venv
+    source venv/bin/activate
+    # Or .\venv\Scripts\activate on Windows
     maturin develop --release
     cd ..
     ```
-
 4.  **Run:**
     ```bash
     # Admin privileges required for Raw Sockets
