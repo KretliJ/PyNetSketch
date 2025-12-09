@@ -93,7 +93,9 @@ Note: This project does not currently provide a full release executable.
 ## ⚠️ Known Limitations (v1.5 Debug)
 <details>
 <summary><strong>Click to expand</strong></summary>
-  
+
+### 0. TODO: Implement robust testing.
+
 ### 1. Large Subnet Scans (The "Atomic Scapy" Issue)
 **Symptom:** Scanning a `/16` network (65,536 hosts) causes the application to "freeze" or become unresponsive to the "STOP" button.
 
