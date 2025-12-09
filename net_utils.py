@@ -8,6 +8,7 @@ import requests
 import re
 from scapy.all import ARP, Ether, srp, IP, ICMP, TCP, sr1, conf, sniff
 import utils
+import traceback
 
 # --- IMPORT RUST CORE ---
 # This is important for python implementation fallback
@@ -124,30 +125,61 @@ def ping_host(target_ip, stop_event=None, progress_callback=None):
 # This used to call for an API, but that causes issues when dealing with large networks
 #   manufdb is faster with good enough identification capabilities
 def resolve_mac_vendor(mac_address):
+    """
+    Resolves MAC vendor using ONLY local Scapy manufdb (offline).
+    Includes circuit-breaker logic to stop log flooding on DB failure.
+    """
+    # 0. Check if we already marked the DB as broken to prevent log floods
+    if VENDOR_CACHE.get("scapy_db_broken", False):
+        return "Unknown Vendor (DB Error)"
+
     mac = mac_address.upper()
+    
+    # 1. Check for Locally Administered Addresses
     if len(mac) > 1 and mac[1] in ['2', '6', 'A', 'E']:
         return "Randomized / Virtual (LAA)"
+
+    # 2. Check local memory cache
     if mac in VENDOR_CACHE:
         return VENDOR_CACHE[mac]
+
+    # 3. Lookup in Scapy's internal database
     try:
-        url = f"https://api.macvendors.com/{mac}"
-        response = requests.get(url, timeout=1.5)
-        if response.status_code == 200:
-            vendor = response.text.strip()
-            VENDOR_CACHE[mac] = vendor
-            time.sleep(0.5) 
-            return vendor
-        elif response.status_code == 429:
-            return "Too Many Requests (API Limit)"
-        else:
-            prefix = mac[:8]
-            # Use f-string to include the MAC address and status code in the log for better context
-            utils._log_operation(f"API failed for MAC {mac} (Status: {response.status_code}). Falling back to manufdb.", "WARN")
-            return conf.manufdb.get(prefix) or "Unknown Vendor"
-    except Exception as e:
+        # Check existence
+        if not hasattr(conf, "manufdb") or conf.manufdb is None:
+            if not VENDOR_CACHE.get("scapy_db_broken"):
+                utils._log_operation("Scapy 'manufdb' not initialized. Disabling lookup.", "WARN")
+                VENDOR_CACHE["scapy_db_broken"] = True
+            return "Unknown Vendor"
+
         prefix = mac[:8]
-        utils._log_operation(f"MAC Vendor lookup failed for {mac}. Error: [{type(e).__name__}] {e}", "ERROR")
-        return conf.manufdb.get(prefix) or "Unknown Vendor"
+        
+        # FIX: Scapy DADict often lacks .get(), use direct access with try/except
+        try:
+            vendor = conf.manufdb[prefix]
+        except KeyError:
+            vendor = None
+        except AttributeError:
+            # This catches the specific error from your logs (missing .get or getattr fail)
+            raise AttributeError("Manufdb object does not support access")
+
+        if vendor:
+            VENDOR_CACHE[mac] = vendor
+            return vendor
+            
+    except AttributeError as e:
+        # The specific crash you saw. Log once, then disable.
+        if not VENDOR_CACHE.get("scapy_db_broken"):
+            utils._log_operation(f"Critical Scapy DB Failure: {e}. Disabling vendor resolution.", "ERROR")
+            VENDOR_CACHE["scapy_db_broken"] = True
+        return "Unknown Vendor"
+        
+    except Exception:
+        # Catch-all for other weirdness, simplified logging
+        # We don't log this anymore to keep logs clean unless it's unique
+        pass
+
+    return "Unknown Vendor"
 
 # Main function for python ARP table scan
 # This isn't handled by rust since the added complexity did not justify possible performance gains at the time
