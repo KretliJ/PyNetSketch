@@ -1,25 +1,20 @@
 import os
 import sys
-# --- FIX: Tkinter em Ambiente Virtual (Windows) ---
-# Isso resolve o erro "_tkinter.TclError: Can't find a usable init.tcl"
-# forçando o Python a buscar as libs gráficas na instalação base, não no venv quebrado.
+# --- FIX: Tkinter in venv (Windows) ---
 if sys.platform == "win32":
     import glob
     
-    # 1. Encontra onde o Python REAL está instalado (fora do venv)
+    # 1. Finds real python out of venv
     base_prefix = getattr(sys, "base_prefix", sys.prefix)
     
-    # 2. Procura pelas pastas tcl8.6 e tk8.6 dentro da instalação base
-    # (Geralmente em C:\Python3xx\tcl\...)
+    # 2. Looks for relevant libraries
     tcl_dir = os.path.join(base_prefix, "tcl")
     
     if os.path.exists(tcl_dir):
-        # Tenta encontrar a pasta exata (pode ser tcl8.6, tcl8.6.13, etc)
         tcl_libs = glob.glob(os.path.join(tcl_dir, "tcl8*"))
         tk_libs = glob.glob(os.path.join(tcl_dir, "tk8*"))
         
         if tcl_libs and tk_libs:
-            # Define as variáveis de ambiente em tempo de execução
             os.environ["TCL_LIBRARY"] = tcl_libs[0]
             os.environ["TK_LIBRARY"] = tk_libs[0]
             
