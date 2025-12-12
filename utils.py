@@ -5,6 +5,7 @@ import threading
 import logging 
 import platform
 import subprocess
+from datetime import datetime
 
 def get_executable_dir():
     # Returns dir where executable is located

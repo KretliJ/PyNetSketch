@@ -182,57 +182,68 @@ def resolve_mac_vendor(mac_address):
 
 # Main function for python ARP table scan
 # This isn't handled by rust since the added complexity did not justify possible performance gains at the time
+# Existing rust implementations exist. Maybe look for a third party module?
 # Returns list with found devices in provided range
 def arp_scan(network_cidr, stop_event=None, progress_callback=None):
     all_devices = []
-    # Reads the return from _parse_target_input to check if the scan is a range
+    # Parse input to ensure we have valid networks
     target_subnets = _parse_target_input(network_cidr)
+    
     utils._log_operation(f"Processing scan targets: {target_subnets}")
 
-    # Iterates through subnet ranges
-    for subnet in target_subnets:
+    for subnet_str in target_subnets:
         if stop_event and stop_event.is_set(): break
+        
         try:
-            target_ip_base = subnet.split('/')[0]
+            # String to network object
+            network = ipaddress.ip_network(subnet_str, strict=False)
             
-            # Use Scapy to find the correct route interface
-            route = conf.route.route(target_ip_base)
-            active_iface = route[0]
+            # --- CHUNKING LOGIC ---
+            # For nets bigger than /24 (256+ hosts), breaks in /24 subnets
+            if network.prefixlen < 24:
+                utils._log_operation(f"Large subnet detected ({subnet_str}). Chunking into /24 blocks...")
+                chunks = list(network.subnets(new_prefix=24))
+            else:
+                chunks = [network]
             
-            # Ensures iface is string for logging
-            iface_name = str(active_iface)
+            total_chunks = len(chunks)
             
-            if progress_callback: progress_callback(f"Scanning {subnet} via {iface_name}")
-            
-            arp = ARP(pdst=subnet)
-            ether = Ether(dst="ff:ff:ff:ff:ff:ff")
-            packet = ether/arp
-            
-            start_t = time.perf_counter()
-            
-            # srp = Send and Receive Packet (Layer 2)
-            result = srp(packet, timeout=2, verbose=0, iface=active_iface)[0]
-            
-            duration = (time.perf_counter() - start_t) * 1000
-            
-            # Iterates through results, adds them to found devices
-            for sent, received in result:
-                if stop_event and stop_event.is_set(): break
-                if not any(d['ip'] == received.psrc for d in all_devices):
-                    mac_addr = received.hwsrc
-                    vendor_str = resolve_mac_vendor(mac_addr)
-                    all_devices.append({'ip': received.psrc, 'mac': mac_addr, 'vendor': vendor_str})
-            
-            msg = f"Finished {subnet} in {duration:.0f}ms. Found {len(all_devices)} devices."
+            for i, chunk in enumerate(chunks):
+                # Verifies STOP each 256 IPs bloc
+                if stop_event and stop_event.is_set():
+                    utils._log_operation("Scan aborted by user during chunking.")
+                    return all_devices
+
+                chunk_str = str(chunk)
+                if progress_callback: 
+                    progress_callback(f"Scanning chunk {i+1}/{total_chunks}: {chunk_str}")
+
+                # Original Scapy logic (now operating on current chunk)
+                target_ip_base = chunk_str.split('/')[0]
+                route = conf.route.route(target_ip_base)
+                active_iface = route[0]
+                
+                arp = ARP(pdst=chunk_str)
+                ether = Ether(dst="ff:ff:ff:ff:ff:ff")
+                packet = ether/arp
+                
+                # Short timeout per chunk keeps loop agility
+                result = srp(packet, timeout=1.5, verbose=0, iface=active_iface)[0]
+                
+                for sent, received in result:
+                    if not any(d['ip'] == received.psrc for d in all_devices):
+                        mac_addr = received.hwsrc
+                        vendor_str = resolve_mac_vendor(mac_addr)
+                        all_devices.append({'ip': received.psrc, 'mac': mac_addr, 'vendor': vendor_str})
+                
+                # Uncomment short pause for GUI if needed for massive networks
+                # time.sleep(0.01) 
+
+            msg = f"Finished scanning {subnet_str}. Total devices: {len(all_devices)}"
             utils._log_operation(msg)
-            if progress_callback: progress_callback(msg)
             
         except Exception as e:
-            # ENHANCED ERROR LOGGING
-            # Prints the Exception Type and raw representation to diagnose empty error messages
-            error_msg = f"Scan failed for {subnet}: [{type(e).__name__}] {repr(e)}"
-            utils._log_operation(error_msg, "ERROR")
-            if progress_callback: progress_callback(f"Error: {type(e).__name__}. Check Logs.")
+            utils._log_operation(f"Scan failed for {subnet_str}: {e}", "ERROR")
             continue
             
     return all_devices
@@ -419,65 +430,96 @@ def send_magic_packet(mac_address):
         return False, str(e)
 
 def monitor_traffic(interface=None, filter_ip=None, stop_event=None, progress_callback=None):
-    """
-    Monitora tráfego com Estratégia de Seleção de Interface Robusta.
-    """
     utils._log_operation(f"Starting Traffic Monitor (Filter: {filter_ip if filter_ip else 'None'})...")
     
-    # 1. Scapy Default
+    # 1. SELEÇÃO INTELIGENTE DE INTERFACE
+    # Se o usuário não escolheu nada, não confie no padrão do Scapy (que pode ser VPN).
+    # Pergunte ao SO: "Quem chega na internet?"
     if interface is None:
-        if not conf.iface: conf.route.route("8.8.8.8")
-        target_interface_name = conf.iface.name 
+        try:
+            # Roteia para o Google DNS para achar a saída real
+            route = conf.route.route("8.8.8.8")
+            active_iface = route[0] # Objeto da interface
+            target_interface_name = active_iface.name
+            utils._log_operation(f"Auto-detected active internet interface: {target_interface_name}")
+        except Exception:
+            # Fallback se não tiver internet
+            if not conf.iface: conf.route.route("8.8.8.8")
+            target_interface_name = conf.iface.name
     else:
         target_interface_name = interface
 
-    # --- RUST IMPLEMENTATION ---
+    # --- RUST IMPLEMENTATION (PNET) ---
     if RUST_AVAILABLE:
         try:
-            # 2. Introspecção: O que o Rust enxerga?
+            # 2. MATCHING DE GUID (O Pulo do Gato)
             rust_ifaces = pynetsketch_core.rust_list_interfaces()
             
-            # Se o nome que temos (ex: "Wi-Fi") não está na lista técnica do Rust...
+            # Se o nome amigável (ex: "Wi-Fi") não estiver na lista crua do Rust...
+            # Se o nome amigável (ex: "Wi-Fi") não estiver na lista crua do Rust...
             if target_interface_name not in rust_ifaces:
-                utils._log_operation(f"DEBUG: '{target_interface_name}' not in Rust list. Attempting Adapter translation...", "WARN")
                 found_match = None
                 
-                # Tenta traduzir via GUID
-                if platform.system() == "Windows" and hasattr(conf.iface, "guid"):
-                    scapy_guid = conf.iface.guid
-                    for r_iface in rust_ifaces:
-                        if scapy_guid in r_iface:
-                            found_match = r_iface
-                            utils._log_operation(f"SUCCESS: Adapter mapped '{target_interface_name}' -> '{found_match}'")
-                            break
-                
-                # DECISÃO ARQUITETURAL:
+                # --- NOVO BLOCO DE RESOLUÇÃO (Windows Specific) ---
+                if platform.system() == "Windows":
+                    try:
+                        # Importação tardia para evitar erro no Linux
+                        from scapy.arch.windows import get_windows_if_list
+                        
+                        # Obtém a lista crua de adaptadores do Windows
+                        win_ifaces = get_windows_if_list()
+                        
+                        target_guid = None
+                        
+                        # 1. Procura o GUID correspondente ao nome "Wi-Fi" (ou Ethernet)
+                        for iface_dict in win_ifaces:
+                            # Normaliza nomes para evitar erros de case/espaços
+                            if iface_dict['name'].strip().lower() == target_interface_name.strip().lower():
+                                target_guid = iface_dict['guid']
+                                utils._log_operation(f"DEBUG: Scapy found GUID for '{target_interface_name}': {target_guid}")
+                                break
+                        
+                        # 2. Se achou o GUID, procura ele na lista do Rust (\Device\NPF_{...})
+                        if target_guid:
+                            # Limpa o GUID para garantir o match (remove chaves se houver duplicidade)
+                            clean_target = target_guid.upper().replace("{", "").replace("}", "")
+                            
+                            for r_iface in rust_ifaces:
+                                clean_rust = r_iface.upper().replace("{", "").replace("}", "")
+                                
+                                # Verifica se o GUID do Windows está contido na string do Rust
+                                if clean_target in clean_rust:
+                                    found_match = r_iface
+                                    utils._log_operation(f"SUCCESS: Mapped '{target_interface_name}' -> '{found_match}'")
+                                    break
+                        else:
+                            utils._log_operation(f"DEBUG: Scapy could not find interface named '{target_interface_name}' in Windows registry.", "WARN")
+                            # Lista disponível para debug
+                            all_names = [i['name'] for i in win_ifaces]
+                            utils._log_operation(f"DEBUG: Available Windows Interfaces: {all_names}")
+
+                    except ImportError:
+                        utils._log_operation("WARN: scapy.arch.windows not available.", "WARN")
+                    except Exception as e:
+                        utils._log_operation(f"Translation Error: {e}", "ERROR")
+
+                # --- FIM DO NOVO BLOCO ---
+
                 if found_match:
                     target_interface_name = found_match
                 else:
-                    # Se não conseguimos traduzir, NÃO mande o nome "Wi-Fi" pro Rust.
-                    # Mande None. Isso diz ao Rust: "Escolha você a melhor interface".
-                    utils._log_operation("FAILED: Could not map interface. Delegating selection to Rust (Auto-Detect).", "WARN")
-                    target_interface_name = None 
-
-            # 3. Execução
-            if progress_callback: 
-                if target_interface_name:
-                    progress_callback(f"Initializing Rust Sniffer on {target_interface_name}...")
-                else:
-                    progress_callback("Initializing Rust Sniffer (Auto-Select)...")
-            
+                    utils._log_operation(f"WARNING: Could not map '{target_interface_name}' to Rust device. Using raw name.", "WARN")
+            # 3. Definição do Callback com Controle de Fluxo
             def bridge_callback(stats):
-                if stop_event and stop_event.is_set(): pass 
                 if progress_callback: progress_callback(stats)
+                if stop_event and stop_event.is_set(): return False
+                return True
 
-            # Passa o nome corrigido (ou None)
             pynetsketch_core.start_sniffer(bridge_callback, target_interface_name, filter_ip)
             return
 
         except Exception as e:
-            utils._log_operation(f"Rust sniffer failed: {e}. Falling back to Scapy.", "ERROR")
-    
+            utils._log_operation(f"Rust sniffer failed: {e}. Falling back to Scapy.", "ERROR")    
     # --- PYTHON FALLBACK ---
     if progress_callback: progress_callback("Initializing Scapy Sniffer (Slow Mode)...")
     try:
