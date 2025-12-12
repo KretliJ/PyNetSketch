@@ -124,17 +124,20 @@ python gui_app.py
 <details>
 <summary><strong>Click to expand</strong></summary>
 
-### 1. Large Subnet Scans (The "Atomic Scapy" Issue)
-**Status:** Open.
+### ~~1. Large Subnet Scans (The "Atomic Scapy" Issue)~~ (SOLVED)
+**Status:** **FIXED in v1.7**.
 Scanning a `/16` network still relies on Scapy's atomic calls in Python mode, which can delay UI updates. The Rust implementation mitigates this but requires further optimization for massive ranges.
+**Solution:** Implemented the Subnet Chunking logic in net_utils.py. Any target network larger than a /24 is now split into smaller /24 blocks. The scanner processes these blocks sequentially, checking for thread cancellation signals (stop_event) and updating the UI progress bar between each chunk, preventing the interface from freezing during massive scans.
 
-### 2. Logs in PyInstaller Mode
-**Status:** Pending.
+### ~~2. Logs in PyInstaller Mode~~ (SOLVED)
+**Status:** **FIXED in v1.6**.
 Logs currently write to the temporary execution directory when frozen with PyInstaller. Needs logic to detect `sys.frozen`.
+**Solution:** Refactored utils.py to implement Context-Aware Path Detection.
 
-### 3. Rust Thread Cancellation
-**Status:** Partially Solved.
+### ~~3. Rust Thread Cancellation~~ (SOLVED)
+**Status:** **FIXED in v1.7**.
 While the Python UI now remains responsive (due to `py.allow_threads`), stopping a Rust operation instantly requires the Rust loop to check a shared atomic flag. Currently, it stops after the current batch/timeout (approx. 1s latency).
+**Solution:** Established a Bidirectional Control Channel via FFI. Configured the Rust `pnet` channel with a 100ms read timeout to prevent blocking on idle networks. The Python callback now returns a boolean status.
 
 ### 4. ~~Traffic Monitor "0 pps" / Interface Error~~ (SOLVED)
 **Status:** **FIXED in v1.6**.
