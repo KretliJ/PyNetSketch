@@ -109,15 +109,24 @@ python gui_app.py
 
 ## 🛠️ Version History
 
+<details>
+<summary><strong>v.1.X - Early Engineering</strong></summary>
+   
 * **v1.0 - v1.2:** Basic Monolithic Prototyping.
 * **v1.3** Rust Integration (Hybrid Engine).
 * **v1.4** Distributed Server Mode & Mobile Protocol.
 * **v1.5** Pre-release executable, fixes and error documentation.
-* **v1.6 (Current - Thesis Milestone):**
+* **v1.6 (Thesis Milestone):**
     * **Refactoring:** Full GUI modularization.
     * **Performance:** Implemented threaded Rust Sniffer with GIL release (fixed freezing).
     * **Feature:** Differential Traffic Filtering.
     * **Fix:** Solved Windows Interface Name mismatch (Adapter Pattern).
+* **v1.7 (Current - Thesis Milestone):**
+    * **Concurrency:** Implemented Bidirectional Control Channel for Rust Sniffer (Non-blocking I/O cancellation <1s).
+    * **Optimization:** Added "Subnet Chunking" strategy for large network scans (eliminating Atomic Scapy freezes).
+    * **Performance:** Threaded Rust Sniffer with GIL release and Differential Traffic Filtering.
+
+</details>
 
 ## ⚠️ Known Limitations & Engineering Challenges
 
