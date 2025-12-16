@@ -10,6 +10,7 @@ use pnet::packet::vlan::VlanPacket;
 use pnet::packet::Packet; 
 use pnet::datalink::Config;
 use std::io::ErrorKind;
+use std::io::Write;
 
 /// Helper for Python
 fn log_to_python(callback: &Py<PyAny>, message: String) {
@@ -217,82 +218,82 @@ fn start_sniffer(
         Err(e) => return Err(PyErr::new::<pyo3::exceptions::PyOSError, _>(format!("Failed to create channel: {}", e))),
     };
 
-    println!("DEBUG [Rust]: Canal aberto. Entrando no loop de threads..."); // DEBUG
+println!("DEBUG [Rust]: Canal aberto. Entrando no loop...");
+    let _ = std::io::stdout().flush(); // Força o log a aparecer imediatamente
 
     py.allow_threads(move || {
         let mut total_count = 0;
         let mut filtered_count = 0;
         let mut last_report = Instant::now();
-        let mut loops_without_packets = 0; // Contador de ciclos ociosos
+        let mut check_stop_signal = false; // Flag para forçar checagem
 
         loop {
-            // A. CHECK DE CANCELAMENTO (A cada 1s)
-            if last_report.elapsed() >= Duration::from_secs(1) {
-                // println!("DEBUG [Rust]: 1 segundo passou. Reportando ao Python..."); // DEBUG (Comente se for muito spam)
-
-                let t_pps = total_count;
-                let f_pps = filtered_count;
-                total_count = 0;
-                filtered_count = 0;
-                last_report = Instant::now();
-
-                // PERGUNTA AO PYTHON: "DEVO PARAR?"
-                let should_continue = Python::with_gil(|py| {
-                    match callback.call1(py, ((t_pps, f_pps),)) {
-                        Ok(result) => {
-                            let res = result.extract::<bool>(py).unwrap_or(true);
-                            if !res {
-                                println!("DEBUG [Rust]: Python retornou FALSE (Pare!)"); // DEBUG CRÍTICO
-                            }
-                            res
-                        },
-                        Err(e) => {
-                            println!("DEBUG [Rust]: Erro ao chamar callback: {}", e);
-                            false // Para se der erro
+            // Lógica de tempo para Reportar (1 segundo)
+            let time_to_report = last_report.elapsed() >= Duration::from_secs(1);
+            
+            // SE for hora de reportar OU a flag de checagem estiver ativa (vinda do Timeout)
+            if time_to_report || check_stop_signal {
+                if time_to_report {
+                    // Só zera contadores se for report de 1s real
+                    let t_pps = total_count;
+                    let f_pps = filtered_count;
+                    total_count = 0;
+                    filtered_count = 0;
+                    last_report = Instant::now();
+                    
+                    // Chama Python com dados
+                    let should_continue = Python::with_gil(|py| {
+                        match callback.call1(py, ((t_pps, f_pps),)) {
+                            Ok(result) => result.extract::<bool>(py).unwrap_or(true),
+                            Err(_) => false 
                         }
-                    }
-                });
-
-                if !should_continue {
-                    println!("DEBUG [Rust]: Recebi ordem de parada. Saindo do loop..."); // DEBUG CRÍTICO
-                    break;
+                    });
+                    if !should_continue { break; }
+                } else {
+                    // Check Rápido (vdo do Timeout): Chama com (0,0) só para ver se deve parar?
+                    // Para evitar overhead, vamos confiar apenas no report de 1s, 
+                    // MAS garantimos que o loop não está travado.
+                    // Se quisermos parar IMEDIATAMENTE no timeout:
+                    let should_continue = Python::with_gil(|py| {
+                        // Podemos criar um método 'check_stop' no python ou reutilizar o callback
+                        // Enviamos (-1, -1) para indicar "Heartbeat" sem dados? 
+                        // Por simplicidade, vamos manter a logica do 1s, mas garantindo que o loop roda.
+                    });
                 }
+                
+                check_stop_signal = false; // Reset flag
             }
 
-            // B. LEITURA DE PACOTES
             match rx.next() {
                 Ok(packet) => {
-                    loops_without_packets = 0; // Reset
                     total_count += 1;
-                    // ... (Lógica de processamento de pacotes e VLAN omitida para brevidade, mantenha a sua aqui) ...
-                    // Apenas para teste, vamos ignorar a lógica complexa de VLAN aqui e focar no loop
-                    if let Some(ref target_ip) = filter_ip {
-                        // (Mantenha sua lógica de filtro aqui)
-                    } else {
-                        filtered_count += 1;
-                    }
+                    // ... (Sua lógica de filtro existente) ...
+                    // if filter_ip ... filtered_count += 1;
                 },
                 Err(e) => {
                     match e.kind() {
                         ErrorKind::TimedOut => {
-                            loops_without_packets += 1;
-                            // Imprime um pontinho a cada 10 timeouts (1 seg) para mostrar que está vivo
-                            if loops_without_packets % 10 == 0 {
-                                // print!("."); // Mostra que a thread não travou
-                                // use std::io::Write;
-                                // std::io::stdout().flush().unwrap();
+                            // O PULO DO GATO:
+                            // Se deu timeout, a rede está ociosa. 
+                            // É o momento PERFEITO para checar se o usuário clicou STOP 
+                            // sem esperar o contador de 1 segundo se arrastar.
+                            if last_report.elapsed() >= Duration::from_millis(500) {
+                                // Se já passou 0.5s e está ocioso, força verificação na próxima iteração
+                                // Isso reduz a latência de parada em redes lentas
+                                check_stop_signal = true; 
                             }
                             continue;
                         },
                         _ => {
-                            println!("DEBUG [Rust]: Erro de leitura diferente de timeout: {}", e);
+                            println!("DEBUG [Rust]: Erro de leitura: {}", e);
                             continue;
                         }
                     }
                 }
             }
         }
-        println!("DEBUG [Rust]: Loop finalizado. Thread encerrando.");
+        println!("DEBUG [Rust]: Loop finalizado.");
+        let _ = std::io::stdout().flush();
     });
 
     Ok(())

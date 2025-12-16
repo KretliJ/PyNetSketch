@@ -1,80 +1,75 @@
 import os
 import sys
+import threading
+import time
+import tkinter as tk
+from tkinter import ttk, messagebox, scrolledtext, simpledialog
+import platform
+import webbrowser
+
 # --- FIX: Tkinter in venv (Windows) ---
+# Mantendo sua correção original para garantir que funcione no executável
 if sys.platform == "win32":
     import glob
-    
-    # 1. Finds real python out of venv
     base_prefix = getattr(sys, "base_prefix", sys.prefix)
-    
-    # 2. Looks for relevant libraries
     tcl_dir = os.path.join(base_prefix, "tcl")
-    
     if os.path.exists(tcl_dir):
         tcl_libs = glob.glob(os.path.join(tcl_dir, "tcl8*"))
         tk_libs = glob.glob(os.path.join(tcl_dir, "tk8*"))
-        
         if tcl_libs and tk_libs:
             os.environ["TCL_LIBRARY"] = tcl_libs[0]
             os.environ["TK_LIBRARY"] = tk_libs[0]
-            
-            # print(f"DEBUG: Tcl fix applied. Using {tcl_libs[0]}")
 # --------------------------------------------------
-import tkinter as tk
-from tkinter import ttk, messagebox, scrolledtext, simpledialog
-import time
 
-import platform 
-import webbrowser
+# --- GLOBAL MODULE PLACEHOLDERS ---
+# Definimos como None para carregar depois (Lazy Import)
+net_utils = None
+utils = None
+report_utils = None
+set_app_icon = None
+NetworkServerMode = None
+ScannerTab = None
+TopologyTab = None
+TrafficTab = None
 
-# Core Logic imports
-import net_utils
-import utils
-import report_utils
-
-# Interface Modules
-from interface.ui_helpers import set_app_icon
-from interface.server_mode import NetworkServerMode
-from interface.scanner_tab import ScannerTab
-from interface.topology_tab import TopologyTab
-from interface.traffic_tab import TrafficTab
-
-# --- CONFIGURAÇÃO GLOBAL E UTILITÁRIOS ---
-
-def check_npcap():
-    """Verifica se o Npcap está instalado no Windows."""
+# --- CONFIGURAÇÃO DE DEPENDÊNCIA (NPCAP) ---
+def check_npcap_silent():
+    """Verifica silenciosamente se o Npcap existe (para rodar na thread)."""
     if platform.system() != "Windows":
-        return
+        return True
     npcap_path = os.path.join(os.environ["WINDIR"], "System32", "Npcap", "wpcap.dll")
-    if not os.path.exists(npcap_path):
-        temp_root = tk.Tk()
-        temp_root.withdraw() 
-        msg = "Npcap is required. Download from nmap.org/npcap?"
-        if messagebox.askyesno("Missing Dependency", msg):
-            webbrowser.open("https://nmap.org/npcap/")
-            sys.exit(0)
-        else:
-            temp_root.destroy()
+    return os.path.exists(npcap_path)
 
-# --- CLASSE DO MODO STANDALONE (GUI COMPLETA) ---
+def prompt_npcap_install():
+    """Pede ao usuário para instalar (roda na thread principal)."""
+    root = tk.Tk()
+    root.withdraw()
+    if messagebox.askyesno("Missing Dependency", "Npcap is required (Packet Capture Driver).\nDownload from nmap.org/npcap?"):
+        webbrowser.open("https://nmap.org/npcap/")
+    root.destroy()
+    sys.exit(0)
+
+# --- CLASSE DA APLICAÇÃO PRINCIPAL ---
 class NetworkApp:
     def __init__(self, root):
         self.root = root
-        set_app_icon(self.root) 
+        # Como carregamos via thread, 'set_app_icon' já estará disponível globalmente
+        if set_app_icon: set_app_icon(self.root) 
         self.root.title("PyNetSketch (Standalone)")
         self.root.geometry("1200x800") 
         
         self.style = ttk.Style()
         self.style.theme_use('clam')
         
-        # --- Styles ---
+        # Styles
         self.style.configure("Green.TButton", background="#4caf50", foreground="white")
         self.style.map("Green.TButton", background=[("active", "#45a049"), ("disabled", "#d3d3d3")])
         self.style.configure("Red.TButton", background="#f44336", foreground="white")
         self.style.map("Red.TButton", background=[("active", "#d32f2f"), ("disabled", "#d3d3d3")])
         
-        # --- State ---
+        # State
         self.latest_scan_results = []
+        # 'net_utils' já foi importado neste ponto
         self.local_ip = net_utils.get_local_ip()
         self.current_stop_event = None
         
@@ -84,7 +79,7 @@ class NetworkApp:
         self.spinner_idx = 0
         self.task_start_time = None
 
-        # --- Layout ---
+        # Layout
         self.create_top_bar() 
         self.create_tabs()
         self.create_bottom_bar() 
@@ -96,7 +91,6 @@ class NetworkApp:
         control_frame = ttk.LabelFrame(self.root, text="Controls", padding=10)
         control_frame.pack(fill="x", padx=10, pady=5)
 
-        # Target Inputs
         ttk.Label(control_frame, text="Target:").pack(side="left", padx=(5, 2))
         self.target_entry = ttk.Entry(control_frame, width=25)
         self.target_entry.pack(side="left", padx=5)
@@ -104,7 +98,6 @@ class NetworkApp:
 
         ttk.Separator(control_frame, orient="vertical").pack(side="left", fill="y", padx=15)
 
-        # Mode Selection
         ttk.Label(control_frame, text="Mode:").pack(side="left", padx=(5, 2))
         self.mode_var = tk.StringVar(value="Ping Host")
         self.mode_combo = ttk.Combobox(control_frame, textvariable=self.mode_var, state="readonly", width=18)
@@ -112,13 +105,11 @@ class NetworkApp:
         self.mode_combo.pack(side="left", padx=5)
         self.mode_combo.bind("<<ComboboxSelected>>", self.on_mode_change)
 
-        # Start/Stop
         self.start_btn = ttk.Button(control_frame, text="START", command=self.start_selected_task, style="Green.TButton")
         self.start_btn.pack(side="left", padx=(15, 5))
         self.stop_btn = ttk.Button(control_frame, text="STOP", command=self.stop_current_task, state="disabled", style="Red.TButton")
         self.stop_btn.pack(side="left", padx=5)
 
-        # Utilities
         ttk.Button(control_frame, text="Export Results", command=self.export_data).pack(side="right", padx=5)
         ttk.Button(control_frame, text="Clear Logs", command=self.clear_logs).pack(side="right", padx=5)
 
@@ -126,21 +117,21 @@ class NetworkApp:
         self.notebook = ttk.Notebook(self.root)
         self.notebook.pack(fill="both", expand=True, padx=10, pady=5)
 
-        # 1. Console (Kept inline as it's simple and tightly coupled to controller logging)
+        # 1. Console
         self.tab_console = ttk.Frame(self.notebook)
         self.notebook.add(self.tab_console, text="Console & Logs")
         self.console_text = scrolledtext.ScrolledText(self.tab_console, state='disabled', font=("Consolas", 10))
         self.console_text.pack(fill="both", expand=True, padx=5, pady=5)
 
-        # 2. Scanner (Modularized)
+        # 2. Scanner
         self.tab_scanner = ScannerTab(self.notebook, self)
         self.notebook.add(self.tab_scanner, text="Network Scanner")
 
-        # 3. Topology (Modularized)
+        # 3. Topology
         self.tab_visual = TopologyTab(self.notebook)
         self.notebook.add(self.tab_visual, text="Network Topology")
         
-        # 4. Traffic Monitor (Modularized)
+        # 4. Traffic Monitor
         self.tab_traffic = TrafficTab(self.notebook)
         self.notebook.add(self.tab_traffic, text="Traffic Monitor")
 
@@ -160,6 +151,7 @@ class NetworkApp:
     def load_persistent_logs(self):
         self.log_display.config(state='normal')
         self.log_display.delete(1.0, tk.END)
+        # 'utils' já importado
         log_path = utils.LOG_FILE
         if os.path.exists(log_path):
             try:
@@ -179,7 +171,7 @@ class NetworkApp:
         ttk.Button(bottom_frame, text="About", width=8, command=self.show_about_dialog).pack(side="right")
 
     def show_about_dialog(self):
-        messagebox.showinfo("About PyNetSketch", f"PyNetSketch v1.7 Bugfix\nA student's project by KretliJ")
+        messagebox.showinfo("About PyNetSketch", f"PyNetSketch v1.8 Milestone 3\nA student's project by KretliJ")
 
     # --- UI Logic ---
     def fill_local_ip(self):
@@ -315,18 +307,15 @@ class NetworkApp:
             self.notebook.select(self.tab_traffic)
             self.tab_traffic.reset_data()
             
-            # >>>> NOVO CÓDIGO AQUI <<<<
-            # Pega o filtro da UI
             filter_ip = self.tab_traffic.get_filter_ip()
             if filter_ip:
                 self.log_to_console(f"Applying filter: Host {filter_ip}")
             
-            # Passa o filtro para a função do net_utils
             evt = utils.run_in_background(
                 net_utils.monitor_traffic, 
                 self.handle_generic_finish, 
                 progress_callback=self.handle_traffic_update,
-                filter_ip=filter_ip  # Argumento novo
+                filter_ip=filter_ip
             )
             self.set_task_running(True, evt)
 
@@ -354,10 +343,7 @@ class NetworkApp:
             elapsed_str = f" in {duration:.1f}s"
         self.set_task_running(False)
         self.log_to_console(f"Scan Finished{elapsed_str}.")
-        
         self.latest_scan_results = devices
-        
-        # Delegate display to modules
         if devices:
             self.tab_scanner.populate(devices)
             self.tab_visual.update_map(devices)
@@ -366,7 +352,6 @@ class NetworkApp:
         try:
             if isinstance(data, str):
                 self.log_to_console(data)
-            # Aceita tuple, list, int ou float
             elif isinstance(data, (int, float, tuple, list)):
                 self.root.after(0, self.tab_traffic.add_data_point, data)
         except Exception as e:
@@ -376,7 +361,6 @@ class NetworkApp:
         top = tk.Toplevel(self.root)
         top.title("Export Options")
         top.geometry("300x150")
-        
         ttk.Label(top, text="Select Format:").pack(pady=10)
         def do_export(fmt):
             top.destroy()
@@ -384,22 +368,28 @@ class NetworkApp:
         ttk.Button(top, text="CSV (Excel)", command=lambda: do_export("csv")).pack(pady=5)
         ttk.Button(top, text="HTML (Web/PDF)", command=lambda: do_export("html")).pack(pady=5)
 
-# --- INICIALIZAÇÃO E LAUNCHER ---
-def main_launcher():
-    check_npcap()    
-    if platform.system() == "Windows":
-        try:
-            import ctypes
-            myappid = 'student.project.network.scanner.poc' 
-            ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
-        except Exception: pass
 
-    # Janela de Seleção (Launcher)
+# --- ENTRY POINT & SPLASH SCREEN LOGIC ---
+
+def open_launcher():
+    """Abre a janela de seleção de modo."""
+    # Primeiro verifica o Npcap (se não tiver, avisa e fecha)
+    if not check_npcap_silent():
+        prompt_npcap_install()
+
+    # Janela de Seleção
     selection_window = tk.Tk()
-    set_app_icon(selection_window)
+    if set_app_icon: set_app_icon(selection_window)
     selection_window.title("PyNetSketch - Launcher")
     selection_window.geometry("350x250")
     
+    # Centralizar
+    sc_width = selection_window.winfo_screenwidth()
+    sc_height = selection_window.winfo_screenheight()
+    x = (sc_width // 2) - (175)
+    y = (sc_height // 2) - (125)
+    selection_window.geometry(f"+{x}+{y}")
+
     style = ttk.Style()
     style.configure("Big.TButton", font=("Arial", 12))
     
@@ -423,6 +413,7 @@ def main_launcher():
     
     selection_window.mainloop()
 
+    # Inicia o app escolhido
     if selection_state["mode"] == "standalone":
         root = tk.Tk()
         app = NetworkApp(root)
@@ -432,5 +423,88 @@ def main_launcher():
         app = NetworkServerMode(root, session_name=selection_state["session_name"])
         root.mainloop()
 
+def main():
+    # 1. Configuração Inicial do Root (Invisível)
+    root = tk.Tk()
+    root.withdraw()
+    
+    # 2. Inicia Splash
+    from interface.startup_screen import SplashScreen
+    # Tenta ícone se existir
+    splash_icon = "assets/app_icon.png" if os.path.exists("assets/app_icon.png") else None
+    splash = SplashScreen(root, image_path=splash_icon)
+
+    def load_extensions():
+        """Carrega módulos pesados na thread"""
+        try:
+            # Declarar Globais
+            global net_utils, utils, report_utils, set_app_icon
+            global NetworkServerMode, ScannerTab, TopologyTab, TrafficTab
+            
+            # --- FASE 1: Core ---
+            splash.update_status("Initializing Logging & Utils...", 10)
+            import utils as u_mod
+            utils = u_mod
+            utils._log_operation("Application Boot Sequence Initiated.")
+            time.sleep(0.2)
+            
+            # --- FASE 2: Engine ---
+            splash.update_status("Loading Network Engine (Scapy/Rust)...", 30)
+            import net_utils as nu_mod
+            net_utils = nu_mod
+            
+            if hasattr(net_utils, 'RUST_AVAILABLE') and net_utils.RUST_AVAILABLE:
+                utils._log_operation("Rust Acceleration Engine: ACTIVE")
+            else:
+                utils._log_operation("Rust Engine: INACTIVE (Using Python Fallback)", "WARN")
+            time.sleep(0.3)
+
+            # --- FASE 3: Interface ---
+            splash.update_status("Loading UI Components...", 60)
+            import report_utils as ru_mod
+            report_utils = ru_mod
+            
+            from interface.ui_helpers import set_app_icon as sai
+            set_app_icon = sai
+            
+            from interface.server_mode import NetworkServerMode as nsm
+            NetworkServerMode = nsm
+            
+            from interface.scanner_tab import ScannerTab as st
+            ScannerTab = st
+            
+            from interface.topology_tab import TopologyTab as tt
+            TopologyTab = tt
+            
+            from interface.traffic_tab import TrafficTab as trt
+            TrafficTab = trt
+            
+            # --- FASE 4: Hardware Check ---
+            splash.update_status("Checking Network Drivers...", 90)
+            if not check_npcap_silent():
+                utils._log_operation("Npcap missing! Will prompt user.", "WARN")
+            
+            splash.update_status("Ready.", 100)
+            time.sleep(0.5)
+            
+            # Chama finalização na thread principal
+            root.after(0, finish_loading)
+            
+        except Exception as e:
+            print(f"Critical Startup Error: {e}")
+            if utils: utils._log_operation(f"Startup Crash: {e}", "CRITICAL")
+            # Fecha splash mesmo com erro
+            root.after(0, finish_loading)
+
+    def finish_loading():
+        splash.close()
+        root.destroy() # Destrói root da splash
+        open_launcher() # Abre o launcher (que cria seu próprio root)
+
+    # Inicia carregamento
+    threading.Thread(target=load_extensions, daemon=True).start()
+    
+    root.mainloop()
+
 if __name__ == "__main__":
-    main_launcher()
+    main()
