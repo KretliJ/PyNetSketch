@@ -44,6 +44,7 @@ The project adheres to a modular design pattern:
     * `traffic_tab.py`: Graph rendering and IP filtering logic.
     * `topology_tab.py`: Canvas drawing logic for network maps.
     * `server_mode.py`: UI for the Probe Server mode.
+    * `startup_screen.py`: View Layer. Handles the threaded loading sequence and visual startup feedback.
 * `net_utils.py`: **Model / Middleware**. Handles logic adaptation, Scapy fallback, and FFI calls to Rust.
 * `host_functions.py`: Server logic for the mobile companion.
 * `utils.py`: Thread management (`run_in_background`) and logging.
@@ -116,16 +117,19 @@ python gui_app.py
 * **v1.3** Rust Integration (Hybrid Engine).
 * **v1.4** Distributed Server Mode & Mobile Protocol.
 * **v1.5** Pre-release executable, fixes and error documentation.
-* **v1.6 (Thesis Milestone):**
+* **v1.6 (Thesis Milestone 1 - Modularization and Interfacing):**
     * **Refactoring:** Full GUI modularization.
     * **Performance:** Implemented threaded Rust Sniffer with GIL release (fixed freezing).
     * **Feature:** Differential Traffic Filtering.
     * **Fix:** Solved Windows Interface Name mismatch (Adapter Pattern).
-* **v1.7 (Current - Thesis Milestone):**
+* **v1.7 (Thesis Milestone 2 - Stability):**
     * **Concurrency:** Implemented Bidirectional Control Channel for Rust Sniffer (Non-blocking I/O cancellation <1s).
     * **Optimization:** Added "Subnet Chunking" strategy for large network scans (eliminating Atomic Scapy freezes).
     * **Performance:** Threaded Rust Sniffer with GIL release and Differential Traffic Filtering.
-
+* **v1.8 (Current - Thesis Milestone 3 - Loading and Build fixes):**
+    * **UX Polish:** Implemented custom Tkinter Splash Screen with transparency and procedural throbber.
+    * **Architecture:** "Lazy Loading" pattern implementation for instant app launch.
+    * **Critical Fix:** Resolved blocking I/O on Rust Core (Stop latency < 0.1s) and fixed PyInstaller binary shadowing.
 </details>
 
 ## ⚠️ Known Limitations & Engineering Challenges
