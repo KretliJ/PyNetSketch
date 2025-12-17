@@ -6,9 +6,40 @@ import tkinter as tk
 from tkinter import ttk, messagebox, scrolledtext, simpledialog
 import platform
 import webbrowser
+import ctypes
+
+def resource_path(relative_path):
+    """ Retorna o caminho absoluto do recurso, funcionando para dev e para PyInstaller """
+    try:
+        # PyInstaller cria uma pasta temp e armazena o caminho em _MEIPASS
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, relative_path)
+
+def setup_window_icon(window):
+    """ Define o ícone da janela de forma cross-platform """
+    try:
+        # 1. Tenta formato Windows (.ico) via iconbitmap
+        # Isso é preferível no Windows pois define o ícone da barra de tarefas e cabeçalho corretamente
+        if sys.platform.startswith("win"):
+            ico_path = resource_path(os.path.join("assets", "app_icon.ico"))
+            if os.path.exists(ico_path):
+                window.iconbitmap(default=ico_path)
+                return
+        
+        # 2. Fallback para Linux/Mac ou se o .ico falhar (.png)
+        # O Linux prefere iconphoto com PNG
+        png_path = resource_path(os.path.join("assets", "app_icon.png"))
+        if os.path.exists(png_path):
+            img = tk.PhotoImage(file=png_path)
+            window.iconphoto(True, img)
+            
+    except Exception as e:
+        print(f"Icon load warning: {e}")
 
 # --- FIX: Tkinter in venv (Windows) ---
-# Mantendo sua correção original para garantir que funcione no executável
 if sys.platform == "win32":
     import glob
     base_prefix = getattr(sys, "base_prefix", sys.prefix)
@@ -22,7 +53,6 @@ if sys.platform == "win32":
 # --------------------------------------------------
 
 # --- GLOBAL MODULE PLACEHOLDERS ---
-# Definimos como None para carregar depois (Lazy Import)
 net_utils = None
 utils = None
 report_utils = None
@@ -34,14 +64,12 @@ TrafficTab = None
 
 # --- CONFIGURAÇÃO DE DEPENDÊNCIA (NPCAP) ---
 def check_npcap_silent():
-    """Verifica silenciosamente se o Npcap existe (para rodar na thread)."""
     if platform.system() != "Windows":
         return True
     npcap_path = os.path.join(os.environ["WINDIR"], "System32", "Npcap", "wpcap.dll")
     return os.path.exists(npcap_path)
 
 def prompt_npcap_install():
-    """Pede ao usuário para instalar (roda na thread principal)."""
     root = tk.Tk()
     root.withdraw()
     if messagebox.askyesno("Missing Dependency", "Npcap is required (Packet Capture Driver).\nDownload from nmap.org/npcap?"):
@@ -53,8 +81,9 @@ def prompt_npcap_install():
 class NetworkApp:
     def __init__(self, root):
         self.root = root
-        # Como carregamos via thread, 'set_app_icon' já estará disponível globalmente
-        if set_app_icon: set_app_icon(self.root) 
+        
+        setup_window_icon(self.root)
+
         self.root.title("PyNetSketch (Standalone)")
         self.root.geometry("1200x800") 
         
@@ -69,7 +98,6 @@ class NetworkApp:
         
         # State
         self.latest_scan_results = []
-        # 'net_utils' já foi importado neste ponto
         self.local_ip = net_utils.get_local_ip()
         self.current_stop_event = None
         
@@ -117,25 +145,20 @@ class NetworkApp:
         self.notebook = ttk.Notebook(self.root)
         self.notebook.pack(fill="both", expand=True, padx=10, pady=5)
 
-        # 1. Console
         self.tab_console = ttk.Frame(self.notebook)
         self.notebook.add(self.tab_console, text="Console & Logs")
         self.console_text = scrolledtext.ScrolledText(self.tab_console, state='disabled', font=("Consolas", 10))
         self.console_text.pack(fill="both", expand=True, padx=5, pady=5)
 
-        # 2. Scanner
         self.tab_scanner = ScannerTab(self.notebook, self)
         self.notebook.add(self.tab_scanner, text="Network Scanner")
 
-        # 3. Topology
         self.tab_visual = TopologyTab(self.notebook)
         self.notebook.add(self.tab_visual, text="Network Topology")
         
-        # 4. Traffic Monitor
         self.tab_traffic = TrafficTab(self.notebook)
         self.notebook.add(self.tab_traffic, text="Traffic Monitor")
 
-        # 5. Persistent Logs
         self.tab_logs = ttk.Frame(self.notebook)
         self.notebook.add(self.tab_logs, text="Persistent Logs")
         self._setup_persistent_logs_tab()
@@ -151,7 +174,6 @@ class NetworkApp:
     def load_persistent_logs(self):
         self.log_display.config(state='normal')
         self.log_display.delete(1.0, tk.END)
-        # 'utils' já importado
         log_path = utils.LOG_FILE
         if os.path.exists(log_path):
             try:
@@ -266,7 +288,7 @@ class NetworkApp:
         target = self.target_entry.get()
         
         if mode == "Ping Host":
-            target = target.split("/")[0] # Clean CIDR
+            target = target.split("/")[0]
             self.log_to_console(f"Pinging {target}...")
             
             def ping_formatter(result):
@@ -372,18 +394,15 @@ class NetworkApp:
 # --- ENTRY POINT & SPLASH SCREEN LOGIC ---
 
 def open_launcher():
-    """Abre a janela de seleção de modo."""
-    # Primeiro verifica o Npcap (se não tiver, avisa e fecha)
     if not check_npcap_silent():
         prompt_npcap_install()
 
-    # Janela de Seleção
     selection_window = tk.Tk()
-    if set_app_icon: set_app_icon(selection_window)
+    
+    setup_window_icon(selection_window)
     selection_window.title("PyNetSketch - Launcher")
     selection_window.geometry("350x250")
     
-    # Centralizar
     sc_width = selection_window.winfo_screenwidth()
     sc_height = selection_window.winfo_screenheight()
     x = (sc_width // 2) - (175)
@@ -413,7 +432,6 @@ def open_launcher():
     
     selection_window.mainloop()
 
-    # Inicia o app escolhido
     if selection_state["mode"] == "standalone":
         root = tk.Tk()
         app = NetworkApp(root)
@@ -424,31 +442,29 @@ def open_launcher():
         root.mainloop()
 
 def main():
-    # 1. Configuração Inicial do Root (Invisível)
     root = tk.Tk()
     root.withdraw()
-    
-    # 2. Inicia Splash
-    from interface.startup_screen import SplashScreen
-    # Tenta ícone se existir
-    splash_icon = "assets/app_icon.png" if os.path.exists("assets/app_icon.png") else None
+
+    try:
+        from interface.startup_screen import SplashScreen
+    except ImportError:
+        from interface.startup_screen import SplashScreen
+
+    splash_icon = resource_path(os.path.join("assets", "app_icon.png"))
     splash = SplashScreen(root, image_path=splash_icon)
+    setup_window_icon(root)
 
     def load_extensions():
-        """Carrega módulos pesados na thread"""
         try:
-            # Declarar Globais
             global net_utils, utils, report_utils, set_app_icon
             global NetworkServerMode, ScannerTab, TopologyTab, TrafficTab
             
-            # --- FASE 1: Core ---
             splash.update_status("Initializing Logging & Utils...", 10)
             import utils as u_mod
             utils = u_mod
             utils._log_operation("Application Boot Sequence Initiated.")
             time.sleep(0.2)
             
-            # --- FASE 2: Engine ---
             splash.update_status("Loading Network Engine (Scapy/Rust)...", 30)
             import net_utils as nu_mod
             net_utils = nu_mod
@@ -459,7 +475,6 @@ def main():
                 utils._log_operation("Rust Engine: INACTIVE (Using Python Fallback)", "WARN")
             time.sleep(0.3)
 
-            # --- FASE 3: Interface ---
             splash.update_status("Loading UI Components...", 60)
             import report_utils as ru_mod
             report_utils = ru_mod
@@ -479,7 +494,6 @@ def main():
             from interface.traffic_tab import TrafficTab as trt
             TrafficTab = trt
             
-            # --- FASE 4: Hardware Check ---
             splash.update_status("Checking Network Drivers...", 90)
             if not check_npcap_silent():
                 utils._log_operation("Npcap missing! Will prompt user.", "WARN")
@@ -487,24 +501,44 @@ def main():
             splash.update_status("Ready.", 100)
             time.sleep(0.5)
             
-            # Chama finalização na thread principal
             root.after(0, finish_loading)
             
         except Exception as e:
             print(f"Critical Startup Error: {e}")
             if utils: utils._log_operation(f"Startup Crash: {e}", "CRITICAL")
-            # Fecha splash mesmo com erro
             root.after(0, finish_loading)
 
     def finish_loading():
         splash.close()
-        root.destroy() # Destrói root da splash
-        open_launcher() # Abre o launcher (que cria seu próprio root)
+        root.destroy()
+        open_launcher()
 
-    # Inicia carregamento
     threading.Thread(target=load_extensions, daemon=True).start()
     
     root.mainloop()
 
 if __name__ == "__main__":
+    import ctypes
+    import sys
+
+    # Correção do AppUserModelID (Para o ícone separar do Python)
+    if sys.platform.startswith('win'):
+        try:
+            myappid = 'kretlij.pynetsketch.thesis.v1.8'
+            ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
+        except Exception:
+            pass
+
+        # CORREÇÃO DE DPI 
+        # diz ao Windows para renderizar o app na resolução nativa do monitor
+        try:
+            # Tenta API do Windows 8.1+ (Mais robusta)
+            ctypes.windll.shcore.SetProcessDpiAwareness(1) 
+        except Exception:
+            try:
+                # Fallback para Windows Vista/7
+                ctypes.windll.user32.SetProcessDPIAware()
+            except Exception:
+                pass
+
     main()

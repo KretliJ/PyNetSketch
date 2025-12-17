@@ -22,7 +22,13 @@ class SplashScreen:
         y = (hs // 2) - (self.height // 2)
         self.splash.geometry(f'{self.width}x{self.height}+{x}+{y}')
 
-        # Transparência e Canvas
+        # --- CORREÇÃO DE JANELA (Sempre no Topo) ---
+        self.splash.overrideredirect(True)
+        self.splash.attributes('-topmost', True) 
+        self.splash.lift()                        
+        self.splash.focus_force()
+
+        # Transparência
         self.splash.overrideredirect(True)
         self.transparent_key = '#ff00ff' 
         self.splash.attributes('-transparentcolor', self.transparent_key)
@@ -38,97 +44,77 @@ class SplashScreen:
 
         self._draw_rounded_panel(2, 2, self.width-3, self.height-3, self.corner_radius)
 
-        # --- ELEMENTOS VISUAIS (LAYOUT FLUIDO) ---
-        
-        # Cursor vertical inicial (Padding do topo)
+        # --- ELEMENTOS VISUAIS ---
         current_y = 30 
-
-        # 1. LOGO (Lógica de "Objeto Sólido") 👇
         self.logo_img = None
         if image_path and os.path.exists(image_path):
             try:
                 self.logo_img = tk.PhotoImage(file=image_path)
-                img_w = self.logo_img.width()
                 img_h = self.logo_img.height()
-                
-                # Se a imagem for muito grande, limitamos o espaço visual
-                # Mas aqui desenhamos ela considerando seu centro
                 self.canvas.create_image(
-                    self.width // 2, 
-                    current_y + (img_h // 2), # O Canvas ancora no centro da imagem
-                    image=self.logo_img, 
-                    anchor='center'
+                    self.width // 2, current_y + (img_h // 2),
+                    image=self.logo_img, anchor='center'
                 )
-                
-                # A MÁGICA: Empurramos o cursor para baixo baseando-se na ALTURA REAL + Padding
                 current_y += img_h + 10 
-            except: 
-                pass
+            except: pass
         else:
-            # Se não tem imagem, dá um espacinho extra para o texto não colar no teto
             current_y += 20
-        # 👆 Fim da Lógica da Logo
 
-        # 2. Título
-        self.canvas.create_text(
-            self.width // 2, current_y+10,
-            text="PyNetSketch",
-            font=("Consolas", 22, "bold"),
-            fill=self.accent_color
-        )
-        # Empurra cursor (Tamanho da fonte aprox + padding)
+        self.canvas.create_text(self.width // 2, current_y+20, text="PyNetSketch", font=("Consolas", 22, "bold"), fill=self.accent_color)
         current_y += 35 
 
-        # 3. Subtítulo
-        self.canvas.create_text(
-            self.width // 2, current_y,
-            text="Network Analysis Tool",
-            font=("Segoe UI", 9),
-            fill="#888888"
-        )
+        self.canvas.create_text(self.width // 2, current_y+10, text="Network Analysis Tool", font=("Segoe UI", 9), fill="#888888")
         current_y += 40 
 
-        # 4. Throbber (Spinner)
-        # Ajustamos o centro do throbber para o novo Y
+        # Throbber
         self.spinner_angle = 0
         self.spinner_ids = []
         self.throbber_x = self.width // 2
-        self.throbber_y = current_y + 15 # +15 é o raio aproximado para centralizar o círculo
+        self.throbber_y = current_y + 15 
         self.throbber_radius = 22
         
+        self.animation_id = None 
         self._animate_throbber()
 
-        # Empurra cursor (Tamanho do Throbber + padding)
         current_y += 60 
 
-        # 5. Texto de Status
-        self.status_text_id = self.canvas.create_text(
-            self.width // 2, current_y,
-            text="Initializing...", 
-            font=("Segoe UI", 10), 
-            fill=self.text_color
-        )
+        self.status_text_id = self.canvas.create_text(self.width // 2, current_y, text="Initializing...", font=("Segoe UI", 10), fill=self.text_color)
         current_y += 20
 
-        # 6. Porcentagem
-        self.pct_text_id = self.canvas.create_text(
-            self.width // 2, current_y,
-            text="0%",
-            font=("Consolas", 8),
-            fill="#666666"
-        )
+        self.pct_text_id = self.canvas.create_text(self.width // 2, current_y, text="0%", font=("Consolas", 8), fill="#666666")
         
-        self.splash.update()
-    # --- Métodos Públicos ---
+        # Não chamamos self.splash.update() aqui pois o mainloop cuidará disso
+        # Apenas forçamos o processamento inicial de eventos
+        self.splash.update_idletasks()
+
     def update_status(self, text, progress_val):
+        """
+        ATENÇÃO: Este método agora é Thread-Safe.
+        Ele não atualiza a GUI diretamente, mas agenda a atualização
+        para a thread principal usando self.root.after.
+        """
+        try:
+            self.root.after(0, lambda: self._safe_update(text, progress_val))
+        except:
+            pass
+
+    def _safe_update(self, text, progress_val):
+        """Método interno que roda apenas na thread principal"""
+        if not self.splash.winfo_exists(): return
         self.canvas.itemconfig(self.status_text_id, text=text)
         self.canvas.itemconfig(self.pct_text_id, text=f"{progress_val}%")
-        self.splash.update()
+        # Removido self.splash.update() pois é redundante e perigoso com mainloop rodando
 
     def close(self):
-        self.splash.destroy()
-
-    # --- Métodos Internos de Desenho ---
+        if self.animation_id:
+            try:
+                self.root.after_cancel(self.animation_id)
+                self.animation_id = None
+            except: pass
+            
+        try:
+            self.splash.destroy()
+        except: pass
 
     def _animate_throbber(self):
         if not self.splash.winfo_exists(): return
@@ -136,39 +122,28 @@ class SplashScreen:
         for item in self.spinner_ids: self.canvas.delete(item)
         self.spinner_ids.clear()
 
-        # 1. Anel de fundo (Mais fino e sutil agora)
         bg_ring = self.canvas.create_oval(
             self.throbber_x - self.throbber_radius, self.throbber_y - self.throbber_radius,
             self.throbber_x + self.throbber_radius, self.throbber_y + self.throbber_radius,
-            outline="#3a3a3a", width=3 # Cinza bem escuro e fino
+            outline="#3a3a3a", width=3
         )
         self.spinner_ids.append(bg_ring)
 
-        # 2. Arco ativo (Verde brilhante)
-        # Extensão de 90 graus para parecer mais rápido
         arc = self.canvas.create_arc(
             self.throbber_x - self.throbber_radius, self.throbber_y - self.throbber_radius,
             self.throbber_x + self.throbber_radius, self.throbber_y + self.throbber_radius,
             start=self.spinner_angle, extent=100, style="arc",
-            outline=self.accent_color, width=3 # Mesma largura do fundo
+            outline=self.accent_color, width=3
         )
         self.spinner_ids.append(arc)
 
-        # Gira mais rápido (20 graus por frame)
         self.spinner_angle = (self.spinner_angle - 20) % 360 
-        self.root.after(30, self._animate_throbber)
+        
+        self.animation_id = self.root.after(30, self._animate_throbber)
 
     def _draw_rounded_panel(self, x1, y1, x2, y2, r):
-        """Desenha o painel de fundo usando um polígono suavizado"""
-        # Truque para suavizar bordas no Tkinter: desenhar a borda e o preenchimento separadamente
-        
-        # Pontos do polígono arredondado
         points = (x1+r, y1, x1+r, y1, x2-r, y1, x2-r, y1, x2, y1, x2, y1+r, x2, y1+r, 
                   x2, y2-r, x2, y2-r, x2, y2, x2-r, y2, x2-r, y2, x1+r, y2, x1+r, y2, 
                   x1, y2, x1, y2-r, x1, y2-r, x1, y1+r, x1, y1+r, x1, y1)
-        
-        # Desenha o preenchimento (sem borda)
         self.canvas.create_polygon(points, fill=self.bg_color, outline="", smooth=True)
-        
-        # Desenha a borda por cima (mais fina para esconder serrilhados)
         self.canvas.create_polygon(points, fill="", outline=self.border_color, width=1.5, smooth=True)
