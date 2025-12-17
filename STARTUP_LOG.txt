@@ -1,6 +1,0 @@
---- INICIANDO NOVA SESSÃO ---
-AppID definido com sucesso.
-DPI Awareness (Shcore) ativado.
-Tentando importar startup_screen...
-Sucesso: startup_screen importado da raiz.
-Rust Available: True
