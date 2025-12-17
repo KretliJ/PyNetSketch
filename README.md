@@ -128,7 +128,7 @@ python gui_app.py
     * **Performance:** Threaded Rust Sniffer with GIL release and Differential Traffic Filtering.
 * **v1.8 (Current - Thesis Milestone 3 - Loading and Build fixes):**
     * **UX Polish:** Implemented custom Tkinter Splash Screen with transparency and procedural throbber.
-    * **Architecture:** "Lazy Loading" pattern implementation for instant app launch.
+    * **Architecture:** "Lazy Loading" pattern implementation for visual feedback on app launch.
     * **Critical Fix:** Resolved blocking I/O on Rust Core (Stop latency < 0.1s) and fixed PyInstaller binary shadowing.
 </details>
 
