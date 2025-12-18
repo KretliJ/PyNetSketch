@@ -25,6 +25,26 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y libpcap-dev python3-tk
 
+      # Prepara Windows
+      # Instala npcap
+      - name: Download Npcap SDK (Windows)
+        if: runner.os == 'Windows'
+        shell: powershell
+        run: |
+        
+          # 1. Baixa o SDK oficial do Npcap
+          Invoke-WebRequest -Uri "https://npcap.com/dist/npcap-sdk-1.13.zip" -OutFile "npcap-sdk.zip"
+          
+          # 2. Descompacta
+          Expand-Archive -Path "npcap-sdk.zip" -DestinationPath "npcap-sdk"
+          
+          # 3. Avisa o Linker (link.exe) onde encontrar o arquivo Packet.lib
+          # Pega o caminho atual + pasta descompactada + Lib + x64
+          $npcapPath = "$(Get-Location)\npcap-sdk\Lib\x64"
+          
+          # Adiciona ao ambiente do GitHub Actions para os próximos passos usarem
+          echo "LIB=$npcapPath;$env:LIB" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          
       # Prepara o Python
       - name: Set up Python
         uses: actions/setup-python@v5
