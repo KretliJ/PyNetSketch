@@ -42,10 +42,11 @@ jobs:
           python -m pip install --upgrade pip
           pip install maturin pyinstaller scapy requests
 
-      # Compila o Rust e "cola" dentro do Python
       - name: Build Rust Extension
+        shell: bash
         run: |
-          maturin develop --release
+          maturin build --release
+          pip install target/wheels/*.whl
 
       # Gera o Executável (Windows)
       # Usa ponto-e-vírgula (;) para separar assets
