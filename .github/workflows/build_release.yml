@@ -44,6 +44,7 @@ jobs:
 
       - name: Build Rust Extension
         shell: bash
+        working-directory: ./rust_src
         run: |
           maturin build --release
           pip install target/wheels/*.whl
