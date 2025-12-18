@@ -415,18 +415,53 @@ def open_launcher():
     
     setup_window_icon(selection_window)
     selection_window.title("PyNetSketch - Launcher")
-    selection_window.geometry("350x250")
     
+    selection_window.geometry("500x480")
+    
+    # Centraliza na tela
     sc_width = selection_window.winfo_screenwidth()
     sc_height = selection_window.winfo_screenheight()
-    x = (sc_width // 2) - (175)
-    y = (sc_height // 2) - (125)
+    x = (sc_width // 2) - (250)
+    y = (sc_height // 2) - (240)
     selection_window.geometry(f"+{x}+{y}")
 
+    # Configuração de Estilos para o Launcher
     style = ttk.Style()
-    style.configure("Big.TButton", font=("Arial", 12))
+    style.configure("LauncherTitle.TLabel", font=("Segoe UI", 20, "bold"))
+    style.configure("LauncherSub.TLabel", font=("Segoe UI", 10), foreground="#666666")
+    style.configure("Big.TButton", font=("Segoe UI", 11, "bold"))
+    style.configure("Feature.TLabel", font=("Consolas", 10))
+
+    # --- Cabeçalho ---
+    header_frame = ttk.Frame(selection_window)
+    header_frame.pack(pady=(25, 10))
     
-    ttk.Label(selection_window, text="Selecione o Modo de Operação:", font=("Arial", 11)).pack(pady=20)
+    ttk.Label(header_frame, text="PyNetSketch", style="LauncherTitle.TLabel").pack()
+    ttk.Label(header_frame, text="Network Analysis & Monitoring Tool", style="LauncherSub.TLabel").pack()
+
+    # --- Área de Informações ---
+    info_frame = ttk.LabelFrame(selection_window, text=" System Capabilities ", padding=15)
+    info_frame.pack(fill="x", padx=30, pady=15)
+
+    # Lista de Features com ícones Unicode
+    features = [
+        "⚡ Rust Acceleration Engine (High Performance)",
+        "📊 Real-time Traffic Monitor (Live Charts)",
+        "🔍 Multi-threaded Port Scanner",
+        "🕸️ Layer 2/3 Topology Mapper",
+        "🛡️ Passive Network Sniffer"
+    ]
+
+    for feat in features:
+        row = ttk.Frame(info_frame)
+        row.pack(fill="x", pady=2)
+        ttk.Label(row, text=feat, style="Feature.TLabel").pack(side="left")
+
+    # --- Área de Ação ---
+    action_frame = ttk.Frame(selection_window)
+    action_frame.pack(pady=10, fill="x", padx=30)
+    
+    ttk.Label(action_frame, text="Select Operation Mode:", font=("Segoe UI", 10, "bold")).pack(anchor="center", pady=(10, 5))
     
     selection_state = {"mode": None, "session_name": "My PyNetSketch Probe"}
 
@@ -441,11 +476,19 @@ def open_launcher():
             selection_state["session_name"] = name
             selection_window.destroy()
 
-    ttk.Button(selection_window, text="🖥️ Standalone (GUI)", command=select_standalone, width=25, style="Big.TButton").pack(pady=10)
-    ttk.Button(selection_window, text="📡 Server (Remote Probe)", command=select_server, width=25, style="Big.TButton").pack(pady=10)
+    # Botões
+    btn_gui = ttk.Button(action_frame, text="🖥️  Standalone Client (GUI)", command=select_standalone, style="Big.TButton")
+    btn_gui.pack(fill="x", pady=5, ipady=5)
     
+    btn_server = ttk.Button(action_frame, text="📡  Remote Server Probe (Headless)", command=select_server, style="Big.TButton")
+    btn_server.pack(fill="x", pady=5, ipady=5)
+    
+    # Rodapé simples
+    ttk.Label(selection_window, text="v1.8 Milestone 3", font=("Segoe UI", 8), foreground="#999999").pack(side="bottom", pady=10)
+
     selection_window.mainloop()
 
+    # Lógica de inicialização
     if selection_state["mode"] == "standalone":
         root = tk.Tk()
         app = NetworkApp(root)
