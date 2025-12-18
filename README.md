@@ -178,5 +178,8 @@ This project is licensed under the MIT License.
 
 <details><summary><b>Architecture Diagrams (UML)</b></summary>
 <img alt="ClassDiagram 2025-2" src="https://github.com/KretliJ/PyNetSketch/blob/main/projectDiagrams/ClassDiagram.png">
+   
+<img alt="UserFlow 2025-2" src="https://github.com/KretliJ/PyNetSketch/blob/main/projectDiagrams/SequenceDiagram.png">
+
 <img alt="UserFlow 2025-2" src="https://github.com/KretliJ/PyNetSketch/blob/main/projectDiagrams/UserFlow.png">
 </details>
