@@ -1,9 +1,12 @@
 name: Build Multi-Platform
 
+permissions:
+  contents: write
+  
 on:
-  push:
-    branches: ["main"]
-  workflow_dispatch: # Permite clicar no botão "Run" manualmente na aba Actions
+  release:
+    types: [created]
+  workflow_dispatch:
 
 jobs:
   build:
@@ -25,6 +28,26 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y libpcap-dev python3-tk
 
+      # Prepara Windows
+      # Instala npcap
+      - name: Download Npcap SDK (Windows)
+        if: runner.os == 'Windows'
+        shell: powershell
+        run: |
+        
+          # 1. Baixa o SDK oficial do Npcap
+          Invoke-WebRequest -Uri "https://npcap.com/dist/npcap-sdk-1.13.zip" -OutFile "npcap-sdk.zip"
+          
+          # 2. Descompacta
+          Expand-Archive -Path "npcap-sdk.zip" -DestinationPath "npcap-sdk"
+          
+          # 3. Avisa o Linker (link.exe) onde encontrar o arquivo Packet.lib
+          # Pega o caminho atual + pasta descompactada + Lib + x64
+          $npcapPath = "$(Get-Location)\npcap-sdk\Lib\x64"
+          
+          # Adiciona ao ambiente do GitHub Actions para os próximos passos usarem
+          echo "LIB=$npcapPath;$env:LIB" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          
       # Prepara o Python
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -42,10 +65,12 @@ jobs:
           python -m pip install --upgrade pip
           pip install maturin pyinstaller scapy requests
 
-      # Compila o Rust e "cola" dentro do Python
       - name: Build Rust Extension
+        shell: bash
+        working-directory: ./rust_src
         run: |
-          maturin develop --release
+          maturin build --release
+          pip install target/wheels/*.whl
 
       # Gera o Executável (Windows)
       # Usa ponto-e-vírgula (;) para separar assets
@@ -61,11 +86,18 @@ jobs:
         run: |
           pyinstaller --noconsole --onefile --name "PyNetSketch" --add-data "assets:assets" --hidden-import "pynetsketch_core" gui_app.py
 
-      # 9. Faz o Upload do arquivo pronto para você baixar
+      # 9. Faz o Upload do arquivo pronto para baixar
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
           name: PyNetSketch-${{ matrix.os }}
           path: |
+          
             dist/PyNetSketch.exe
             dist/PyNetSketch
+            
+      - name: Upload to Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: dist/*
