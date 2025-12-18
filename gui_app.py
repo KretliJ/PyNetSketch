@@ -374,8 +374,22 @@ class NetworkApp:
         try:
             if isinstance(data, str):
                 self.log_to_console(data)
-            elif isinstance(data, (int, float, tuple, list)):
-                self.root.after(0, self.tab_traffic.add_data_point, data)
+            
+            # Supports format (Total, Filtered, Lista_IPs) from Rust
+            elif isinstance(data, (tuple, list)):
+                if len(data) == 3:
+                    total, filtered, ip_list = data
+                    
+                    # 1. Atualiza o Gráfico (apenas números)
+                    self.root.after(0, self.tab_traffic.add_data_point, (total, filtered))
+                    
+                    # 2. Atualiza a Tabela de IPs (lista)
+                    self.root.after(0, self.tab_traffic.update_ip_table, ip_list)
+                
+                # fallback Python
+                elif len(data) == 2:
+                    self.root.after(0, self.tab_traffic.add_data_point, data)
+                    
         except Exception as e:
             print(f"Graph update error: {e}")
 

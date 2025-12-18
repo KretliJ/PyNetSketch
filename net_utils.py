@@ -433,17 +433,13 @@ def monitor_traffic(interface=None, filter_ip=None, stop_event=None, progress_ca
     utils._log_operation(f"Starting Traffic Monitor (Filter: {filter_ip if filter_ip else 'None'})...")
     
     # 1. SELEÇÃO INTELIGENTE DE INTERFACE
-    # Se o usuário não escolheu nada, não confie no padrão do Scapy (que pode ser VPN).
-    # Pergunte ao SO: "Quem chega na internet?"
     if interface is None:
         try:
-            # Roteia para o Google DNS para achar a saída real
             route = conf.route.route("8.8.8.8")
-            active_iface = route[0] # Objeto da interface
+            active_iface = route[0]
             target_interface_name = active_iface.name
             utils._log_operation(f"Auto-detected active internet interface: {target_interface_name}")
         except Exception:
-            # Fallback se não tiver internet
             if not conf.iface: conf.route.route("8.8.8.8")
             target_interface_name = conf.iface.name
     else:
@@ -455,61 +451,39 @@ def monitor_traffic(interface=None, filter_ip=None, stop_event=None, progress_ca
             # 2. MATCHING DE GUID (O Pulo do Gato)
             rust_ifaces = pynetsketch_core.rust_list_interfaces()
             
-            # Se o nome amigável (ex: "Wi-Fi") não estiver na lista crua do Rust...
-            # Se o nome amigável (ex: "Wi-Fi") não estiver na lista crua do Rust...
             if target_interface_name not in rust_ifaces:
                 found_match = None
                 
                 # --- NOVO BLOCO DE RESOLUÇÃO (Windows Specific) ---
                 if platform.system() == "Windows":
                     try:
-                        # Importação tardia para evitar erro no Linux
                         from scapy.arch.windows import get_windows_if_list
-                        
-                        # Obtém a lista crua de adaptadores do Windows
                         win_ifaces = get_windows_if_list()
-                        
                         target_guid = None
                         
-                        # 1. Procura o GUID correspondente ao nome "Wi-Fi" (ou Ethernet)
                         for iface_dict in win_ifaces:
-                            # Normaliza nomes para evitar erros de case/espaços
                             if iface_dict['name'].strip().lower() == target_interface_name.strip().lower():
                                 target_guid = iface_dict['guid']
-                                utils._log_operation(f"DEBUG: Scapy found GUID for '{target_interface_name}': {target_guid}")
                                 break
                         
-                        # 2. Se achou o GUID, procura ele na lista do Rust (\Device\NPF_{...})
                         if target_guid:
-                            # Limpa o GUID para garantir o match (remove chaves se houver duplicidade)
                             clean_target = target_guid.upper().replace("{", "").replace("}", "")
-                            
                             for r_iface in rust_ifaces:
                                 clean_rust = r_iface.upper().replace("{", "").replace("}", "")
-                                
-                                # Verifica se o GUID do Windows está contido na string do Rust
                                 if clean_target in clean_rust:
                                     found_match = r_iface
                                     utils._log_operation(f"SUCCESS: Mapped '{target_interface_name}' -> '{found_match}'")
                                     break
-                        else:
-                            utils._log_operation(f"DEBUG: Scapy could not find interface named '{target_interface_name}' in Windows registry.", "WARN")
-                            # Lista disponível para debug
-                            all_names = [i['name'] for i in win_ifaces]
-                            utils._log_operation(f"DEBUG: Available Windows Interfaces: {all_names}")
-
-                    except ImportError:
-                        utils._log_operation("WARN: scapy.arch.windows not available.", "WARN")
                     except Exception as e:
                         utils._log_operation(f"Translation Error: {e}", "ERROR")
-
                 # --- FIM DO NOVO BLOCO ---
 
                 if found_match:
                     target_interface_name = found_match
                 else:
                     utils._log_operation(f"WARNING: Could not map '{target_interface_name}' to Rust device. Using raw name.", "WARN")
-            # 3. Definição do Callback com Controle de Fluxo
+            
+            # 3. Definição do Callback
             def bridge_callback(stats):
                 if progress_callback: progress_callback(stats)
                 if stop_event and stop_event.is_set(): return False
@@ -520,26 +494,54 @@ def monitor_traffic(interface=None, filter_ip=None, stop_event=None, progress_ca
 
         except Exception as e:
             utils._log_operation(f"Rust sniffer failed: {e}. Falling back to Scapy.", "ERROR")    
-    # --- PYTHON FALLBACK ---
+    
+    # --- PYTHON FALLBACK (SCAPY) ---
     if progress_callback: progress_callback("Initializing Scapy Sniffer (Slow Mode)...")
     try:
-        bpf_filter = f"host {filter_ip}" if filter_ip else None
+        # Loop principal do modo lento
         while not (stop_event and stop_event.is_set()):
             total_count = 0
             filtered_count = 0
+            
+            # Dicionário local para contar IPs neste segundo
+            # Estrutura: { "192.168.1.5": 10, ... }
+            ip_counts = {} 
+
             def count_pkt(p):
                 nonlocal total_count, filtered_count
                 total_count += 1
-                if filter_ip and IP in p:
-                    if p[IP].src == filter_ip or p[IP].dst == filter_ip:
+                
+                # Verifica se é pacote IP para extrair origem
+                if IP in p:
+                    src_ip = p[IP].src
+                    
+                    # 1. Incrementa contagem do IP
+                    ip_counts[src_ip] = ip_counts.get(src_ip, 0) + 1
+                    
+                    # 2. Lógica de Filtro
+                    if filter_ip:
+                        if src_ip == filter_ip or p[IP].dst == filter_ip:
+                            filtered_count += 1
+                    else:
                         filtered_count += 1
-                elif not filter_ip:
-                    filtered_count += 1
+                else:
+                    # Pacotes não-IP (ARP, IPv6 puro, etc) contam no total mas não entram na lista de IPs
+                    # Se não houver filtro, contam como 'passed'
+                    if not filter_ip:
+                        filtered_count += 1
 
+            # Escuta por 1 segundo (bloqueante)
             sniff(prn=count_pkt, timeout=1, store=0)
-            if progress_callback: progress_callback((total_count, filtered_count))
+            
+            # Transforma o dict em lista de tuplas e ordena: [('192.168.1.5', 10), ...]
+            top_ips = sorted(ip_counts.items(), key=lambda item: item[1], reverse=True)
+            
+            # Envia a tupla de 3 elementos, igual ao Rust
+            if progress_callback: 
+                progress_callback((total_count, filtered_count, top_ips))
             
     except Exception as e:
+        utils._log_operation(f"Sniffer error: {e}", "ERROR")
         if progress_callback: progress_callback(f"Sniffer error: {e}")
         
 # Function to organize the results of ARP table scans and group them by subnets

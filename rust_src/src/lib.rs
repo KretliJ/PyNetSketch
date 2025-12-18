@@ -11,6 +11,7 @@ use pnet::packet::Packet;
 use pnet::datalink::Config;
 use std::io::ErrorKind;
 use std::io::Write;
+use std::collections::HashMap;
 
 /// Helper for Python
 fn log_to_python(callback: &Py<PyAny>, message: String) {
@@ -84,109 +85,6 @@ fn rust_subnet_sweep(py: Python, ips: Vec<String>, ports: Vec<u16>, timeout_ms: 
     })
 }
 
-// --- 4. Traffic Sniffer (Fixed Lifetimes) ---
-// #[pyfunction]
-// #[pyo3(signature = (callback, interface_name=None, filter_ip=None))]
-// fn start_sniffer(
-//     py: Python,
-//     callback: PyObject,
-//     interface_name: Option<String>,
-//     filter_ip: Option<String>
-// ) -> PyResult<()> {
-    
-//     // Setup Interface
-//     let interfaces = datalink::interfaces();
-//     let interface = match interface_name {
-//         Some(name) => interfaces.into_iter().find(|iface| iface.name == name)
-//                                 .ok_or_else(|| PyErr::new::<pyo3::exceptions::PyValueError, _>("Interface not found"))?,
-//         None => interfaces.into_iter().find(|iface| iface.is_up() && !iface.is_loopback() && !iface.ips.is_empty())
-//                                 .ok_or_else(|| PyErr::new::<pyo3::exceptions::PyValueError, _>("No suitable interface found"))?
-//     };
-
-//     // Timeout config to fix error where rust monitor would "refuse" to stop
-//     let mut config = Config::default();
-//     config.read_timeout = Some(Duration::from_millis(200)); // Wakes up each 200ms interval
-
-//     let (_, mut rx) = match datalink::channel(&interface, config) { // Pass config here
-//         Ok(Ethernet(tx, rx)) => (tx, rx),
-//         Ok(_) => return Err(PyErr::new::<pyo3::exceptions::PyValueError, _>("Unhandled channel type")),
-//         Err(e) => return Err(PyErr::new::<pyo3::exceptions::PyOSError, _>(format!("Failed to create channel: {}", e))),
-//     };
-
-//     // Main loop
-//     py.allow_threads(move || {
-//         let mut total_count = 0;
-//         let mut filtered_count = 0;
-//         let mut last_report = Instant::now();
-
-//         loop {
-//             // Periodical cancel check
-//             // Full second pass, reports and verifies if should stop
-//             if last_report.elapsed() >= Duration::from_secs(1) {
-//                 let t_pps = total_count;
-//                 let f_pps = filtered_count;
-//                 total_count = 0;
-//                 filtered_count = 0;
-//                 last_report = Instant::now();
-
-//                 let should_continue = Python::with_gil(|py| {
-//                     match callback.call1(py, ((t_pps, f_pps),)) {
-//                         Ok(result) => result.extract::<bool>(py).unwrap_or(true),
-//                         Err(_) => false 
-//                     }
-//                 });
-
-//                 if !should_continue { break; }
-//             }
-
-//             // Read with Timeout
-//             match rx.next() {
-//                 Ok(packet) => {
-//                     // ... (Lógica de processamento de pacote IDÊNTICA à anterior) ...
-//                     total_count += 1;
-//                     if let Some(ref target_ip) = filter_ip {
-//                          if let Some(ethernet) = EthernetPacket::new(packet) {
-//                             let is_match = match ethernet.get_ethertype() {
-//                                 EtherTypes::Ipv4 => {
-//                                     if let Some(header) = Ipv4Packet::new(ethernet.payload()) {
-//                                         let src = header.get_source().to_string();
-//                                         let dst = header.get_destination().to_string();
-//                                         src == *target_ip || dst == *target_ip
-//                                     } else { false }
-//                                 },
-//                                 EtherTypes::Vlan => {
-//                                      if let Some(vlan) = VlanPacket::new(ethernet.payload()) {
-//                                         if vlan.get_ethertype() == EtherTypes::Ipv4 {
-//                                             if let Some(header) = Ipv4Packet::new(vlan.payload()) {
-//                                                 let src = header.get_source().to_string();
-//                                                 let dst = header.get_destination().to_string();
-//                                                 src == *target_ip || dst == *target_ip
-//                                             } else { false }
-//                                         } else { false }
-//                                     } else { false }
-//                                 },
-//                                 _ => false
-//                             };
-//                             if is_match { filtered_count += 1; }
-//                          }
-//                     } else {
-//                         filtered_count += 1;
-//                     }
-//                 },
-//                 Err(e) => {
-//                     // Timeout is normal. Ignore and loop runs again
-//                     // Allows for "should_continue" up there to run.
-//                     match e.kind() {
-//                         std::io::ErrorKind::TimedOut => continue,
-//                         _ => continue, // Ignore other errors
-//                     }
-//                 }
-//             }
-//         }
-//     });
-
-//     Ok(())
-// }
 #[pyfunction]
 #[pyo3(signature = (callback, interface_name=None, filter_ip=None))]
 fn start_sniffer(
@@ -208,7 +106,7 @@ fn start_sniffer(
 
     println!("DEBUG [Rust]: Interface selecionada: {}", interface.name); // DEBUG
 
-    // TENTATIVA DE TIMEOUT MAIS AGRESSIVO (100ms)
+    // 100ms aggressive timeout
     let mut config = Config::default();
     config.read_timeout = Some(Duration::from_millis(100));
 
@@ -218,46 +116,52 @@ fn start_sniffer(
         Err(e) => return Err(PyErr::new::<pyo3::exceptions::PyOSError, _>(format!("Failed to create channel: {}", e))),
     };
 
-println!("DEBUG [Rust]: Canal aberto. Entrando no loop...");
-    let _ = std::io::stdout().flush(); // Força o log a aparecer imediatamente
+    println!("DEBUG [Rust]: Channel open. Starting loop...");
+    let _ = std::io::stdout().flush(); // Forces log to show up instantly
 
     py.allow_threads(move || {
         let mut total_count = 0;
         let mut filtered_count = 0;
+        let mut ip_counts: HashMap<String, u32> = HashMap::new();
         let mut last_report = Instant::now();
-        let mut check_stop_signal = false; // Flag para forçar checagem
+        let mut check_stop_signal = false; // Flag to force check
+        let mut loops_without_packets = 0;
 
         loop {
-            // Lógica de tempo para Reportar (1 segundo)
+            // Logic to repot (1 sec)
             let time_to_report = last_report.elapsed() >= Duration::from_secs(1);
             
-            // SE for hora de reportar OU a flag de checagem estiver ativa (vinda do Timeout)
+            // IF is time to report OR check flag is active (from Timeout)
+            
             if time_to_report || check_stop_signal {
                 if time_to_report {
-                    // Só zera contadores se for report de 1s real
+                    // Zeroes counters if 1s report is real
                     let t_pps = total_count;
                     let f_pps = filtered_count;
+                    let mut top_ips: Vec<(String, u32)> = ip_counts.iter()
+                        .map(|(k, v)| (k.clone(), *v))
+                        .collect();
                     total_count = 0;
                     filtered_count = 0;
+                    ip_counts.clear();
                     last_report = Instant::now();
-                    
-                    // Chama Python com dados
+
+                    // Calls Python with data
                     let should_continue = Python::with_gil(|py| {
-                        match callback.call1(py, ((t_pps, f_pps),)) {
+                        match callback.call1(py, ((t_pps, f_pps, top_ips),)) {
                             Ok(result) => result.extract::<bool>(py).unwrap_or(true),
                             Err(_) => false 
                         }
                     });
                     if !should_continue { break; }
                 } else {
-                    // Check Rápido (vdo do Timeout): Chama com (0,0) só para ver se deve parar?
-                    // Para evitar overhead, vamos confiar apenas no report de 1s, 
-                    // MAS garantimos que o loop não está travado.
-                    // Se quisermos parar IMEDIATAMENTE no timeout:
+
+                    // If want int  to stop immediately at timeout:
                     let should_continue = Python::with_gil(|py| {
-                        // Podemos criar um método 'check_stop' no python ou reutilizar o callback
-                        // Enviamos (-1, -1) para indicar "Heartbeat" sem dados? 
-                        // Por simplicidade, vamos manter a logica do 1s, mas garantindo que o loop roda.
+                        // Create 'check_stop' on python or reuse callback
+                        // Send (-1, -1) to indicate "Heartbeat" with no data? 
+                        // For simplicity, keep 1s logic for now, ensuring loop runs.
+                        true
                     });
                 }
                 
@@ -266,26 +170,48 @@ println!("DEBUG [Rust]: Canal aberto. Entrando no loop...");
 
             match rx.next() {
                 Ok(packet) => {
+                    loops_without_packets = 0; 
                     total_count += 1;
-                    // ... (Sua lógica de filtro existente) ...
-                    // if filter_ip ... filtered_count += 1;
+                    
+                    // Parser Manual para extrair Source IP e contar
+                    if let Some(ethernet) = EthernetPacket::new(packet) {
+                        match ethernet.get_ethertype() {
+                            EtherTypes::Ipv4 => {
+                                if let Some(header) = Ipv4Packet::new(ethernet.payload()) {
+                                    let src = header.get_source().to_string();
+                                    // Incrementa contador do IP
+                                    *ip_counts.entry(src.clone()).or_insert(0) += 1;
+
+                                    // Lógica de Filtro (Mantida)
+                                    if let Some(ref target_ip) = filter_ip {
+                                        let dst = header.get_destination().to_string();
+                                        if src == *target_ip || dst == *target_ip {
+                                            filtered_count += 1;
+                                        }
+                                    } else {
+                                        filtered_count += 1;
+                                    }
+                                }
+                            },
+                            // Adicione lógica similar para VLAN se necessário contar IPs dentro de VLANs
+                            _ => {}
+                        }
+                    }
                 },
                 Err(e) => {
                     match e.kind() {
                         ErrorKind::TimedOut => {
-                            // O PULO DO GATO:
-                            // Se deu timeout, a rede está ociosa. 
-                            // É o momento PERFEITO para checar se o usuário clicou STOP 
-                            // sem esperar o contador de 1 segundo se arrastar.
+                            // Timeout means network is idle
+                            // Perfect moment to check for STOP condition 
                             if last_report.elapsed() >= Duration::from_millis(500) {
-                                // Se já passou 0.5s e está ocioso, força verificação na próxima iteração
-                                // Isso reduz a latência de parada em redes lentas
+                                // If 0.5s and idle, force verify in next iteration
+                                // Reduces stop latency for slower networks
                                 check_stop_signal = true; 
                             }
                             continue;
                         },
                         _ => {
-                            println!("DEBUG [Rust]: Erro de leitura: {}", e);
+                            println!("DEBUG [Rust]: Read error: {}", e);
                             continue;
                         }
                     }
