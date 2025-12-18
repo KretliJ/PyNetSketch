@@ -126,10 +126,13 @@ python gui_app.py
     * **Concurrency:** Implemented Bidirectional Control Channel for Rust Sniffer (Non-blocking I/O cancellation <1s).
     * **Optimization:** Added "Subnet Chunking" strategy for large network scans (eliminating Atomic Scapy freezes).
     * **Performance:** Threaded Rust Sniffer with GIL release and Differential Traffic Filtering.
-* **v1.8 (Current - Thesis Milestone 3 - Loading and Build fixes):**
+* **v1.8 (Thesis Milestone 3 - Loading and Build fixes):**
     * **UX Polish:** Implemented custom Tkinter Splash Screen with transparency and procedural throbber.
     * **Architecture:** "Lazy Loading" pattern implementation for visual feedback on app launch.
     * **Critical Fix:** Resolved blocking I/O on Rust Core (Stop latency < 0.1s) and fixed PyInstaller binary shadowing.
+* **v1.9 (Current - Traffic Monitor Refactor):**
+    * **Refactored TrafficTab:** Implemented persistent packet tracking by hosts IP and improved adherence to SRP.
+    * **IP list:** Added right-click context menu with 'Filter by this Host' option. 
 </details>
 
 ## ⚠️ Known Limitations & Engineering Challenges
