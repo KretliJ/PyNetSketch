@@ -193,7 +193,7 @@ class NetworkApp:
         ttk.Button(bottom_frame, text="About", width=8, command=self.show_about_dialog).pack(side="right")
 
     def show_about_dialog(self):
-        messagebox.showinfo("About PyNetSketch", f"PyNetSketch v1.8 Milestone 3\nA student's project by KretliJ")
+        messagebox.showinfo("About PyNetSketch", f"PyNetSketch v1.9\nA student's project by KretliJ")
 
     # --- UI Logic ---
     def fill_local_ip(self):
