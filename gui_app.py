@@ -445,11 +445,11 @@ def open_launcher():
 
     # Lista de Features com ícones Unicode
     features = [
-        "⚡ Rust Acceleration Engine (High Performance)",
-        "📊 Real-time Traffic Monitor (Live Charts)",
-        "🔍 Multi-threaded Port Scanner",
-        "🕸️ Layer 2/3 Topology Mapper",
-        "🛡️ Passive Network Sniffer"
+        "⚡- Rust Acceleration Engine (High Performance)",
+        "📊- Real-time Traffic Monitor (Live Charts)",
+        "🔍- Multi-threaded Port Scanner",
+        "🕸️- Layer 2/3 Topology Mapper",
+        "🛡️- Passive Network Sniffer"
     ]
 
     for feat in features:
@@ -470,7 +470,7 @@ def open_launcher():
         selection_window.destroy()
 
     def select_server():
-        name = simpledialog.askstring("Session Name", "Nome desta sonda/servidor:", initialvalue="Lab Probe 01")
+        name = simpledialog.askstring("Session Name", "Name this probe/server:", initialvalue="Lab Probe 01")
         if name:
             selection_state["mode"] = "server"
             selection_state["session_name"] = name
@@ -484,7 +484,7 @@ def open_launcher():
     btn_server.pack(fill="x", pady=5, ipady=5)
     
     # Rodapé simples
-    ttk.Label(selection_window, text="v1.8 Milestone 3", font=("Segoe UI", 8), foreground="#999999").pack(side="bottom", pady=10)
+    ttk.Label(selection_window, text="v1.9", font=("Segoe UI", 8), foreground="#999999").pack(side="bottom", pady=10)
 
     selection_window.mainloop()
 

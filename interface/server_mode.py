@@ -17,29 +17,29 @@ class NetworkServerMode:
         header_frame = ttk.Frame(root)
         header_frame.pack(pady=(15, 5))
         
-        ttk.Label(header_frame, text="📡 Modo Sonda Ativo", font=("Arial", 14, "bold")).pack()
-        ttk.Label(header_frame, text=f"Sessão: {session_name}", font=("Arial", 11)).pack()
+        ttk.Label(header_frame, text="📡 Server mode active", font=("Arial", 14, "bold")).pack()
+        ttk.Label(header_frame, text=f"Session: {session_name}", font=("Arial", 11)).pack()
         
-        info_frame = ttk.LabelFrame(root, text="Informações de Conexão", padding=10)
+        info_frame = ttk.LabelFrame(root, text="Connection Info", padding=10)
         info_frame.pack(fill="x", padx=10, pady=5)
         
         local_ip = net_utils.get_local_ip()
-        ttk.Label(info_frame, text=f"IP Local: {local_ip}", font=("Consolas", 10, "bold")).pack(anchor="w")
-        ttk.Label(info_frame, text=f"Porta de Comando (TCP): {host_functions.CMD_PORT}").pack(anchor="w")
-        ttk.Label(info_frame, text=f"Porta de Descoberta (UDP): {host_functions.DISCOVERY_PORT}").pack(anchor="w")
+        ttk.Label(info_frame, text=f"Local IP: {local_ip}", font=("Consolas", 10, "bold")).pack(anchor="w")
+        ttk.Label(info_frame, text=f"Command port (TCP): {host_functions.CMD_PORT}").pack(anchor="w")
+        ttk.Label(info_frame, text=f"Discovery port (UDP): {host_functions.DISCOVERY_PORT}").pack(anchor="w")
         
-        self.fw_label = ttk.Label(info_frame, text="Configurando Firewall...", foreground="orange", font=("Arial", 8))
+        self.fw_label = ttk.Label(info_frame, text="Configuring Firewall...", foreground="orange", font=("Arial", 8))
         self.fw_label.pack(anchor="w", pady=(5,0))
         
-        ttk.Label(root, text="Log de Eventos:", font=("Arial", 9, "bold")).pack(anchor="w", padx=10)
+        ttk.Label(root, text="Event log:", font=("Arial", 9, "bold")).pack(anchor="w", padx=10)
 
         self.log_area = scrolledtext.ScrolledText(root, height=10, width=50, state='disabled', font=("Consolas", 8))
         self.log_area.pack(fill="both", expand=True, padx=10, pady=5)
         
         btn_frame = ttk.Frame(root)
         btn_frame.pack(pady=10)
-        ttk.Button(btn_frame, text="Parar Servidor", command=self.stop_server).pack(side="left", padx=5)
-        ttk.Button(btn_frame, text="Limpar Log", command=self.clear_log).pack(side="left", padx=5)
+        ttk.Button(btn_frame, text="Stop Server", command=self.stop_server).pack(side="left", padx=5)
+        ttk.Button(btn_frame, text="Clear Log", command=self.clear_log).pack(side="left", padx=5)
         
         self.server_manager = host_functions.ProbeServer(
             port=host_functions.CMD_PORT, 
