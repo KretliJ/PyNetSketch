@@ -33,7 +33,7 @@ It demonstrates advanced architectural patterns by featuring a Hybrid Engine tha
     * **Remote Control:** Accepts JSON commands via TCP sockets from mobile clients.
     * **Hardware Abstraction:** Allows mobile devices to execute raw socket operations (like ARP scans) by proxying through the PC.
 
-## 📂 Project Structure (v1.6)
+## 📂 Project Structure (v1.9)
 
 The project adheres to a modular design pattern:
 
