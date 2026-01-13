@@ -6,7 +6,9 @@
 
 It demonstrates advanced architectural patterns by featuring a Hybrid Engine that combines a flexible Python frontend (Tkinter) with a high-performance Rust core for critical I/O operations. The project is designed to bridge the gap between abstract network theory and visual understanding.
 
-> **Note:** This project serves as an academic case study in Systems Integration, FFI (Foreign Function Interface), and Concurrency Patterns.
+> **Notes:**
+> This project serves as an academic case study in Systems Integration, FFI (Foreign Function Interface), and Concurrency Patterns.
+> This project is currently an early prototype and proof-of-concept system for the study of Software Engineering applied to a network monitoring tool
 
 ## 🌟 Key Features
 
