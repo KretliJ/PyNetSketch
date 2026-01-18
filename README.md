@@ -67,6 +67,7 @@ sudo apt-get install libpcap-dev
 
 ### 🪟 Windows shenanigans and troubleshooting:
 
+* **Powershell is a must**
 * **Npcap Driver:** Download from [nmap.org/npcap](https://nmap.org/npcap/). Though this chack is handled during the startup cycle
 * **Npcap SDK:** To compile the Rust core, download the **Npcap SDK**. Extract in a known folder (as shown in example further down the chain, prefer making an `C:\NpcapSDK` folder)
   * (You are looking for these)
