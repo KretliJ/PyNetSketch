@@ -65,9 +65,27 @@ The project adheres to a modular design pattern:
 sudo apt-get install libpcap-dev
 ```
 
-### 🪟 Windows
+### 🪟 Windows shenanigans and troubleshooting:
+
 * **Npcap Driver:** Download from [nmap.org/npcap](https://nmap.org/npcap/). Though this chack is handled during the startup cycle
-* **Npcap SDK:** To compile the Rust core, download the **Npcap SDK** and set the `LIB` environment variable to point to `Packet.lib`. Extract in a known folder (C:\NpcapSDK)
+* **Npcap SDK:** To compile the Rust core, download the **Npcap SDK**. Extract in a known folder (as shown in example further down the chain, prefer making an `C:\NpcapSDK` folder)
+  * (You are looking for these)
+  * <img alt="Npcap_needs" src=https://github.com/KretliJ/PyNetSketch/blob/main/projectDiagrams/Nmap_print.png>
+* **Windows SDK:** If not already installed:
+  ```
+  winget install --id=Microsoft.VisualStudio.2022.BuildTools --force --override "--quiet --wait --add Microsoft.VisualStudio.Workload.VCTools --includeRecommended"
+  ```
+  No further action should be necessary but if this still fails:
+     1. Open Visual Studio Installer
+     2. Click "modify" on Visual Studio Build Tools
+     3. Make sure "Desktop development with C++" workload is checked
+     4. On the right side panel, make sure to check "Windows 11 SDK" or "Windows 10 SDK"
+  
+* **Rust:** If not already installed:
+  ```
+  winget install rustup
+  ```
+  Set a system path to `C:\Users\<your user>\.cargo\bin`
 
 ### 1: Configure venv 
 
