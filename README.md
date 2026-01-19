@@ -58,72 +58,106 @@ The project adheres to a modular design pattern:
 
 ## 📦 Installation & Compilation for Development
 
-### 🐧 Linux (Debian/Ubuntu/Kali)
+### 🐧 Linux (Debian/Fedora/Arch)
 
-* libpcap headers: Required for compiling the Rust core packet capture features.
-```
-sudo apt-get install libpcap-dev
-```
+   * libpcap headers: Required for compiling the Rust core packet capture features.
+   ```
+   sudo apt-get install libpcap-dev # Debian
+   ```
+   ```
+   sudo dnf install libpcap-devel # Fedora
+   ```
+   ```
+   sudo pacman -S libpcap # Arch
+   ```
+   Note: This can be skipped but the application will run python-only, so prefer not to
 
 ### 🪟 Windows shenanigans and troubleshooting:
 
-* **Powershell is a must**
-* **Npcap Driver:** Download from [nmap.org/npcap](https://nmap.org/npcap/). Though this chack is handled during the startup cycle
-* **Npcap SDK:** To compile the Rust core, download the **Npcap SDK**. Extract in a known folder (as shown in example further down the chain, prefer making an `C:\NpcapSDK` folder)
-  * (You are looking for these)
-  * <img alt="Npcap_needs" src=https://github.com/KretliJ/PyNetSketch/blob/main/projectDiagrams/Nmap_print.png>
-* **Windows SDK:** If not already installed:
-  ```
-  winget install --id=Microsoft.VisualStudio.2022.BuildTools --force --override "--quiet --wait --add Microsoft.VisualStudio.Workload.VCTools --includeRecommended"
-  ```
-  No further action should be necessary but if this still fails:
-     1. Open Visual Studio Installer
-     2. Click "modify" on Visual Studio Build Tools
-     3. Make sure "Desktop development with C++" workload is checked
-     4. On the right side panel, make sure to check "Windows 11 SDK" or "Windows 10 SDK"
-  
-* **Rust:** If not already installed:
-  ```
-  winget install rustup
-  ```
-  Set a system path to `C:\Users\<your user>\.cargo\bin`
-
+   * **Powershell is a must**
+   * **Npcap Driver:** Download from [nmap.org/npcap](https://nmap.org/npcap/). Though this chack is handled during the startup cycle
+   * **Npcap SDK:** To compile the Rust core, download the **Npcap SDK**. Extract in a known folder (as shown in example further down the chain, prefer making an `C:\NpcapSDK` folder)
+     * (You are looking for these)
+     * <img alt="Npcap_needs" src=https://github.com/KretliJ/PyNetSketch/blob/main/projectDiagrams/Nmap_print.png>
+   * **Windows SDK:** If not already installed:
+     ```
+     winget install --id=Microsoft.VisualStudio.2022.BuildTools --force --override "--quiet --wait --add Microsoft.VisualStudio.Workload.VCTools --includeRecommended"
+     ```
+     No further action should be necessary but if this still fails:
+        1. Open Visual Studio Installer
+        2. Click "modify" on Visual Studio Build Tools
+        3. Make sure "Desktop development with C++" workload is checked
+        4. On the right side panel, make sure to check "Windows 11 SDK" or "Windows 10 SDK"
+     
+   * **Rust:** If not already installed:
+     ```
+     winget install rustup
+     ```
+     Set a system path to `C:\Users\<your user>\.cargo\bin`
+     Note: This can be skipped but the application will run python-only, so prefer not to
+     
 ### 1: Configure venv 
 
-**Linux**
-```
-python3 -m venv .venv
-source .venv/bin/activate
-```
-**Windows**
-```
-python -m venv .venv
-.\.venv\Scripts\activate
-```
+   **Linux**
+   ```
+   python3 -m venv .venv
+   source .venv/bin/activate
+   ```
+   **Windows**
+   ```
+   python -m venv .venv
+   .\.venv\Scripts\activate
+   ```
+   Note: You *can* do this outside of venv just fine, but this approach is recommended
+
 ### 2: Install dependencies
-```
-pip install scapy requests pillow maturin
-```
+
+   **Both systems**   
+   ```
+   pip install scapy requests pillow maturin
+   ```
+   
+   **Linux**
+   ```
+   sudo apt install python3-tk tk-dev # Debian
+   ```
+   ```
+   sudo dnf install python3-tkinter # Fedora
+   ```
+   ```
+   sudo pacman -S tk # Arch only needs to run this if tk complains it's not there 
+   ```
+
 ### 3: Compile Rust core
-**Linux**
-```
-cd rust_src
-maturin develop --release
-cd ..
-```
-**Windows**
-```
-$env:LIB = "C:\NpcapSDK\Lib\x64;" + $env:LIB # Ignore if already in PATH
-cd rust_src
-maturin develop --release
-cd ..
-```
+
+   **Linux**
+   ```
+   cd rust_src
+   maturin develop --release
+   cd ..
+   ```
+   
+   **Windows**
+   ```
+   $env:LIB = "C:\NpcapSDK\Lib\x64;" + $env:LIB # Ignore if already in PATH
+   cd rust_src
+   maturin develop --release
+   cd ..
+   ```
+   Note: This can be skipped but the application will run python-only, so prefer not to
+
 ### 4: Execute
 **Linux**
 ```
 # Point to the venv python executable to ensure dependencies are found
 sudo ./.venv/bin/python gui_app.py
 ```
+```
+# If you want to reduce the risk of X11/Wayland protocols
+sudo setcap cap_net_raw,cap_net_admin=eip ./.venv/bin/python3
+./.venv/bin/python3 gui_app.py
+```
+
 **Windows**
 ```
 python gui_app.py
