@@ -153,7 +153,7 @@ The project adheres to a modular design pattern:
 sudo ./.venv/bin/python gui_app.py
 ```
 ```
-# If you want to reduce the risk of X11/Wayland protocols
+# If you want to reduce the risk of breaking X11/Wayland protocols
 sudo setcap cap_net_raw,cap_net_admin=eip ./.venv/bin/python3
 ./.venv/bin/python3 gui_app.py
 ```
