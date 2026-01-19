@@ -28,16 +28,23 @@ class SplashScreen:
         self.splash.lift()                        
         self.splash.focus_force()
 
-        # Transparência
-        self.splash.overrideredirect(True)
-        self.transparent_key = '#ff00ff' 
-        self.splash.attributes('-transparentcolor', self.transparent_key)
-        self.splash.config(bg=self.transparent_key)
+# Configuração de Transparência Multiplataforma
+        self.transparent_key = '#ff00ff'
+        
+        if os.name == 'nt': # Windows
+            try:
+                self.splash.attributes('-transparentcolor', self.transparent_key)
+                self.splash.config(bg=self.transparent_key)
+            except:
+                self.splash.config(bg=self.bg_color)
+        else: # Linux / macOS
+            self.splash.attributes('-alpha', 0.95)
+            self.splash.config(bg=self.bg_color)
 
         self.canvas = tk.Canvas(
             self.splash, 
             width=self.width, height=self.height, 
-            bg=self.transparent_key, 
+            bg=self.bg_color if os.name != 'nt' else self.transparent_key, 
             highlightthickness=0
         )
         self.canvas.pack(fill='both', expand=True)

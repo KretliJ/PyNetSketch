@@ -104,3 +104,18 @@
 [2026-01-18 13:30:19] [GUI] - Trace complete.
 [2026-01-18 13:30:19] [INFO] - Thread finished for: perform_traceroute
 [2026-01-18 13:30:19] [GUI] - Task Completed in 8.8s.
+[2026-01-18 21:10:40] [INFO] - Application Boot Sequence Initiated.
+[2026-01-18 21:10:41] [INFO] - Rust Acceleration Engine: ACTIVE
+[2026-01-18 21:10:52] [INFO] - Application Boot Sequence Initiated.
+[2026-01-18 21:10:53] [INFO] - Rust Acceleration Engine: ACTIVE
+[2026-01-18 21:10:55] [GUI] - Reset target to local subnet: 192.168.3.0/24
+[2026-01-18 21:10:55] [GUI] - App started. Local IP: 192.168.3.22
+[2026-01-18 21:11:07] [GUI] - Scanning 192.168.3.0/24...
+[2026-01-18 21:11:07] [INFO] - Thread started for: arp_scan
+[2026-01-18 21:11:07] [INFO] - Processing scan targets: ['192.168.3.0/24']
+[2026-01-18 21:11:07] [GUI] - Scanning chunk 1/1: 192.168.3.0/24
+[2026-01-18 21:11:09] [GUI] - [+] Found: 192.168.3.1 (('HuaweiDevice', 'Huawei Device Co., Ltd.'))
+[2026-01-18 21:11:09] [GUI] - [+] Found: 192.168.3.2 (('GigaByteTech', 'Giga-Byte Technology Co.,Ltd.'))
+[2026-01-18 21:11:09] [GUI] - [+] Found: 192.168.3.27 (Randomized / Virtual (LAA))
+[2026-01-18 21:11:09] [INFO] - Thread finished for: arp_scan
+[2026-01-18 21:11:09] [GUI] - Scan Finished in 1.8s.
