@@ -223,6 +223,10 @@ To control this tool from your phone, check the [PyNetSketch Mobile App](https:/
 NOTE: 
 Development environment setup is necessary to run the mobile app.
 
+## 🛠️ Encountering errors?
+
+[Check the troubleshooting guide](./troubleshooting.md)
+
 ## 📜 License
 This project is licensed under the MIT License.
 
