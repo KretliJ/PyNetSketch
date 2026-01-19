@@ -2,25 +2,9 @@
 
 This document lists the most common errors encountered during the development and execution of PyNetSketch across different operating systems.
 
-## 🖥️ Graphical User Interface (Tkinter / GUI)
-
-### 1. Window does not open on Linux (Display/X11 Error)
-
-Symptom: `_tkinter.TclError: no display name and no $DISPLAY environment variable.`
-
-Cause: Usually occurs when running the app with sudo directly within a Wayland or X11 session.
-Solution:
-
-Avoid running the entire GUI as root. Instead, grant specific capabilities to the Python binary:
-
-```
-sudo setcap cap_net_raw,cap_net_admin=eip ./.venv/bin/python3
-./.venv/bin/python3 gui_app.py
-```
-
 ## 📡 Packet Capture and Networking (Rust / Scapy)
 
-### 2. Traffic Monitor showing 0 pps (Windows)
+### 1. Traffic Monitor showing 0 pps (Windows)
 
 Symptom: The traffic graph does not move or displays an interface error.
 
@@ -32,7 +16,7 @@ Inicialization should handle lack of drivers but if that did not happen, ensure 
 
 In the code, verify that the Friendly Name to GUID translation is correctly implemented in net_utils.py.
 
-### 3. Socket Permission Error (Raw Sockets)
+### 2. Socket Permission Error (Raw Sockets)
 
 Symptom: `PermissionError: [Errno 1] Operation not permitted.`
 
@@ -45,7 +29,7 @@ Windows: Run your terminal (PowerShell/CMD) or IDE as Administrator.
 
 ## Core Compilation (Rust / Maturin)
 
-### 4. error: linking with 'link.exe' failed (Windows)
+### 3. error: linking with 'link.exe' failed (Windows)
 
 Symptom: Failure while compiling the Rust core.
 
@@ -64,7 +48,7 @@ or
 ```
 $env:LIB = "C:\<location in the C drive>;" + $env:LIB
 ```
-### 5. fatal error: `pcap.h: No such file or directory (Linux)`
+### 4. fatal error: `pcap.h: No such file or directory (Linux)`
 
 Symptom: Rust fails to compile the pnet or libpcap dependency.
 
@@ -79,7 +63,7 @@ Arch Linux: `sudo pacman -S libpcap`
 
 ## 📦 Dependencies and Environment
 
-### 6. Tkinter not found (Arch Linux / Fedora)
+### 5. Tkinter not found (Arch Linux / Fedora)
 
 Symptom: `ModuleNotFoundError: No module named 'tkinter'.`
 
@@ -93,7 +77,7 @@ Fedora: sudo dnf install python3-tkinter
 
 Debian: sudo apt-get install python3-tkinter
 
-### 7. Maturin fails in VENV
+### 6. Maturin fails in VENV
 
 Symptom: `command 'maturin' not found.`
 
