@@ -152,11 +152,6 @@ The project adheres to a modular design pattern:
 # Point to the venv python executable to ensure dependencies are found
 sudo ./.venv/bin/python gui_app.py
 ```
-```
-# If you want to reduce the risk of breaking X11/Wayland protocols
-sudo setcap cap_net_raw,cap_net_admin=eip ./.venv/bin/python3
-./.venv/bin/python3 gui_app.py
-```
 
 **Windows**
 ```
