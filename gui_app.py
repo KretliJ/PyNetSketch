@@ -581,7 +581,7 @@ if __name__ == "__main__":
     # Correção do AppUserModelID (Para o ícone separar do Python)
     if sys.platform.startswith('win'):
         try:
-            myappid = 'kretlij.pynetsketch.thesis.v1.8'
+            myappid = 'kretlij.pynetsketch.thesis.v1.9'
             ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
         except Exception:
             pass
