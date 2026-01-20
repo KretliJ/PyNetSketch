@@ -616,21 +616,27 @@ class NetworkApp:
         self.log_to_console(f"Opening map viewer...")
         abs_path = os.path.abspath(map_file_path)
         
-        # O PULO DO GATO:
-        # Chamamos sys.executable (que é o python ou o binário compilado)
-        # passamos a flag que criamos lá embaixo e o caminho do mapa.
-        cmd = [sys.executable, "gui_app.py", "--view-map", abs_path]
-        
-        # Se estivermos 'congelados' (PyInstaller), sys.executable é o binário,
-        # então não precisamos do "gui_app.py" no meio do comando.
-        if getattr(sys, 'frozen', False):
-            cmd = [sys.executable, "--view-map", abs_path]
+        cmd = [sys.executable]
+        if not getattr(sys, 'frozen', False):
+            cmd.append("gui_app.py")
+            
+        cmd.extend(["--view-map", abs_path])
 
         print(f"DEBUG [GUI]: Executing sub-process: {cmd}")
         
-        # Lança o processo independente
-        subprocess.Popen(cmd)
-        self.log_to_console(f"Map launched in separate window.")
+        # --- ALTERAÇÃO PARA DEBUG DE BINÁRIO ---
+        # Cria um arquivo de log na mesma pasta do executável (ou onde o app estiver rodando)
+        log_path = os.path.join(os.path.dirname(sys.executable), "map_crash_log.txt")
+        
+        # Abre o arquivo e redireciona a saída do processo para ele
+        try:
+            with open(log_path, "w") as log_file:
+                # stderr=subprocess.STDOUT joga os erros no mesmo lugar da saída padrão
+                subprocess.Popen(cmd, stdout=log_file, stderr=subprocess.STDOUT)
+                
+            self.log_to_console(f"Map process launched. Check {log_path} for errors.")
+        except Exception as e:
+            self.log_to_console(f"Failed to launch map: {e}")
 
     def _finalize_task_ui(self, result_msg):
         elapsed_str = ""
