@@ -44,14 +44,13 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y libpcap-dev python3-tk
-
+          
       # Linux GTK Específico (Headers para compilar a ponte do WebKit)
       - name: Install GTK Build Deps
         if: matrix.target == 'linux-gtk'
         run: |
-          # Instala dependências de compilação para PyGObject e WebKit
-          sudo apt-get install -y libgirepository1.0-dev libcairo2-dev pkg-config python3-dev gir1.2-webkit-6.0
-
+          sudo apt-get install -y libgirepository1.0-dev libglib2.0-dev libcairo2-dev pkg-config python3-dev gir1.2-webkit-6.0
+      
       # ----------------------------------------------------------------
       # PREPARAÇÃO WINDOWS
       # ----------------------------------------------------------------
