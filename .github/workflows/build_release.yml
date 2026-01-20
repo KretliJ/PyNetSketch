@@ -2,7 +2,7 @@ name: Build Multi-Platform
 
 permissions:
   contents: write
-  
+
 on:
   release:
     types: [created]
@@ -10,61 +10,94 @@ on:
 
 jobs:
   build:
-    name: Build on ${{ matrix.os }}
+    name: Build ${{ matrix.name }}
     runs-on: ${{ matrix.os }}
     strategy:
-      fail-fast: false # Se o Linux falhar, não cancela o Windows (e vice-versa)
+      fail-fast: false
       matrix:
-        os: [windows-latest, ubuntu-latest]
+        include:
+          # --- WINDOWS ---
+          - os: windows-latest
+            target: windows
+            name: Windows-x64
+            
+          # --- LINUX QT (Stand-alone via Pip) ---
+          - os: ubuntu-latest
+            target: linux-qt
+            name: Linux-Qt
+            
+          # --- LINUX GTK (Depende do WebKit do Sistema) ---
+          - os: ubuntu-latest
+            target: linux-gtk
+            name: Linux-Native-GTK
+
     steps:
-      # Baixa código
       - uses: actions/checkout@v4
 
-      # Prepara Linux
-      # Instala libpcap e python3-tk
-      - name: Install Linux System Dependencies
+      # ----------------------------------------------------------------
+      # PREPARAÇÃO LINUX (DEPENDÊNCIAS DE SISTEMA)
+      # ----------------------------------------------------------------
+      
+      # Linux Geral (libpcap é necessário para o Rust Core em ambos)
+      - name: Install Common Linux Deps
         if: runner.os == 'Linux'
         run: |
           sudo apt-get update
           sudo apt-get install -y libpcap-dev python3-tk
 
-      # Prepara Windows
-      # Instala npcap
+      # Linux GTK Específico (Headers para compilar a ponte do WebKit)
+      - name: Install GTK Build Deps
+        if: matrix.target == 'linux-gtk'
+        run: |
+          # Instala dependências de compilação para PyGObject e WebKit
+          sudo apt-get install -y libgirepository1.0-dev libcairo2-dev pkg-config python3-dev gir1.2-webkit-6.0
+
+      # ----------------------------------------------------------------
+      # PREPARAÇÃO WINDOWS
+      # ----------------------------------------------------------------
       - name: Download Npcap SDK (Windows)
-        if: runner.os == 'Windows'
+        if: matrix.target == 'windows'
         shell: powershell
         run: |
-        
-          # 1. Baixa o SDK oficial do Npcap
           Invoke-WebRequest -Uri "https://npcap.com/dist/npcap-sdk-1.13.zip" -OutFile "npcap-sdk.zip"
-          
-          # 2. Descompacta
           Expand-Archive -Path "npcap-sdk.zip" -DestinationPath "npcap-sdk"
-          
-          # 3. Avisa o Linker (link.exe) onde encontrar o arquivo Packet.lib
-          # Pega o caminho atual + pasta descompactada + Lib + x64
           $npcapPath = "$(Get-Location)\npcap-sdk\Lib\x64"
-          
-          # Adiciona ao ambiente do GitHub Actions para os próximos passos usarem
           echo "LIB=$npcapPath;$env:LIB" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
-          
-      # Prepara o Python
+
+      # ----------------------------------------------------------------
+      # SETUP LINGUAGENS
+      # ----------------------------------------------------------------
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.10"
           cache: "pip"
 
-      # Prepara o Rust
       - name: Set up Rust
         uses: dtolnay/rust-toolchain@stable
 
-      # Instala bibliotecas Python (comum para os dois)
-      - name: Install Python Dependencies
+      # ----------------------------------------------------------------
+      # INSTALAÇÃO DEPENDÊNCIAS PYTHON
+      # ----------------------------------------------------------------
+      - name: Install Common Python Dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install maturin pyinstaller scapy requests
+          # Instala dependências gerais listadas no seu requirements.txt implícito
+          pip install maturin pyinstaller scapy requests Pillow folium tkinterweb pywebview
 
+      # Dependências Específicas para Build QT
+      - name: Install Qt Dependencies
+        if: matrix.target == 'linux-qt'
+        run: pip install PyQt5 PyQtWebEngine
+
+      # Dependências Específicas para Build GTK
+      - name: Install GTK Dependencies
+        if: matrix.target == 'linux-gtk'
+        run: pip install PyGObject pycairo
+
+      # ----------------------------------------------------------------
+      # COMPILAÇÃO DO CORE RUST
+      # ----------------------------------------------------------------
       - name: Build Rust Extension
         shell: bash
         working-directory: ./rust_src
@@ -72,30 +105,42 @@ jobs:
           maturin build --release
           pip install target/wheels/*.whl
 
-      # Gera o Executável (Windows)
-      # Usa ponto-e-vírgula (;) para separar assets
+      # ----------------------------------------------------------------
+      # GERAÇÃO DO EXECUTÁVEL (PYINSTALLER)
+      # ----------------------------------------------------------------
+      
+      # 1. WINDOWS
       - name: Build Exe (Windows)
-        if: runner.os == 'Windows'
+        if: matrix.target == 'windows'
         run: |
           pyinstaller --noconsole --onefile --name "PyNetSketch" --icon="assets/app_icon.ico" --add-data "assets;assets" --hidden-import "pynetsketch_core" gui_app.py
 
-      # 8. Gera o Executável (Linux)
-      # Usa dois-pontos (:) para separar assets e não tem ícone .ico
-      - name: Build Binary (Linux)
-        if: runner.os == 'Linux'
+      # 2. LINUX - QT VERSION
+      - name: Build Binary (Linux QT)
+        if: matrix.target == 'linux-qt'
         run: |
-          pyinstaller --noconsole --onefile --name "PyNetSketch" --add-data "assets:assets" --hidden-import "pynetsketch_core" gui_app.py
+          # Adicionamos hidden-import para garantir que o PyInstaller pegue os módulos QT
+          pyinstaller --noconsole --onefile --name "PyNetSketch-Qt" --add-data "assets:assets" --hidden-import "pynetsketch_core" --hidden-import "PyQt5" --hidden-import "PyQtWebEngine" gui_app.py
 
-      # 9. Faz o Upload do arquivo pronto para baixar
+      # 3. LINUX - GTK VERSION
+      - name: Build Binary (Linux GTK)
+        if: matrix.target == 'linux-gtk'
+        run: |
+          # Adicionamos hidden-import para o gi (GObject Introspection)
+          pyinstaller --noconsole --onefile --name "PyNetSketch-GTK" --add-data "assets:assets" --hidden-import "pynetsketch_core" --hidden-import "gi" gui_app.py
+
+      # ----------------------------------------------------------------
+      # UPLOAD E RELEASE
+      # ----------------------------------------------------------------
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: PyNetSketch-${{ matrix.os }}
+          name: PyNetSketch-${{ matrix.name }}
           path: |
-          
             dist/PyNetSketch.exe
-            dist/PyNetSketch
-            
+            dist/PyNetSketch-Qt
+            dist/PyNetSketch-GTK
+
       - name: Upload to Release
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
