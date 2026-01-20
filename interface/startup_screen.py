@@ -70,7 +70,7 @@ class SplashScreen:
         self.canvas.create_text(self.width // 2, current_y+20, text="PyNetSketch", font=("Consolas", 22, "bold"), fill=self.accent_color)
         current_y += 35 
 
-        self.canvas.create_text(self.width // 2, current_y+10, text="Network Analysis Tool", font=("Segoe UI", 9), fill="#888888")
+        self.canvas.create_text(self.width // 2, current_y+10, text="Network Analysis Tool v2.0", font=("Segoe UI", 9), fill="#888888")
         current_y += 40 
 
         # Throbber

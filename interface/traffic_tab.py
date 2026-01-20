@@ -63,15 +63,19 @@ class TrafficDataManager:
 
 # --- VIEW / UI ---
 class TrafficTab(ttk.Frame):
-    """
-    Responsável apenas por desenhar na tela.
-    Não faz cálculos de soma nem decide ordenação.
-    """
-    def __init__(self, parent, *args, **kwargs):
-        super().__init__(parent, *args, **kwargs)
-        
-        # Injeção/Composição do Gerenciador de Dados
+    def __init__(self, master, *args, app=None, **kwargs):
+        super().__init__(master, *args, **kwargs)
+        self.app = app
         self.manager = TrafficDataManager()
+        
+        # --- ESTADO DE CORES (Padrão Dark inicial) ---
+        self.colors = {
+            "bg": "#222222",
+            "line_total": "#00ff00",     # Verde Matrix
+            "line_filter": "yellow",     # Amarelo
+            "text": "#00ff00",
+            "grid": "#333333"
+        }
 
         # --- Toolbar de Filtro ---
         self.control_frame = ttk.Frame(self)
@@ -80,30 +84,30 @@ class TrafficTab(ttk.Frame):
         ttk.Label(self.control_frame, text="Filter IP:").pack(side="left")
         
         self.filter_entry = ttk.Entry(self.control_frame, width=15)
+        self.filter_entry.config(state="disabled")
         self.filter_entry.pack(side="left", padx=5)
         
-        ttk.Label(self.control_frame, text="(Leave empty for all traffic)").pack(side="left", padx=5)
+        ttk.Label(self.control_frame, text="(Right-click list to filter)").pack(side="left", padx=5)
 
-        # --- Layout Dividido (PanedWindow) ---
+        # --- Layout Dividido ---
         self.paned = ttk.PanedWindow(self, orient=tk.VERTICAL)
         self.paned.pack(fill="both", expand=True, padx=5, pady=5)
 
-        # 1. Área do Gráfico (Topo)
+        # 1. Gráfico (Canvas)
         self.graph_frame = ttk.Frame(self.paned)
-        self.traffic_canvas = tk.Canvas(self.graph_frame, bg="#222222", height=200) 
+        self.traffic_canvas = tk.Canvas(self.graph_frame, bg=self.colors["bg"], height=200, highlightthickness=0) 
         self.traffic_canvas.pack(fill="both", expand=True)
         self.paned.add(self.graph_frame, weight=3)
         
-        # 2. Área da Lista de IPs (Fundo)
+        # 2. Lista (Treeview)
         self.list_frame = ttk.Frame(self.paned)
         self.paned.add(self.list_frame, weight=2)
 
-        # --- Configuração da Tabela ---
         columns = ("source_ip", "current", "total")
         self.ip_tree = ttk.Treeview(self.list_frame, columns=columns, show="headings")
         
         self.ip_tree.heading("source_ip", text="Source IP")
-        self.ip_tree.heading("current", text="Last Interval (pps)")
+        self.ip_tree.heading("current", text="PPS (Current)")
         self.ip_tree.heading("total", text="Total Packets")
         
         self.ip_tree.column("source_ip", width=200, anchor="center")
@@ -116,12 +120,34 @@ class TrafficTab(ttk.Frame):
         self.ip_tree.pack(side="left", fill="both", expand=True)
         self.scrollbar.pack(side="right", fill="y")
 
-        # --- Menu de Contexto (Right Click) ---
+        # Menu de Contexto
         self.context_menu = tk.Menu(self, tearoff=0)
         self.context_menu.add_command(label="Filter by this Host", command=self.apply_selected_filter)
-        
-        # Vincula o botão direito (Button-3 no Windows/Linux, Button-2 no Mac às vezes)
         self.ip_tree.bind("<Button-3>", self.show_context_menu)
+
+    # --- NOVO MÉTODO: ATUALIZAÇÃO DE TEMA ---
+    def update_theme(self, is_dark):
+        if is_dark:
+            self.colors = {
+                "bg": "#161e2b",         # Fundo Cyberpunk Dark
+                "line_total": "#00ff00", # Verde Neon
+                "line_filter": "yellow",
+                "text": "#e1e6ef",
+                "grid": "#2a3b55"
+            }
+        else:
+            self.colors = {
+                "bg": "#ffffff",         # Fundo Branco
+                "line_total": "#0078d7", # Azul Windows
+                "line_filter": "#ff8c00",# Laranja Escuro (legível no branco)
+                "text": "#000000",
+                "grid": "#e0e0e0"
+            }
+        
+        # Atualiza o fundo do Canvas imediatamente
+        self.traffic_canvas.config(bg=self.colors["bg"])
+        # Redesenha o gráfico com as novas cores
+        self.draw_traffic_graph()
 
     def show_context_menu(self, event):
         """Seleciona a linha sob o cursor e mostra o menu."""
@@ -133,6 +159,66 @@ class TrafficTab(ttk.Frame):
             self.ip_tree.selection_set(item_id)
             # Exibe o menu na posição do mouse
             self.context_menu.post(event.x_root, event.y_root)
+
+    def update_theme(self, is_dark):
+        style = ttk.Style()
+        
+        if is_dark:
+            # --- MODO DARK ---
+            graph_bg = "#161e2b"      # Fundo Azul Profundo (App)
+            list_bg = "#161e2b"       # Fundo da Lista
+            list_fg = "white"         # Texto da Lista
+            list_field = "#161e2b"    # Área vazia da lista
+            
+            self.colors = {
+                "bg": graph_bg,
+                "line_total": "#00ff00", # Verde Neon
+                "line_filter": "yellow",
+                "text": "#e1e6ef",       # Texto do Gráfico
+                "grid": "#2a3b55"
+            }
+        else:
+            # --- MODO LIGHT (Híbrido) ---
+            # O usuário pediu fundo do gráfico escuro mesmo no modo claro
+            graph_bg = "#333333"      # Cinza Carvão (Dark Gray)
+            
+            # A lista deve ser clara para combinar com o resto do app Light
+            list_bg = "white"
+            list_fg = "black"
+            list_field = "white"
+
+            self.colors = {
+                "bg": graph_bg,          # Gráfico continua escuro
+                "line_total": "#00ff00", # Mantemos Verde (contrasta bem com cinza escuro)
+                "line_filter": "yellow", # Mantemos Amarelo
+                "text": "white",         # Texto do gráfico branco (pois o fundo é escuro)
+                "grid": "#555555"
+            }
+        
+        # 1. Atualiza o Canvas do Gráfico
+        self.traffic_canvas.config(bg=self.colors["bg"])
+        
+        # 2. Atualiza a Lista (Treeview) - AQUI ESTAVA O PROBLEMA
+        # Configuramos o estilo globalmente para garantir que pegue
+        style.configure("Treeview", 
+                        background=list_bg, 
+                        foreground=list_fg, 
+                        fieldbackground=list_field,
+                        borderwidth=0)
+        
+        # Configura a cor da seleção (Azul padrão)
+        select_bg = "#3b8ed0" if is_dark else "#0078d7"
+        style.map("Treeview", 
+                  background=[('selected', select_bg)], 
+                  foreground=[('selected', 'white')])
+        
+        # Força atualização do cabeçalho também (opcional, mas bom para garantir)
+        head_bg = "#1c2636" if is_dark else "#e1e1e1"
+        head_fg = "white" if is_dark else "black"
+        style.configure("Treeview.Heading", background=head_bg, foreground=head_fg)
+
+        # 3. Redesenha o gráfico
+        self.draw_traffic_graph()
 
     def apply_selected_filter(self):
         """Pega o IP da seleção atual e coloca no campo de filtro."""
@@ -148,8 +234,15 @@ class TrafficTab(ttk.Frame):
             ip = values[0] # A primeira coluna é o Source IP
             
             # Atualiza o campo de texto
+            self.filter_entry.config(state="normal")
             self.filter_entry.delete(0, tk.END)
             self.filter_entry.insert(0, ip)
+            self.filter_entry.config(state="disabled")
+
+            if hasattr(self, 'app') and (self.app.mode_var.get() == "Traffic Monitor"):
+                self.app.stop_current_task()
+                self.app.mode_var.set("Traffic Monitor")
+                self._safe_restart_monitor(attempts=0)
             
             # Opcional: Feedback visual ou log (se necessário)
             # print(f"Filter set to {ip}. Please restart scan to apply.")
@@ -171,6 +264,15 @@ class TrafficTab(ttk.Frame):
         self.manager.add_graph_point(data)
         # 2. Atualiza Visual
         self.draw_traffic_graph()
+
+    def _safe_restart_monitor(self, attempts=0):
+        # Se a tarefa ainda consta como rodando e não tentou demais (limite de 3s)
+        if self.app.task_running and attempts < 10:
+            # Espera mais 300ms e tenta verificar de novo
+            self.after(300, lambda: self._safe_restart_monitor(attempts + 1))
+        else:
+            # A pista está limpa (ou estourou o tempo), agora sim iniciamos
+            self.app.start_selected_task() 
 
     def update_ip_table(self, incoming_data):
         # 1. Processa dados no Modelo
@@ -197,18 +299,22 @@ class TrafficTab(ttk.Frame):
         h = self.traffic_canvas.winfo_height()
         if w < 50: return 
         
-        # Pega dados limpos do Manager
         data_total, data_filtered = self.manager.get_graph_data()
         
         max_val = max(data_total) if data_total and max(data_total) > 10 else 10
         h_factor = (h - 20) / max_val
-        
         x_step = w / (len(data_total) - 1) if len(data_total) > 1 else w
 
-        # Desenha legendas
-        self.traffic_canvas.create_text(10, 10, text=f"Max Total: {max_val} pps", fill="#00ff00", anchor="nw")
+        # Grid Horizontal (Opcional, para visual pro)
+        self.traffic_canvas.create_line(0, h-10, w, h-10, fill=self.colors["grid"])
+        self.traffic_canvas.create_line(0, 10, w, 10, fill=self.colors["grid"])
+
+        # Legendas Dinâmicas
+        self.traffic_canvas.create_text(10, 10, text=f"Max: {max_val} pps", fill=self.colors["text"], anchor="nw", font=("Consolas", 9))
+        
         last_filtered = data_filtered[-1] if data_filtered else 0
-        self.traffic_canvas.create_text(10, 25, text=f"Filtered: {last_filtered} pps", fill="yellow", anchor="nw")
+        if max(data_filtered) > 0:
+            self.traffic_canvas.create_text(10, 25, text=f"Filter: {last_filtered} pps", fill=self.colors["line_filter"], anchor="nw", font=("Consolas", 9))
 
         def get_points(dataset):
             pts = []
@@ -219,11 +325,16 @@ class TrafficTab(ttk.Frame):
                 pts.append(y)
             return pts
 
+        # Linha Total
         points_total = get_points(data_total)
         if len(points_total) >= 4:
-            self.traffic_canvas.create_line(points_total, fill="#00ff00", width=2, smooth=True)
+            self.traffic_canvas.create_line(points_total, fill=self.colors["line_total"], width=2, smooth=True)
+            # Área sob a curva (opcional, efeito bonito)
+            # poly_pts = points_total + [w, h, 0, h]
+            # self.traffic_canvas.create_polygon(poly_pts, fill=self.colors["line_total"], stipple="gray25")
 
+        # Linha Filtro
         if max(data_filtered) > 0:
             points_filtered = get_points(data_filtered)
             if len(points_filtered) >= 4:
-                self.traffic_canvas.create_line(points_filtered, fill="yellow", width=2, smooth=True, dash=(4, 2))
+                self.traffic_canvas.create_line(points_filtered, fill=self.colors["line_filter"], width=2, smooth=True, dash=(4, 2))

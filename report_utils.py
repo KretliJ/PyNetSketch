@@ -1,6 +1,8 @@
 import csv
 import os
 import datetime
+import folium
+import webbrowser
 from tkinter import filedialog, messagebox
 
 def export_results(data, export_type="csv"):
@@ -18,6 +20,41 @@ def export_results(data, export_type="csv"):
         _export_to_csv(data, timestamp)
     elif export_type == "html":
         _export_to_html(data, timestamp)
+
+def generate_visual_map(hops_data):
+    try:
+        m = folium.Map(location=[0, 0], zoom_start=2, tiles="CartoDB dark_matter")
+        coordinates = []
+
+        for hop in hops_data:
+            # Extração segura das coordenadas
+            lat = hop.get('lat')
+            lon = hop.get('lon')
+            
+            if lat and lon:
+                pos = [lat, lon] # Definido dentro do escopo
+                coordinates.append(pos)
+                
+                folium.Marker(
+                    location=pos,
+                    popup=f"Hop {hop['ttl']}: {hop['ip']}<br>{hop.get('display', '')}",
+                    icon=folium.Icon(color='red' if "Hong Kong" in str(hop.get('display', '')) else 'blue')
+                ).add_to(m)
+
+        if not coordinates:
+            print("DEBUG [Map]: Nenhuma coordenada encontrada nos hops.")
+            return None
+
+        if len(coordinates) > 1:
+            folium.PolyLine(coordinates, color="#32CD32", weight=3, opacity=0.8).add_to(m)
+
+        map_path = os.path.abspath("traceroute_map.html")
+        m.save(map_path)
+        print(f"DEBUG [Map]: Mapa salvo em {map_path}")
+        return map_path
+    except Exception as e:
+        print(f"ERRO NO REPORT_UTILS: {e}")
+        return None
 
 def _export_to_csv(data, timestamp):
     filename = filedialog.asksaveasfilename(

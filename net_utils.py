@@ -9,6 +9,7 @@ import re
 from scapy.all import ARP, Ether, srp, IP, ICMP, TCP, sr1, conf, sniff
 import utils
 import traceback
+import requests
 
 # --- IMPORT RUST CORE ---
 try:
@@ -202,6 +203,25 @@ def resolve_mac_vendor(mac_address):
 
     return "Unknown Vendor"
 
+def get_ip_location(ip_addr):
+    if not ip_addr or ip_addr.startswith(("192.168.", "10.", "172.16.")):
+        return None
+    try:
+        response = requests.get(f"http://ip-api.com/json/{ip_addr}?fields=status,country,city,lat,lon", timeout=1.5)
+        data = response.json()
+        if data.get("status") == "success":
+            print(f"DEBUG [GeoIP]: {ip_addr} -> {data['city']}, {data['country']} ({data['lat']}, {data['lon']})")
+            return {
+                "display": f" [{data['city']}, {data['country']}]",
+                "lat": data["lat"],
+                "lon": data["lon"]
+            }
+        else:
+            print(f"DEBUG [GeoIP]: Falha para o IP {ip_addr}")
+    except Exception as e:
+        print(f"DEBUG [GeoIP]: Erro na requisição: {e}")
+    return None
+
 def arp_scan(network_cidr, stop_event=None, progress_callback=None):
     all_devices = []
     target_subnets = _parse_target_input(network_cidr)
@@ -307,41 +327,59 @@ def perform_traceroute(target_ip, max_hops=30, stop_event=None, progress_callbac
 
         for ttl in range(1, max_hops + 1):
             if stop_event and stop_event.is_set(): 
-                if progress_callback: progress_callback("Traceroute stopped by user.")
                 break
             
-            pkt = packet_generator(ttl)
-            start_t = time.perf_counter()
+            reply = None
+            rtt_ms = 0
             
-            # Timeout curto por salto
-            reply = sr1(pkt, verbose=0, timeout=1.5)
-            rtt_ms = (time.perf_counter() - start_t) * 1000
-            
+            # --- LÓGICA DE DETECÇÃO DE NÓS OCULTOS ---
+            # Tenta o método primário (ICMP) e, se falhar, tenta o secundário (TCP)
+            for method_name, generator in methods:
+                pkt = generator(ttl)
+                start_t = time.perf_counter()
+                reply = sr1(pkt, verbose=0, timeout=1.2) # Timeout ajustado para retentativas
+                rtt_ms = (time.perf_counter() - start_t) * 1000
+                
+                if reply is not None:
+                    # Se o nó foi revelado apenas pelo segundo método, logamos o evento
+                    if method_name != "ICMP":
+                        utils._log_operation(f"Hidden node revealed at hop {ttl} using {method_name}")
+                    break 
+            # ------------------------------------------
+
             hop_data = {'ttl': ttl, 'time': rtt_ms}
             
             if reply is None:
+                # Se todos os métodos falharem, continua como timeout
                 consecutive_timeouts.append(ttl)
                 hop_data.update({'ip': '*', 'hostname': ''})
-                if progress_callback: progress_callback(f"{ttl}\tRequest timed out.")
+                if progress_callback: progress_callback(f"{ttl}\tRequest timed out. This might be a hidden node")
                 hops.append(hop_data)
             else:
-                if consecutive_timeouts:
-                    # Reporta saltos perdidos de forma mais compacta
-                    count = len(consecutive_timeouts)
-                    consecutive_timeouts = [] 
- 
                 hostname = ""
-                # --- CORREÇÃO: DNS com Timeout Seguro ---
+                location_data = None
+                display_loc = ""
+
                 if resolve_dns:
                     hostname = _resolve_hostname_fast(reply.src, timeout=0.5)
+                    location_data = get_ip_location(reply.src) # Agora retorna dicionário
 
-                hop_data.update({'ip': reply.src, 'hostname': hostname})
-                hops.append(hop_data)
+                # Monta os dados do salto para o mapa
+                hop_info = {'ttl': ttl, 'time': rtt_ms, 'ip': reply.src, 'hostname': hostname}
                 
+                if location_data:
+                    display_loc = location_data.get('display', '')
+                    hop_info.update({
+                        'lat': location_data.get('lat'),
+                        'lon': location_data.get('lon'),
+                        'display': display_loc
+                    })
+
+                hops.append(hop_info)
+                
+                # Feedback para o console (usando a string display_loc)
                 host_display = f" ({hostname})" if hostname else ""
-                
-                # Feedback formatado estilo Windows/Linux
-                msg = f"{ttl}\t{rtt_ms:.1f} ms\t{reply.src}{host_display}"
+                msg = f"{ttl}\t{rtt_ms:.1f} ms\t{reply.src}{host_display}{display_loc}"
                 if progress_callback: progress_callback(msg)
                 
                 if reply.src == target_ip:
@@ -420,26 +458,37 @@ def monitor_traffic(interface=None, filter_ip=None, stop_event=None, progress_ca
     if interface is None:
         try:
             route = conf.route.route("8.8.8.8")
-            target_interface_name = route[0].name
+            iface_obj = route[0]
+            # No Scapy, .name pode ser uma string ou um atributo
+            target_interface_name = str(iface_obj.name) if hasattr(iface_obj, 'name') else str(iface_obj)
         except Exception:
-            if not conf.iface: conf.route.route("8.8.8.8")
-            target_interface_name = conf.iface.name
+            target_interface_name = str(conf.iface)
     else:
         target_interface_name = interface
 
     if RUST_AVAILABLE:
         try:
             rust_ifaces = pynetsketch_core.rust_list_interfaces()
+            
+            # Garante que estamos enviando a string correta para o Rust
+            # Se o target_interface_name não estiver na lista do Rust, 
+            # tentamos o mapeamento por GUID (essencial para Windows)
+            actual_rust_name = target_interface_name
+            
             if target_interface_name not in rust_ifaces:
-                # Lógica de match (simplificada aqui para brevidade, mas deve ser mantida como no original)
-                pass 
+                route = conf.route.route("8.8.8.8")
+                scapy_iface = route[0]
+                for riface in rust_ifaces:
+                    if hasattr(scapy_iface, 'guid') and scapy_iface.guid and scapy_iface.guid in riface:
+                        actual_rust_name = riface
+                        break
             
             def bridge_callback(stats):
                 if progress_callback: progress_callback(stats)
-                if stop_event and stop_event.is_set(): return False
-                return True
+                return not (stop_event and stop_event.is_set())
 
-            pynetsketch_core.start_sniffer(bridge_callback, target_interface_name, filter_ip)
+            # Chamar o sniffer garantindo que o nome da interface seja String
+            pynetsketch_core.start_sniffer(bridge_callback, str(actual_rust_name), filter_ip)
             return
 
         except Exception as e:

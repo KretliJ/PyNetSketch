@@ -7,12 +7,37 @@ import host_functions
 from interface.ui_helpers import set_app_icon
 
 class NetworkServerMode:
-    def __init__(self, root, session_name="Unnamed Probe"):
+    def __init__(self, root, session_name="Unnamed Probe", dark_mode=False):
         self.root = root
         set_app_icon(self.root)
         self.root.title(f"PyNetSketch Server - {session_name}")
         self.root.geometry("500x450")
         
+        # --- THEME APPLICATION ---
+        style = ttk.Style()
+        style.theme_use('clam')
+        
+        bg_color = "#121b29" if dark_mode else "#f0f0f0"
+        fg_color = "#e1e6ef" if dark_mode else "black"
+        txt_bg   = "#1c2636" if dark_mode else "white"
+        
+        self.root.configure(bg=bg_color)
+        style.configure(".", background=bg_color, foreground=fg_color)
+        style.configure("TLabel", background=bg_color, foreground=fg_color)
+        style.configure("TFrame", background=bg_color)
+        style.configure("TLabelframe", background=bg_color, foreground=fg_color)
+        style.configure("TLabelframe.Label", background=bg_color, foreground=fg_color)
+        
+        # Window Title Bar (Windows)
+        if dark_mode:
+            try:
+                import ctypes
+                hwnd = ctypes.windll.user32.GetParent(self.root.winfo_id())
+                val = ctypes.c_int(1)
+                ctypes.windll.dwmapi.DwmSetWindowAttribute(hwnd, 20, ctypes.byref(val), 4)
+            except: pass
+        # -------------------------
+
         # Interface Visual
         header_frame = ttk.Frame(root)
         header_frame.pack(pady=(15, 5))
@@ -33,7 +58,9 @@ class NetworkServerMode:
         
         ttk.Label(root, text="Event log:", font=("Arial", 9, "bold")).pack(anchor="w", padx=10)
 
+        # Update log area colors based on theme
         self.log_area = scrolledtext.ScrolledText(root, height=10, width=50, state='disabled', font=("Consolas", 8))
+        self.log_area.config(bg=txt_bg, fg=fg_color, insertbackground=fg_color) # Colors applied here
         self.log_area.pack(fill="both", expand=True, padx=10, pady=5)
         
         btn_frame = ttk.Frame(root)

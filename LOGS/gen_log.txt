@@ -1,2 +1,0 @@
-[2025-12-05 16:11:00] [MANUAL] - This is a debug log. Normally would be added to gitignore but it helps to have this accessible across devices
-[2026-18-01 21:47:00] [MANUAL] - Log wipeout
