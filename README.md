@@ -35,7 +35,7 @@ It demonstrates advanced architectural patterns by featuring a Hybrid Engine tha
     * **Remote Control:** Accepts JSON commands via TCP sockets from mobile clients.
     * **Hardware Abstraction:** Allows mobile devices to execute raw socket operations (like ARP scans) by proxying through the PC.
 
-## 📂 Project Structure (v1.9)
+## 📂 Project Structure (v2.0)
 
 The project adheres to a modular design pattern:
 
@@ -114,7 +114,7 @@ The project adheres to a modular design pattern:
 
    **Both systems**   
    ```
-   pip install scapy requests pillow maturin
+   pip install scapy requests pillow maturin pywebview folium
    ```
    
    **Linux**
@@ -180,9 +180,16 @@ python gui_app.py
     * **UX Polish:** Implemented custom Tkinter Splash Screen with transparency and procedural throbber.
     * **Architecture:** "Lazy Loading" pattern implementation for visual feedback on app launch.
     * **Critical Fix:** Resolved blocking I/O on Rust Core (Stop latency < 0.1s) and fixed PyInstaller binary shadowing.
-* **v1.9 (Current - Traffic Monitor Refactor):**
+* **v1.9 (Traffic Monitor Refactor):**
     * **Refactored TrafficTab:** Implemented persistent packet tracking by hosts IP and improved adherence to SRP.
-    * **IP list:** Added right-click context menu with 'Filter by this Host' option. 
+    * **IP list:** Added right-click context menu with 'Filter by this Host' option.
+</details>
+<details>
+<summary><strong>v.2.X - Main features refinement and expansion</strong></summary>
+   
+* **v2.0 (Current - Map and Dark mode):**
+   * **Dark Mode:** Implemented early version of dark mode in the push of a button (some things are a little broken but it works -ish)
+   * **Map:** Implemented API calls for geographical IP matching. Traceroute with DNS resolving now opens a map with a route traced between the geographical positions of each detected node.
 </details>
 
 ## ⚠️ Known Limitations & Engineering Challenges
@@ -192,24 +199,43 @@ python gui_app.py
 
 ### ~~1. Large Subnet Scans (The "Atomic Scapy" Issue)~~ (SOLVED)
 **Status:** **FIXED in v1.7**.
-Scanning a `/16` network still relies on Scapy's atomic calls in Python mode, which can delay UI updates. The Rust implementation mitigates this but requires further optimization for massive ranges.
-**Solution:** Implemented the Subnet Chunking logic in net_utils.py. Any target network larger than a /24 is now split into smaller /24 blocks. The scanner processes these blocks sequentially, checking for thread cancellation signals (stop_event) and updating the UI progress bar between each chunk, preventing the interface from freezing during massive scans.
+   * Scanning a `/16` network still relies on Scapy's atomic calls in Python mode, which can delay UI updates. The Rust implementation mitigates this but requires further optimization for massive ranges.
+
+**Solution:** 
+   * Implemented the Subnet Chunking logic in net_utils.py. Any target network larger than a /24 is now split into smaller /24 blocks. The scanner processes these blocks sequentially, checking for thread cancellation signals (stop_event) and updating the UI progress bar between each chunk, preventing the interface from freezing during massive scans.
 
 ### ~~2. Logs in PyInstaller Mode~~ (SOLVED)
 **Status:** **FIXED in v1.6**.
-Logs currently write to the temporary execution directory when frozen with PyInstaller. Needs logic to detect `sys.frozen`.
-**Solution:** Refactored utils.py to implement Context-Aware Path Detection.
+   * Logs currently write to the temporary execution directory when frozen with PyInstaller. Needs logic to detect `sys.frozen`.
+
+**Solution:**
+   * Refactored utils.py to implement Context-Aware Path Detection.
 
 ### ~~3. Rust Thread Cancellation~~ (SOLVED)
 **Status:** **FIXED in v1.7**.
-While the Python UI now remains responsive (due to `py.allow_threads`), stopping a Rust operation instantly requires the Rust loop to check a shared atomic flag. Currently, it stops after the current batch/timeout (approx. 1s latency).
-**Solution:** Established a Bidirectional Control Channel via FFI. Configured the Rust `pnet` channel with a 100ms read timeout to prevent blocking on idle networks. The Python callback now returns a boolean status.
+   * While the Python UI now remains responsive (due to `py.allow_threads`), stopping a Rust operation instantly requires the Rust loop to check a shared atomic flag. Currently, it stops after the current batch/timeout (approx. 1s latency).
+
+**Solution:**
+   * Established a Bidirectional Control Channel via FFI. Configured the Rust `pnet` channel with a 100ms read timeout to prevent blocking on idle networks. The Python callback now returns a boolean status.
 
 ### 4. ~~Traffic Monitor "0 pps" / Interface Error~~ (SOLVED)
 **Status:** **FIXED in v1.6**.
-Previously, the app failed to identify the correct interface GUID on Windows.
-**Solution:** Implemented an automatic translation layer in `net_utils.py` that maps Scapy's detected device (Friendly Name) to the Npcap GUID required by the Rust `pnet` library.
+   * Previously, the app failed to identify the correct interface GUID on Windows.
+**Solution:**
+   * Implemented an automatic translation layer in `net_utils.py` that maps Scapy's detected device (Friendly Name) to the Npcap GUID required by the Rust `pnet` library.
 
+### 5. Dark Mode Inconsistencies & "Frankenstein" UI
+**Status:** **CREATED AND PARTIALLY FIXED in v2.0.**
+   * The initial Dark Mode implementation resulted in visual glitches where certain widgets did not inherit the theme correctly, creating a mixed "Frankenstein" look.
+   * Combobox (Dropdowns): In readonly state, the background remained system-grey. Crucially, the dropdown list (popdown) often rendered with white text on a white background (invisible) or failed to revert to black text when switching back to Light Mode.
+   * Canvas Elements: The Network Topology and Traffic Monitor graphs retained their original background colors upon toggling the theme.
+   * Native Elements: The Windows Title Bar and Scrollbars remained in the default light system style, breaking the "Cyberpunk" aesthetic.
+
+**Solution:**
+   * Advanced Styling: Implemented comprehensive ttk.Style mapping using style.map to force specific colors for readonly and disabled states on Buttons and Comboboxes.
+   * Global Overrides: Used root.option_add('*TCombobox*Listbox*') and *Listbox* to forcibly style the OS-native dropdown menus, preventing style leakage between modes.
+   * Dynamic Canvas Updates: Added dedicated update_theme(is_dark) methods in traffic_tab.py and topology_tab.py to programmatically reconfigure Canvas backgrounds and redraw vector elements (nodes/lines) with contrast-appropriate palettes.
+   * Windows API Integration: Implemented a ctypes call to dwmapi to force the Windows 10/11 Title Bar to respect the immersive dark mode attribute.
 </details>
 
 ## 📱 Mobile App
