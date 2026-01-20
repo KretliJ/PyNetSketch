@@ -25,32 +25,20 @@ jobs:
           - os: ubuntu-latest
             target: linux-qt
             name: Linux-Qt
-            
-          # --- LINUX GTK (Depende do WebKit do Sistema) ---
-          - os: ubuntu-latest
-            target: linux-gtk
-            name: Linux-Native-GTK
 
     steps:
       - uses: actions/checkout@v4
 
       # ----------------------------------------------------------------
-      # PREPARAÇÃO LINUX (DEPENDÊNCIAS DE SISTEMA)
+      # PREPARAÇÃO LINUX
       # ----------------------------------------------------------------
-      
-      # Linux Geral (libpcap é necessário para o Rust Core em ambos)
-      - name: Install Common Linux Deps
+      - name: Install Linux Deps
         if: runner.os == 'Linux'
         run: |
+          # Apenas o básico para o Rust (libpcap) e Tkinter
           sudo apt-get update
           sudo apt-get install -y libpcap-dev python3-tk
-          
-      # Linux GTK Específico (Headers para compilar a ponte do WebKit)
-      - name: Install GTK Build Deps
-        if: matrix.target == 'linux-gtk'
-        run: |
-          sudo apt-get install -y libgirepository1.0-dev libglib2.0-dev libcairo2-dev pkg-config python3-dev gir1.2-webkit-6.0
-      
+
       # ----------------------------------------------------------------
       # PREPARAÇÃO WINDOWS
       # ----------------------------------------------------------------
@@ -78,21 +66,15 @@ jobs:
       # ----------------------------------------------------------------
       # INSTALAÇÃO DEPENDÊNCIAS PYTHON
       # ----------------------------------------------------------------
-      - name: Install Common Python Dependencies
+      - name: Install Python Dependencies
         run: |
           python -m pip install --upgrade pip
-          # Instala dependências gerais listadas no seu requirements.txt implícito
+          # Dependências gerais
           pip install maturin pyinstaller scapy requests Pillow folium tkinterweb pywebview
-
-      # Dependências Específicas para Build QT
-      - name: Install Qt Dependencies
+      
+      - name: Install Qt Dependencies (Linux Only)
         if: matrix.target == 'linux-qt'
         run: pip install PyQt5 PyQtWebEngine
-
-      # Dependências Específicas para Build GTK
-      - name: Install GTK Dependencies
-        if: matrix.target == 'linux-gtk'
-        run: pip install PyGObject pycairo
 
       # ----------------------------------------------------------------
       # COMPILAÇÃO DO CORE RUST
@@ -118,15 +100,8 @@ jobs:
       - name: Build Binary (Linux QT)
         if: matrix.target == 'linux-qt'
         run: |
-          # Adicionamos hidden-import para garantir que o PyInstaller pegue os módulos QT
-          pyinstaller --noconsole --onefile --name "PyNetSketch-Qt" --add-data "assets:assets" --hidden-import "pynetsketch_core" --hidden-import "PyQt5" --hidden-import "PyQtWebEngine" gui_app.py
-
-      # 3. LINUX - GTK VERSION
-      - name: Build Binary (Linux GTK)
-        if: matrix.target == 'linux-gtk'
-        run: |
-          # Adicionamos hidden-import para o gi (GObject Introspection)
-          pyinstaller --noconsole --onefile --name "PyNetSketch-GTK" --add-data "assets:assets" --hidden-import "pynetsketch_core" --hidden-import "gi" gui_app.py
+          # QT Incluído via Pip - geralmente funciona 'out of the box'
+          pyinstaller --noconsole --onefile --name "PyNetSketch-Linux" --add-data "assets:assets" --hidden-import "pynetsketch_core" --hidden-import "PyQt5" --hidden-import "PyQtWebEngine" gui_app.py
 
       # ----------------------------------------------------------------
       # UPLOAD E RELEASE
@@ -137,8 +112,7 @@ jobs:
           name: PyNetSketch-${{ matrix.name }}
           path: |
             dist/PyNetSketch.exe
-            dist/PyNetSketch-Qt
-            dist/PyNetSketch-GTK
+            dist/PyNetSketch-Linux
 
       - name: Upload to Release
         uses: softprops/action-gh-release@v1
