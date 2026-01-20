@@ -101,9 +101,14 @@ jobs:
       - name: Build Binary (Linux QT)
         if: matrix.target == 'linux-qt'
         run: |
-          # FIX: Adicionado hidden-import para qtpy e QtWebEngineWidgets especificamente
-          pyinstaller --noconsole --onefile --name "PyNetSketch-Linux" --add-data "assets:assets" --hidden-import "pynetsketch_core" --hidden-import "PyQt5" --hidden-import "PyQtWebEngine" --hidden-import "PyQt5.QtWebEngineWidgets" --hidden-import "qtpy" gui_app.py
-
+          # --collect-all para forçar a cópia bruta do pacote qtpy
+          pyinstaller --noconsole --onefile \
+            --name "PyNetSketch-Linux" \
+            --add-data "assets:assets" \
+            --hidden-import "pynetsketch_core" \
+            --collect-all "qtpy" \
+            --collect-all "PyQtWebEngine" \
+            gui_app.py
       # ----------------------------------------------------------------
       # UPLOAD E RELEASE
       # ----------------------------------------------------------------
