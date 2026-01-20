@@ -114,7 +114,7 @@ The project adheres to a modular design pattern:
 
    **Both systems**   
    ```
-   pip install scapy requests pillow maturin pywebview folium
+   pip install scapy requests pillow maturin pywebview folium tkinterweb
    ```
    
    **Linux**
