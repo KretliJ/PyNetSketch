@@ -53,13 +53,18 @@ jobs:
       - name: Set up Rust
         uses: dtolnay/rust-toolchain@stable
 
-      # --- INSTALAÇÃO UNIFICADA (A Chave da Solução) ---
-      - name: Install Python Dependencies
+      # --- INSTALAÇÃO E DEBUG (O Pulo do Gato) ---
+      - name: Install Python Dependencies & DEBUG
         run: |
           python -m pip install --upgrade pip
-          # Instalamos TUDO aqui. O que não for usado no Windows/Linux será ignorado pelo PyInstaller
-          # Adicionamos PyQt5 e qtpy explicitamente aqui para garantir que o pip resolva as versões
+          # Instalação unificada
           pip install maturin pyinstaller scapy requests Pillow folium tkinterweb pywebview PyQt5 PyQtWebEngine qtpy
+          
+          echo "=== DEBUG: LISTA DE PACOTES ==="
+          pip list
+          echo "=== DEBUG: LOCALIZAÇÃO DO QTPY ==="
+          pip show qtpy
+          echo "==============================="
 
       # --- COMPILAÇÃO RUST ---
       - name: Build Rust Extension
@@ -77,15 +82,13 @@ jobs:
         run: |
           pyinstaller --noconsole --onefile --name "PyNetSketch" --icon="assets/app_icon.ico" --add-data "assets;assets" --hidden-import "pynetsketch_core" gui_app.py
 
-      # 2. LINUX (Build Corrigida)
+      # 2. LINUX (Build com Log Verboso)
       - name: Build Binary (Linux QT)
         if: matrix.target == 'linux-qt'
         run: |
-          # CORREÇÃO:
-          # 1. Usamos hidden-import para qtpy (módulo python) em vez de collect-all
-          # 2. Adicionamos PyQt5.sip (essencial no Linux)
-          # 3. Adicionamos hidden-imports para os widgets do WebEngine
+          # Adicionamos --log-level=WARN para ver se o PyInstaller grita sobre imports faltando
           pyinstaller --noconsole --onefile \
+            --log-level=WARN \
             --name "PyNetSketch-Linux" \
             --add-data "assets:assets" \
             --hidden-import "pynetsketch_core" \
@@ -95,6 +98,19 @@ jobs:
             --hidden-import "PyQt5.QtWebEngineWidgets" \
             --hidden-import "qtpy" \
             gui_app.py
+
+      # --- TESTE DE FOGO (LINUX ONLY) ---
+      # Vamos tentar rodar o binário DENTRO do Actions para ver o erro na hora
+      - name: Test Execution (Dry Run)
+        if: matrix.target == 'linux-qt'
+        continue-on-error: true  # Não para o job se falhar, queremos ver o log
+        run: |
+          echo "Tentando rodar o binário gerado..."
+          chmod +x dist/PyNetSketch-Linux
+          # Tenta abrir o mapa (vai falhar por falta de display, mas queremos ver SE ele acha o qtpy antes de falhar o display)
+          # Se o erro for "qtpy not found", ainda estamos ferrados.
+          # Se o erro for "Could not connect to display", VENCEMOS!
+          ./dist/PyNetSketch-Linux --view-map ./assets/app_icon.png || true
 
       # --- UPLOAD ---
       - name: Upload Artifact
