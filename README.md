@@ -114,18 +114,24 @@ The project adheres to a modular design pattern:
 
    **Both systems**   
    ```
-   pip install scapy requests pillow maturin pywebview folium tkinterweb
+   pip install -r requirements.txt
    ```
    
    **Linux**
    ```
-   sudo apt install python3-tk tk-dev # Debian
+   # Debian
+
+   sudo apt install python3-tk tk-dev gir1.2-webkit-6.0 libgirepository1.0-dev libcairo2-dev pkg-config python3-dev
    ```
    ```
-   sudo dnf install python3-tkinter # Fedora
+   # Fedora
+
+   sudo dnf install python3-tkinter webkitgtk6.0 gobject-introspection-devel cairo-devel python3-devel pkg-config
    ```
    ```
-   sudo pacman -S tk # Arch only needs to run this if tk complains it's not there 
+   # Arch
+   sudo pacman -S tk # Arch only needs to run this line if tk complains it's not there
+   sudo pacman -S webkit2gtk webkit2gtk-5.0 gobject-introspection base-devel python-gobject cairo
    ```
 
 ### 3: Compile Rust core
@@ -149,8 +155,7 @@ The project adheres to a modular design pattern:
 ### 4: Execute
 **Linux**
 ```
-# Point to the venv python executable to ensure dependencies are found
-sudo ./.venv/bin/python gui_app.py
+sudo QTWEBENGINE_CHROMIUM_FLAGS="--no-sandbox" ./.venv/bin/python gui_app.py
 ```
 
 **Windows**
