@@ -190,6 +190,7 @@ python gui_app.py
 * **v2.0 (Current - Map and Dark mode):**
    * **Dark Mode:** Implemented early version of dark mode in the push of a button (some things are a little broken but it works -ish)
    * **Map:** Implemented API calls for geographical IP matching. Traceroute with DNS resolving now opens a map with a route traced between the geographical positions of each detected node.
+   * **Fixes:** Something broke rust core from functioning in traffic monitor. I fixed it. Again.
 </details>
 
 ## ⚠️ Known Limitations & Engineering Challenges
