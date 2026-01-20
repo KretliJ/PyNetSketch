@@ -223,7 +223,7 @@ class NetworkApp:
         self.btn_theme.pack(side="right", padx=5)
 
     def show_about_dialog(self):
-        messagebox.showinfo("About PyNetSketch", f"PyNetSketch v2.0\nA student's project by KretliJ")
+        messagebox.showinfo("About PyNetSketch", f"PyNetSketch v2.0.1\nA student's project by KretliJ")
 
     # --- UI Logic ---
 
@@ -613,38 +613,24 @@ class NetworkApp:
         import subprocess
         import sys
         
-        self.log_to_console(f"Wait for map rendering...")
+        self.log_to_console(f"Opening map viewer...")
         abs_path = os.path.abspath(map_file_path)
         
-        # Script "voador" ajustado para Linux (Root)
-        viewer_script = f"""
-import webview
-import os
-import sys
-
-# --- CORREÇÃO PARA LINUX (ROOT) ---
-# O QtWebEngine bloqueia execução como root.
-# Precisamos passar a flag --no-sandbox via variável de ambiente.
-if hasattr(sys, 'platform') and sys.platform.startswith('linux'):
-    os.environ["QTWEBENGINE_CHROMIUM_FLAGS"] = "--no-sandbox"
-
-# Configura o caminho do arquivo
-map_url = "file:///" + r"{abs_path}".replace("\\\\", "/")
-
-if __name__ == '__main__':
-    webview.create_window('Global Network Route', map_url, width=1100, height=750)
-    webview.start()
-"""
-        # Salva o script temporário
-        viewer_path = os.path.join(os.path.dirname(abs_path), "map_viewer_temp.py")
-        with open(viewer_path, "w", encoding="utf-8") as f:
-            f.write(viewer_script)
-            
-        print(f"DEBUG [GUI]: Lançando visualizador nativo para {abs_path}")
+        # O PULO DO GATO:
+        # Chamamos sys.executable (que é o python ou o binário compilado)
+        # passamos a flag que criamos lá embaixo e o caminho do mapa.
+        cmd = [sys.executable, "gui_app.py", "--view-map", abs_path]
         
-        # Lança o processo
-        subprocess.Popen([sys.executable, viewer_path])
-        self.log_to_console(f"Map ready.")
+        # Se estivermos 'congelados' (PyInstaller), sys.executable é o binário,
+        # então não precisamos do "gui_app.py" no meio do comando.
+        if getattr(sys, 'frozen', False):
+            cmd = [sys.executable, "--view-map", abs_path]
+
+        print(f"DEBUG [GUI]: Executing sub-process: {cmd}")
+        
+        # Lança o processo independente
+        subprocess.Popen(cmd)
+        self.log_to_console(f"Map launched in separate window.")
 
     def _finalize_task_ui(self, result_msg):
         elapsed_str = ""
@@ -856,7 +842,7 @@ def open_launcher():
     btn_server = ttk.Button(action_frame, text="📡  Remote Server Probe (Headless)", command=select_server, style="Big.TButton")
     btn_server.pack(fill="x", pady=5, ipady=5)
     
-    ttk.Label(selection_window, text="v2.0", font=("Segoe UI", 8), foreground="#999999").pack(side="bottom", pady=10)
+    ttk.Label(selection_window, text="v2.0.1", font=("Segoe UI", 8), foreground="#999999").pack(side="bottom", pady=10)
 
     # Apply default theme on start
     apply_launcher_theme()
@@ -951,28 +937,48 @@ def main():
     
     root.mainloop()
 
-if __name__ == "__main__":
-    import ctypes
+def launch_map_viewer(map_path):
+    import webview
     import sys
+    import os  # <--- Importante garantir o import aqui também
 
-    # Correção do AppUserModelID (Para o ícone separar do Python)
-    if sys.platform.startswith('win'):
+    # Configuração de Sandbox para Linux (Root)
+    if sys.platform.startswith('linux'):
+        os.environ["QTWEBENGINE_CHROMIUM_FLAGS"] = "--no-sandbox"
+
+    # Corrige caminho local para URL
+    abs_path = os.path.abspath(map_path)
+    map_url = "file:///" + abs_path.replace("\\", "/")
+    
+    webview.create_window('Global Network Route', map_url, width=1100, height=750)
+    webview.start()
+
+# -------------------------------------------------------------------------
+# BLOCO PRINCIPAL (ENTRY POINT)
+# -------------------------------------------------------------------------
+if __name__ == "__main__":
+    import sys
+    import multiprocessing
+    
+    # Necessário para PyInstaller no Windows
+    multiprocessing.freeze_support()
+
+    # --- LÓGICA DE DUPLA PERSONALIDADE (MAPA) ---
+    if "--view-map" in sys.argv:
         try:
-            myappid = 'kretlij.pynetsketch.thesis.v2.0'
-            ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
-        except Exception:
-            pass
+            # Pega o argumento logo após a flag --view-map
+            idx = sys.argv.index("--view-map")
+            if idx + 1 < len(sys.argv):
+                map_file = sys.argv[idx + 1]
+                launch_map_viewer(map_file)
+            else:
+                print("Error: No map file provided.")
+        except Exception as e:
+            print(f"Error launching map: {e}")
+        
+        sys.exit(0) # Encerra aqui para não carregar o resto do App
+    # --------------------------------------------
 
-        # CORREÇÃO DE DPI 
-        # diz ao Windows para renderizar o app na resolução nativa do monitor
-        try:
-            # Tenta API do Windows 8.1+ (Mais robusta)
-            ctypes.windll.shcore.SetProcessDpiAwareness(1) 
-        except Exception:
-            try:
-                # Fallback para Windows Vista/7
-                ctypes.windll.user32.SetProcessDPIAware()
-            except Exception:
-                pass
-
+    # --- FLUXO NORMAL DO APLICATIVO ---
+    # Chama a main(), que carrega a Splash Screen, importa net_utils e inicia a GUI
     main()
