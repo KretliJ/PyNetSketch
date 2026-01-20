@@ -74,7 +74,8 @@ jobs:
       
       - name: Install Qt Dependencies (Linux Only)
         if: matrix.target == 'linux-qt'
-        run: pip install PyQt5 PyQtWebEngine
+        # FIX: Adicionado 'qtpy' que é a ponte que o pywebview usa
+        run: pip install PyQt5 PyQtWebEngine qtpy
 
       # ----------------------------------------------------------------
       # COMPILAÇÃO DO CORE RUST
@@ -100,8 +101,8 @@ jobs:
       - name: Build Binary (Linux QT)
         if: matrix.target == 'linux-qt'
         run: |
-          # QT Incluído via Pip - geralmente funciona 'out of the box'
-          pyinstaller --noconsole --onefile --name "PyNetSketch-Linux" --add-data "assets:assets" --hidden-import "pynetsketch_core" --hidden-import "PyQt5" --hidden-import "PyQtWebEngine" gui_app.py
+          # FIX: Adicionado hidden-import para qtpy e QtWebEngineWidgets especificamente
+          pyinstaller --noconsole --onefile --name "PyNetSketch-Linux" --add-data "assets:assets" --hidden-import "pynetsketch_core" --hidden-import "PyQt5" --hidden-import "PyQtWebEngine" --hidden-import "PyQt5.QtWebEngineWidgets" --hidden-import "qtpy" gui_app.py
 
       # ----------------------------------------------------------------
       # UPLOAD E RELEASE
