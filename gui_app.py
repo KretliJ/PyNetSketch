@@ -9,6 +9,14 @@ import platform
 import webbrowser
 import ctypes
 import re
+# Força o reconhecimento do qtpy para builds de binarios linux
+if sys.platform.startswith("linux"):
+    try:
+        import qtpy
+        import PyQt5.QtWebEngineWidgets
+        import PyQt5.QtWebEngine
+    except ImportError:
+        pass
 
 def resource_path(relative_path):
     """ Retorna o caminho absoluto do recurso, funcionando para dev e para PyInstaller """
