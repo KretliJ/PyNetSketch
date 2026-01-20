@@ -614,31 +614,35 @@ class NetworkApp:
         import sys
         
         self.log_to_console(f"Wait for map rendering...")
-        # Garante caminho absoluto
         abs_path = os.path.abspath(map_file_path)
         
-        # Script "voador" que cria a janela do mapa usando o motor do Edge
+        # Script "voador" ajustado para Linux (Root)
         viewer_script = f"""
 import webview
 import os
 import sys
 
+# --- CORREÇÃO PARA LINUX (ROOT) ---
+# O QtWebEngine bloqueia execução como root.
+# Precisamos passar a flag --no-sandbox via variável de ambiente.
+if hasattr(sys, 'platform') and sys.platform.startswith('linux'):
+    os.environ["QTWEBENGINE_CHROMIUM_FLAGS"] = "--no-sandbox"
+
 # Configura o caminho do arquivo
 map_url = "file:///" + r"{abs_path}".replace("\\\\", "/")
 
 if __name__ == '__main__':
-    # Cria a janela nativa flutuante
     webview.create_window('Global Network Route', map_url, width=1100, height=750)
     webview.start()
 """
-        # Salva esse mini-script temporário
+        # Salva o script temporário
         viewer_path = os.path.join(os.path.dirname(abs_path), "map_viewer_temp.py")
         with open(viewer_path, "w", encoding="utf-8") as f:
             f.write(viewer_script)
             
         print(f"DEBUG [GUI]: Lançando visualizador nativo para {abs_path}")
         
-        # Dispara o processo separado (não trava o seu app principal!)
+        # Lança o processo
         subprocess.Popen([sys.executable, viewer_path])
         self.log_to_console(f"Map ready.")
 

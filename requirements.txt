@@ -1,0 +1,23 @@
+# --- Core Network & Backend ---
+scapy>=2.5.0
+requests>=2.31.0
+psutil  # Resource monitoring need
+
+# --- GUI & view ---
+Pillow>=10.0.0
+folium>=0.15.0
+tkinterweb>=3.19  # legacy
+pywebview>=4.4.0
+
+# --- Rust Integration ---
+maturin>=1.4.0
+
+# --- Linux needs ---
+# QT WebEngine is separate on Linux, but built-in on Windows
+PyQtWebEngine; sys_platform == 'linux'
+PyQt5; sys_platform == 'linux'
+
+# --- Windows specific dependencies ---
+# pywebview on Windows usually tries native Edge/Chromium nativo or .NET
+# pywin32 is common, but pywebview deals with that via comtypes
+pythonnet; sys_platform == 'win32'
