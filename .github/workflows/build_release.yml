@@ -16,12 +16,9 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          # --- WINDOWS ---
           - os: windows-latest
             target: windows
             name: Windows-x64
-            
-          # --- LINUX QT (Stand-alone via Pip) ---
           - os: ubuntu-latest
             target: linux-qt
             name: Linux-Qt
@@ -29,19 +26,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # ----------------------------------------------------------------
-      # PREPARAÇÃO LINUX
-      # ----------------------------------------------------------------
+      # --- PREPARAÇÃO LINUX ---
       - name: Install Linux Deps
         if: runner.os == 'Linux'
         run: |
-          # Apenas o básico para o Rust (libpcap) e Tkinter
           sudo apt-get update
           sudo apt-get install -y libpcap-dev python3-tk
 
-      # ----------------------------------------------------------------
-      # PREPARAÇÃO WINDOWS
-      # ----------------------------------------------------------------
+      # --- PREPARAÇÃO WINDOWS ---
       - name: Download Npcap SDK (Windows)
         if: matrix.target == 'windows'
         shell: powershell
@@ -51,9 +43,7 @@ jobs:
           $npcapPath = "$(Get-Location)\npcap-sdk\Lib\x64"
           echo "LIB=$npcapPath;$env:LIB" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
 
-      # ----------------------------------------------------------------
-      # SETUP LINGUAGENS
-      # ----------------------------------------------------------------
+      # --- SETUP ---
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
@@ -63,23 +53,15 @@ jobs:
       - name: Set up Rust
         uses: dtolnay/rust-toolchain@stable
 
-      # ----------------------------------------------------------------
-      # INSTALAÇÃO DEPENDÊNCIAS PYTHON
-      # ----------------------------------------------------------------
+      # --- INSTALAÇÃO UNIFICADA (A Chave da Solução) ---
       - name: Install Python Dependencies
         run: |
           python -m pip install --upgrade pip
-          # Dependências gerais
-          pip install maturin pyinstaller scapy requests Pillow folium tkinterweb pywebview
-      
-      - name: Install Qt Dependencies (Linux Only)
-        if: matrix.target == 'linux-qt'
-        # FIX: Adicionado 'qtpy' que é a ponte que o pywebview usa
-        run: pip install PyQt5 PyQtWebEngine qtpy
+          # Instalamos TUDO aqui. O que não for usado no Windows/Linux será ignorado pelo PyInstaller
+          # Adicionamos PyQt5 e qtpy explicitamente aqui para garantir que o pip resolva as versões
+          pip install maturin pyinstaller scapy requests Pillow folium tkinterweb pywebview PyQt5 PyQtWebEngine qtpy
 
-      # ----------------------------------------------------------------
-      # COMPILAÇÃO DO CORE RUST
-      # ----------------------------------------------------------------
+      # --- COMPILAÇÃO RUST ---
       - name: Build Rust Extension
         shell: bash
         working-directory: ./rust_src
@@ -87,9 +69,7 @@ jobs:
           maturin build --release
           pip install target/wheels/*.whl
 
-      # ----------------------------------------------------------------
-      # GERAÇÃO DO EXECUTÁVEL (PYINSTALLER)
-      # ----------------------------------------------------------------
+      # --- GERAÇÃO DOS EXECUTÁVEIS ---
       
       # 1. WINDOWS
       - name: Build Exe (Windows)
@@ -97,21 +77,26 @@ jobs:
         run: |
           pyinstaller --noconsole --onefile --name "PyNetSketch" --icon="assets/app_icon.ico" --add-data "assets;assets" --hidden-import "pynetsketch_core" gui_app.py
 
-      # 2. LINUX - QT VERSION
+      # 2. LINUX (Build Corrigida)
       - name: Build Binary (Linux QT)
         if: matrix.target == 'linux-qt'
         run: |
-          # --collect-all para forçar a cópia bruta do pacote qtpy
+          # CORREÇÃO:
+          # 1. Usamos hidden-import para qtpy (módulo python) em vez de collect-all
+          # 2. Adicionamos PyQt5.sip (essencial no Linux)
+          # 3. Adicionamos hidden-imports para os widgets do WebEngine
           pyinstaller --noconsole --onefile \
             --name "PyNetSketch-Linux" \
             --add-data "assets:assets" \
             --hidden-import "pynetsketch_core" \
-            --collect-all "qtpy" \
-            --collect-all "PyQtWebEngine" \
+            --hidden-import "PyQt5" \
+            --hidden-import "PyQt5.sip" \
+            --hidden-import "PyQtWebEngine" \
+            --hidden-import "PyQt5.QtWebEngineWidgets" \
+            --hidden-import "qtpy" \
             gui_app.py
-      # ----------------------------------------------------------------
-      # UPLOAD E RELEASE
-      # ----------------------------------------------------------------
+
+      # --- UPLOAD ---
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
