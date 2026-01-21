@@ -9,6 +9,10 @@ import platform
 import webbrowser
 import ctypes
 import re
+
+# Importa utilitários imediatamente
+import utils
+
 # Força o reconhecimento do qtpy para builds de binarios linux
 if sys.platform.startswith("linux"):
     import qtpy
@@ -18,30 +22,17 @@ if sys.platform.startswith("linux"):
     # Diz ao qtpy explicitamente qual backend usar
     os.environ["QT_API"] = "pyqt5"
 
-def resource_path(relative_path):
-    """ Retorna o caminho absoluto do recurso, funcionando para dev e para PyInstaller """
-    try:
-        # PyInstaller cria uma pasta temp e armazena o caminho em _MEIPASS
-        base_path = sys._MEIPASS
-    except Exception:
-        base_path = os.path.abspath(".")
-
-    return os.path.join(base_path, relative_path)
-
 def setup_window_icon(window):
-    """ Define o ícone da janela de forma cross-platform """
+    """ Define o ícone da janela de forma cross-platform (Lógica de UI) """
     try:
-        # 1. Tenta formato Windows (.ico) via iconbitmap
-        # Isso é preferível no Windows pois define o ícone da barra de tarefas e cabeçalho corretamente
+        # Usa utils.resource_path agora
         if sys.platform.startswith("win"):
-            ico_path = resource_path(os.path.join("assets", "app_icon.ico"))
+            ico_path = utils.resource_path(os.path.join("assets", "app_icon.ico"))
             if os.path.exists(ico_path):
                 window.iconbitmap(default=ico_path)
                 return
         
-        # 2. Fallback para Linux/Mac ou se o .ico falhar (.png)
-        # O Linux prefere iconphoto com PNG
-        png_path = resource_path(os.path.join("assets", "app_icon.png"))
+        png_path = utils.resource_path(os.path.join("assets", "app_icon.png"))
         if os.path.exists(png_path):
             img = tk.PhotoImage(file=png_path)
             window.iconphoto(True, img)
@@ -64,7 +55,6 @@ if sys.platform == "win32":
 
 # --- GLOBAL MODULE PLACEHOLDERS ---
 net_utils = None
-utils = None
 report_utils = None
 set_app_icon = None
 NetworkServerMode = None
@@ -72,32 +62,15 @@ ScannerTab = None
 TopologyTab = None
 TrafficTab = None
 
-# --- CONFIGURAÇÃO DE DEPENDÊNCIA (NPCAP) ---
-def check_npcap_silent():
-    if platform.system() != "Windows":
-        return True
-    npcap_path = os.path.join(os.environ["WINDIR"], "System32", "Npcap", "wpcap.dll")
-    return os.path.exists(npcap_path)
-
+# --- UI Helpers ---
 def prompt_npcap_install():
+    """Lógica de UI para solicitar instalação"""
     root = tk.Tk()
     root.withdraw()
     if messagebox.askyesno("Missing Dependency", "Npcap is required (Packet Capture Driver).\nDownload from nmap.org/npcap?"):
         webbrowser.open("https://nmap.org/npcap/")
     root.destroy()
     sys.exit(0)
-
-def is_valid_target(target):
-    # Regex para IP Simples ou CIDR (ex: 192.168.0.1 ou 192.168.0.1/24)
-    # Note o (\/\d{1,2})? no final para o opcional /24
-    ip_cidr_pattern = r"^((25[0-5]|(2[0-4]|1\d|[1-9]|)\d)\.){3}(25[0-5]|(2[0-4]|1\d|[1-9]|)\d)(/\d{1,2})?$"
-    
-    # Regex para Domínios (ex: google.com, sub.dominio.com.br)
-    domain_pattern = r"^([a-z0-9]+(-[a-z0-9]+)*\.)+[a-z]{2,}$"
-
-    if re.match(ip_cidr_pattern, target) or re.match(domain_pattern, target, re.IGNORECASE):
-        return True
-    return False
 
 # --- CLASSE DA APLICAÇÃO PRINCIPAL ---
 class NetworkApp:
@@ -107,6 +80,11 @@ class NetworkApp:
         
         # Set internal state to False initially so toggle_theme works correctly
         self.is_dark_mode = False 
+        
+        # --- FIX: ESTADO DE EXECUÇÃO ---
+        # Armazena qual foi a última função iniciada pelo botão START
+        # Isso evita que o callback de finalização confunda Port Scan com Traceroute
+        self.last_executed_mode = None
         
         setup_window_icon(self.root)
 
@@ -537,11 +515,14 @@ class NetworkApp:
         mode = self.mode_var.get()
         target = self.target_entry.get().strip()
         
-        # Gets target from IP field and verifies with regex. This protects the modes from executing malicious or incorrect commands
-        if(is_valid_target(target)):
+        # Gets target from IP field and verifies with regex (USA UTILS AGORA)
+        if(utils.is_valid_target(target)):
 
             self.stop_btn.config(state="normal")
             self.start_btn.config(state="disabled")
+            
+            # --- FIX: REGISTRA A ÚLTIMA AÇÃO ---
+            self.last_executed_mode = mode
 
             if mode == "Ping Host":
                 target = target.split("/")[0]
@@ -609,10 +590,19 @@ class NetworkApp:
     # --- Result Handlers ---
     def handle_generic_finish(self, result_msg):
         # 1. Garante que os dados do mapa sejam salvos ANTES da finalização da UI
-        if isinstance(result_msg, list) and len(result_msg) > 0:
-                self.last_hops = result_msg
-                # DEBUG extra para confirmar o salvamento
-                print(f"DEBUG [GUI]: Dados salvos em self.last_hops. Pronto para o mapa.")
+        
+        # --- FIX: LÓGICA DE MAPA BASEADA NO MODO ---
+        # Só tenta salvar dados de mapa se o modo foi Trace Route
+        is_map_mode = self.last_executed_mode in ["Trace Route", "Tracert no DNS"]
+        
+        if is_map_mode and isinstance(result_msg, list) and len(result_msg) > 0:
+             # Sanity check para garantir que a lista tem dados de hops
+             if isinstance(result_msg[0], dict) and 'ttl' in result_msg[0]:
+                 self.last_hops = result_msg
+                 print(f"DEBUG [GUI]: Dados salvos em self.last_hops (Modo: {self.last_executed_mode}).")
+        else:
+             # Se rodou Port Scan ou outro, limpa explicitamente para evitar mapa fantasma
+             self.last_hops = None
 
         # 2. Chama a finalização da UI
         self.root.after(0, self._finalize_task_ui, result_msg)
@@ -731,7 +721,7 @@ class NetworkApp:
 # --- ENTRY POINT & SPLASH SCREEN LOGIC ---
 
 def open_launcher():
-    if not check_npcap_silent():
+    if not utils.check_npcap_silent():
         prompt_npcap_install()
 
     selection_window = tk.Tk()
@@ -884,18 +874,19 @@ def main():
     except ImportError:
         from interface.startup_screen import SplashScreen
 
-    splash_icon = resource_path(os.path.join("assets", "app_icon.png"))
+    splash_icon = utils.resource_path(os.path.join("assets", "app_icon.png"))
     splash = SplashScreen(root, image_path=splash_icon)
     setup_window_icon(root)
 
     def load_extensions():
         try:
-            global net_utils, utils, report_utils, set_app_icon
+            # Globals agora são apenas para os módulos que ainda não foram importados no topo
+            global net_utils, report_utils, set_app_icon
             global NetworkServerMode, ScannerTab, TopologyTab, TrafficTab
             
             splash.update_status("Initializing Logging & Utils...", 10)
-            import utils as u_mod
-            utils = u_mod
+            
+            # utils já está importado, usamos ele para log
             utils._log_operation("Application Boot Sequence Initiated.")
             time.sleep(0.2)
             
@@ -929,7 +920,7 @@ def main():
             TrafficTab = trt
             
             splash.update_status("Checking Network Drivers...", 90)
-            if not check_npcap_silent():
+            if not utils.check_npcap_silent():
                 utils._log_operation("Npcap missing! Will prompt user.", "WARN")
             
             splash.update_status("Ready.", 100)

@@ -5,6 +5,7 @@ import threading
 import logging 
 import platform
 import subprocess
+import re  # Adicionado para validação de Regex
 from datetime import datetime
 
 def get_executable_dir():
@@ -18,6 +19,42 @@ def get_executable_dir():
 
 BASE_DIR = get_executable_dir()
 LOG_FILE = os.path.join(BASE_DIR, "LOGS", "gen_log.txt")
+
+# --- FUNÇÕES MOVIDAS DO GUI_APP (Lógica de Sistema/Path/Validação) ---
+
+def resource_path(relative_path):
+    """ Retorna o caminho absoluto do recurso, funcionando para dev e para PyInstaller """
+    try:
+        # PyInstaller cria uma pasta temp e armazena o caminho em _MEIPASS
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, relative_path)
+
+def check_npcap_silent():
+    """ Verifica silenciosamente se o Npcap (driver de captura) existe no Windows """
+    if platform.system() != "Windows":
+        return True
+    try:
+        npcap_path = os.path.join(os.environ["WINDIR"], "System32", "Npcap", "wpcap.dll")
+        return os.path.exists(npcap_path)
+    except Exception:
+        return False
+
+def is_valid_target(target):
+    """ Valida se o alvo é um IP, CIDR ou Domínio válido usando Regex """
+    # Regex para IP Simples ou CIDR (ex: 192.168.0.1 ou 192.168.0.1/24)
+    ip_cidr_pattern = r"^((25[0-5]|(2[0-4]|1\d|[1-9]|)\d)\.){3}(25[0-5]|(2[0-4]|1\d|[1-9]|)\d)(/\d{1,2})?$"
+    
+    # Regex para Domínios (ex: google.com, sub.dominio.com.br)
+    domain_pattern = r"^([a-z0-9]+(-[a-z0-9]+)*\.)+[a-z]{2,}$"
+
+    if re.match(ip_cidr_pattern, target) or re.match(domain_pattern, target, re.IGNORECASE):
+        return True
+    return False
+
+# -------------------------------------------------------------------
 
 def suppress_scapy_warnings():
     # Globally suppresses Scapy verbosity.
