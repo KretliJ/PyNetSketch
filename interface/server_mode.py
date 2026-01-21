@@ -10,7 +10,7 @@ class NetworkServerMode:
     def __init__(self, root, session_name="Unnamed Probe", dark_mode=False):
         self.root = root
         set_app_icon(self.root)
-        self.root.title(f"PyNetSketch Server - {session_name}")
+        self.root.title(f"PyNetSketch Server - {session_name} - {utils.APP_VERSION}")
         self.root.geometry("500x450")
         
         # --- THEME APPLICATION ---

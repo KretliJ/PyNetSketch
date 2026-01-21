@@ -19,6 +19,7 @@ def get_executable_dir():
 
 BASE_DIR = get_executable_dir()
 LOG_FILE = os.path.join(BASE_DIR, "LOGS", "gen_log.txt")
+APP_VERSION = "v2.0.2"
 
 # --- FUNÇÕES MOVIDAS DO GUI_APP (Lógica de Sistema/Path/Validação) ---
 

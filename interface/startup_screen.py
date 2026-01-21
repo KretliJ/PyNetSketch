@@ -1,5 +1,6 @@
 import tkinter as tk
 import os
+from utils import APP_VERSION
 
 class SplashScreen:
     def __init__(self, root, image_path=None):
@@ -70,7 +71,7 @@ class SplashScreen:
         self.canvas.create_text(self.width // 2, current_y+20, text="PyNetSketch", font=("Consolas", 22, "bold"), fill=self.accent_color)
         current_y += 35 
 
-        self.canvas.create_text(self.width // 2, current_y+10, text="Network Analysis Tool v2.0.1", font=("Segoe UI", 9), fill="#888888")
+        self.canvas.create_text(self.width // 2, current_y+10, text="fNetwork Analysis Tool {APP_VERSION} ", font=("Segoe UI", 9), fill="#888888")
         current_y += 40 
 
         # Throbber

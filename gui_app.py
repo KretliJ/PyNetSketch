@@ -15,10 +15,10 @@ import utils
 
 # Força o reconhecimento do qtpy para builds de binarios linux
 if sys.platform.startswith("linux"):
-    import qtpy
-    import PyQt5
-    import PyQt5.QtWebEngineWidgets
-    
+    import qtpy # type: ignore
+    import PyQt5 # type: ignore
+    import PyQt5.QtWebEngineWidgets # type: ignore
+    # Ignorar para evitar warnings desnecessários
     # Diz ao qtpy explicitamente qual backend usar
     os.environ["QT_API"] = "pyqt5"
 
@@ -53,7 +53,7 @@ if sys.platform == "win32":
             os.environ["TK_LIBRARY"] = tk_libs[0]
 # --------------------------------------------------
 
-# --- GLOBAL MODULE PLACEHOLDERS ---
+# --- GLOBAL MODULE PLACEHOLDERS AND VARIABLES ---
 net_utils = None
 report_utils = None
 set_app_icon = None
@@ -209,7 +209,7 @@ class NetworkApp:
         self.btn_theme.pack(side="right", padx=5)
 
     def show_about_dialog(self):
-        messagebox.showinfo("About PyNetSketch", f"PyNetSketch v2.0.1\nA student's project by KretliJ")
+        messagebox.showinfo("About PyNetSketch", f"PyNetSketch {utils.APP_VERSION}\nA student's project by KretliJ")
 
     # --- UI Logic ---
 
@@ -846,7 +846,7 @@ def open_launcher():
     btn_server = ttk.Button(action_frame, text="📡  Remote Server Probe (Headless)", command=select_server, style="Big.TButton")
     btn_server.pack(fill="x", pady=5, ipady=5)
     
-    ttk.Label(selection_window, text="v2.0.1", font=("Segoe UI", 8), foreground="#999999").pack(side="bottom", pady=10)
+    ttk.Label(selection_window, text=f"{utils.APP_VERSION}", font=("Segoe UI", 8), foreground="#999999").pack(side="bottom", pady=10)
 
     # Apply default theme on start
     apply_launcher_theme()
