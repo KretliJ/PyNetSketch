@@ -25,6 +25,7 @@ Cargo.lock
 .idea/
 *.swp
 
-# --- Local logs ---
+# --- Local logs and files ---
 LOGS/
 *.log
+traceroute_map.html
