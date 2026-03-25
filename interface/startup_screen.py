@@ -64,7 +64,8 @@ class SplashScreen:
                     image=self.logo_img, anchor='center'
                 )
                 current_y += img_h + 10 
-            except: pass
+            except (tk.TclError, Exception) as e:
+                utils._log_operation(f"Failed to load splash logo image: {e}", "WARN")
         else:
             current_y += 20
 
@@ -118,12 +119,14 @@ class SplashScreen:
             try:
                 self.root.after_cancel(self.animation_id)
                 self.animation_id = None
-            except: pass
+            except ValueError as e:
+                utils._log_operation(f"Could not cancel splash animation: {e}", "WARN")
             
         try:
             self.splash.destroy()
-        except: pass
-
+        except tk.TclError as e:
+            utils._log_operation(f"Splash window already destroyed: {e}", "WARN")
+            
     def _animate_throbber(self):
         if not self.splash.winfo_exists(): return
 

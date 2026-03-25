@@ -81,7 +81,8 @@ def tcp_ping(target_ip, port=80, timeout=1):
             duration_ms = (end_time - start_time) * 1000
             return True, duration_ms
         return False, 0
-    except:
+    except (socket.error, OSError) as e:
+        utils._log_operation(f"TCP ping to {target_ip} failed: {e}", "WARN")
         return False, 0
 
 def ping_host(target_ip, stop_event=None, progress_callback=None):
@@ -323,7 +324,8 @@ def perform_traceroute(target_ip, max_hops=30, stop_event=None, progress_callbac
              try:
                  test_pkt = packet_generator(64)
                  sr1(test_pkt, verbose=0, timeout=1.0)
-             except: pass
+             except Exception as e:
+                 utils._log_operation(f"Traceroute initial probe failed: {e}", "WARN")
 
         for ttl in range(1, max_hops + 1):
             if stop_event and stop_event.is_set(): 
@@ -435,7 +437,8 @@ def scan_ports(target_ip, ports=None, stop_event=None, progress_callback=None):
                 open_services.append(msg)
                 if progress_callback: progress_callback(msg)
             sock.close()
-        except: pass
+        except (socket.error, OSError) as e:
+            utils._log_operation(f"Port scan error on {target_ip}:{port}: {e}", "WARN")
 
     if progress_callback: progress_callback(f"Scan Complete. Found {len(open_services)} open services.")
     return open_services
@@ -499,7 +502,7 @@ def monitor_traffic(interface=None, filter_ip=None, stop_event=None, progress_ca
         while not (stop_event and stop_event.is_set()):
             total_count = 0
             filtered_count = 0
-            ip_counts = {} 
+            ip_counts = {}
 
             def count_pkt(p):
                 nonlocal total_count, filtered_count
@@ -517,8 +520,12 @@ def monitor_traffic(interface=None, filter_ip=None, stop_event=None, progress_ca
 
             sniff(prn=count_pkt, timeout=1, store=0)
             top_ips = sorted(ip_counts.items(), key=lambda item: item[1], reverse=True)
-            
-            if progress_callback: 
+
+            # THREAD SAFETY: progress_callback is invoked here from a background thread.
+            # The caller (gui_app.handle_traffic_update) is responsible for routing all
+            # widget updates through root.after(). Do NOT call Tkinter widgets directly
+            # inside this callback.
+            if progress_callback:
                 progress_callback((total_count, filtered_count, top_ips))
             
     except Exception as e:

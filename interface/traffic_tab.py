@@ -125,29 +125,6 @@ class TrafficTab(ttk.Frame):
         self.context_menu.add_command(label="Filter by this Host", command=self.apply_selected_filter)
         self.ip_tree.bind("<Button-3>", self.show_context_menu)
 
-    # --- NOVO MÉTODO: ATUALIZAÇÃO DE TEMA ---
-    def update_theme(self, is_dark):
-        if is_dark:
-            self.colors = {
-                "bg": "#161e2b",         # Fundo Cyberpunk Dark
-                "line_total": "#00ff00", # Verde Neon
-                "line_filter": "yellow",
-                "text": "#e1e6ef",
-                "grid": "#2a3b55"
-            }
-        else:
-            self.colors = {
-                "bg": "#ffffff",         # Fundo Branco
-                "line_total": "#0078d7", # Azul Windows
-                "line_filter": "#ff8c00",# Laranja Escuro (legível no branco)
-                "text": "#000000",
-                "grid": "#e0e0e0"
-            }
-        
-        # Atualiza o fundo do Canvas imediatamente
-        self.traffic_canvas.config(bg=self.colors["bg"])
-        # Redesenha o gráfico com as novas cores
-        self.draw_traffic_graph()
 
     def show_context_menu(self, event):
         """Seleciona a linha sob o cursor e mostra o menu."""

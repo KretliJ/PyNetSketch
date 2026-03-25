@@ -174,7 +174,7 @@ class NetworkApp:
     def _setup_persistent_logs_tab(self):
         logs_toolbar = ttk.Frame(self.tab_logs)
         logs_toolbar.pack(fill="x", padx=5, pady=5)
-        ttk.Button(logs_toolbar, text="🔄 Atualizar Logs", command=self.load_persistent_logs).pack(side="left")
+        ttk.Button(logs_toolbar, text="🔄 Update Logs", command=self.load_persistent_logs).pack(side="left")
         self.log_display = scrolledtext.ScrolledText(self.tab_logs, state='disabled', font=("Consolas", 9))
         self.log_display.pack(fill="both", expand=True, padx=5, pady=5)
         self.load_persistent_logs()
@@ -684,27 +684,28 @@ class NetworkApp:
             self.tab_visual.update_map(devices)
 
     def handle_traffic_update(self, data):
+        # NOTE: This method is called from a background thread (Scapy or Rust sniffer).
+        # ALL widget interactions MUST go through root.after() to be thread-safe.
+        # Do not call widget methods directly here under any branch.
         try:
             if isinstance(data, str):
-                self.log_to_console(data)
-            
-            # Supports format (Total, Filtered, Lista_IPs) from Rust
+                # Route through root.after explicitly — do not call log_to_console
+                # directly, as that would touch the console widget from a bg thread.
+                self.root.after(0, self._update_console_widget, data)
+
+            # Supports format (Total, Filtered, Lista_IPs) from Rust and Scapy
             elif isinstance(data, (tuple, list)):
                 if len(data) == 3:
                     total, filtered, ip_list = data
-                    
-                    # 1. Atualiza o Gráfico (apenas números)
                     self.root.after(0, self.tab_traffic.add_data_point, (total, filtered))
-                    
-                    # 2. Atualiza a Tabela de IPs (lista)
                     self.root.after(0, self.tab_traffic.update_ip_table, ip_list)
-                
-                # fallback Python
+
+                # Two-value fallback (Python legacy path)
                 elif len(data) == 2:
                     self.root.after(0, self.tab_traffic.add_data_point, data)
-                    
+
         except Exception as e:
-            print(f"Graph update error: {e}")
+            utils._log_operation(f"Traffic update dispatch error: {e}", "ERROR")
 
     def export_data(self):
         top = tk.Toplevel(self.root)
@@ -787,7 +788,8 @@ def open_launcher():
             hwnd = ctypes.windll.user32.GetParent(selection_window.winfo_id())
             val = ctypes.c_int(1 if is_dark else 0)
             ctypes.windll.dwmapi.DwmSetWindowAttribute(hwnd, 20, ctypes.byref(val), 4)
-        except: pass
+        except (AttributeError, OSError):
+            pass  # Non-Windows or unsupported Windows version — safe to skip silently
 
     def toggle_launcher():
         selection_state["dark_mode"] = not selection_state["dark_mode"]

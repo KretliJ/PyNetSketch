@@ -35,7 +35,8 @@ class NetworkServerMode:
                 hwnd = ctypes.windll.user32.GetParent(self.root.winfo_id())
                 val = ctypes.c_int(1)
                 ctypes.windll.dwmapi.DwmSetWindowAttribute(hwnd, 20, ctypes.byref(val), 4)
-            except: pass
+            except (AttributeError, OSError):
+                pass  # Non-Windows or unsupported Windows version — safe to skip silently
         # -------------------------
 
         # Interface Visual

@@ -51,11 +51,9 @@ class ProbeServer:
     def stop(self):
         self.running = False
         if self.server_socket:
-            try: self.server_socket.close()
-            except: pass
+            self.server_socket.close()
         if self.udp_socket:
-            try: self.udp_socket.close()
-            except: pass
+            self.udp_socket.close()
         self.log("Server stopped.")
 
     def _discovery_loop(self):
@@ -139,12 +137,14 @@ class ProbeServer:
             try:
                 err_resp = {"status": "error", "message": str(e)}
                 client_sock.send(json.dumps(err_resp).encode('utf-8'))
-            except: pass
+            except (BrokenPipeError, ConnectionResetError, OSError) as send_err:
+                utils._log_operation(f"Could not send error response to {addr[0]}: {send_err}", "WARN")
         finally:
             stop_event.set() # Ensure any background tasks know to stop
             try:
                 client_sock.close()
-            except: pass
+            except OSError as e:
+                utils._log_operation(f"Error closing client socket for {addr[0]}: {e}", "WARN")
 
     def _stream_traceroute(self, client_sock, command, stop_event):
         """
