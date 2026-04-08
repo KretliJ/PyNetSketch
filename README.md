@@ -55,8 +55,11 @@ The project adheres to a modular design pattern:
 
 * **Python 3.11+**
 * **Rust Toolchain** (for compiling the core): `curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh`
+* **Npcap Driver and Npcap SDK (for windows)**
 
 ## 📦 Installation & Compilation for Development
+
+NOTE: Rust setup can be skipped but the application will run python-only. This impacts performance so prefer not to
 
 ### 🐧 Linux (Debian/Fedora/Arch)
 
@@ -70,7 +73,6 @@ The project adheres to a modular design pattern:
    ```
    sudo pacman -S libpcap # Arch
    ```
-   Note: This can be skipped but the application will run python-only, so prefer not to
 
 ### 🪟 Windows shenanigans and troubleshooting:
 
@@ -150,13 +152,16 @@ The project adheres to a modular design pattern:
    maturin develop --release
    cd ..
    ```
-   Note: This can be skipped but the application will run python-only, so prefer not to
 
 ### 4: Execute
+
+NOTE: Sudo or running as administrator is recommended since this application needs permission to work with raw network packets. 
+
 **Linux**
 ```
 sudo QTWEBENGINE_CHROMIUM_FLAGS="--no-sandbox" ./.venv/bin/python gui_app.py
 ```
+No sandbox for webview compatibility
 
 **Windows**
 ```
