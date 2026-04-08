@@ -2,7 +2,7 @@
 
 # PyNetSketch 📡
 
-**PyNetSketch** is a robust, Python-based network management and reconnaissance tool designed as a **Software Engineering Thesis** and Proof of Concept (PoC).
+**PyNetSketch** is a robust, Python-based network management and reconnaissance tool designed as a **Software Engineering demonstration** and Proof of Concept (PoC).
 
 It demonstrates advanced architectural patterns by featuring a Hybrid Engine that combines a flexible Python frontend (Tkinter) with a high-performance Rust core for critical I/O operations. The project is designed to bridge the gap between abstract network theory and visual understanding.
 
@@ -74,10 +74,10 @@ NOTE: Rust setup can be skipped but the application will run python-only. This i
    sudo pacman -S libpcap # Arch
    ```
 
-### 🪟 Windows shenanigans and troubleshooting:
+### 🪟 Windows issues and troubleshooting:
 
    * **Powershell is a must**
-   * **Npcap Driver:** Download from [nmap.org/npcap](https://nmap.org/npcap/). Though this chack is handled during the startup cycle
+   * **Npcap Driver:** Download from [nmap.org/npcap](https://nmap.org/npcap/). Though this check is handled during the startup cycle
    * **Npcap SDK:** To compile the Rust core, download the **Npcap SDK**. Extract in a known folder (as shown in example further down the chain, prefer making an `C:\NpcapSDK` folder)
      * (You are looking for these)
      * <img alt="Npcap_needs" src=https://github.com/KretliJ/PyNetSketch/blob/main/projectDiagrams/Nmap_print.png>
@@ -177,16 +177,16 @@ python gui_app.py
 * **v1.3** Rust Integration (Hybrid Engine).
 * **v1.4** Distributed Server Mode & Mobile Protocol.
 * **v1.5** Pre-release executable, fixes and error documentation.
-* **v1.6 (Thesis Milestone 1 - Modularization and Interfacing):**
+* **v1.6 (Milestone 1 - Modularization and Interfacing):**
     * **Refactoring:** Full GUI modularization.
     * **Performance:** Implemented threaded Rust Sniffer with GIL release (fixed freezing).
     * **Feature:** Differential Traffic Filtering.
     * **Fix:** Solved Windows Interface Name mismatch (Adapter Pattern).
-* **v1.7 (Thesis Milestone 2 - Stability):**
+* **v1.7 (Milestone 2 - Stability):**
     * **Concurrency:** Implemented Bidirectional Control Channel for Rust Sniffer (Non-blocking I/O cancellation <1s).
     * **Optimization:** Added "Subnet Chunking" strategy for large network scans (eliminating Atomic Scapy freezes).
     * **Performance:** Threaded Rust Sniffer with GIL release and Differential Traffic Filtering.
-* **v1.8 (Thesis Milestone 3 - Loading and Build fixes):**
+* **v1.8 (Milestone 3 - Loading and Build fixes):**
     * **UX Polish:** Implemented custom Tkinter Splash Screen with transparency and procedural throbber.
     * **Architecture:** "Lazy Loading" pattern implementation for visual feedback on app launch.
     * **Critical Fix:** Resolved blocking I/O on Rust Core (Stop latency < 0.1s) and fixed PyInstaller binary shadowing.
